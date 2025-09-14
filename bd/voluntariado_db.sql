@@ -79,6 +79,37 @@ INSERT INTO `canje` VALUES (1,1,1,'2025-09-10 10:17:45',50,'ENTREGADO');
 UNLOCK TABLES;
 
 --
+-- Table structure for table `categoria_evento`
+--
+
+DROP TABLE IF EXISTS `categoria_evento`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `categoria_evento` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `descripcion` text COLLATE utf8mb4_general_ci,
+  `color_hex` varchar(7) COLLATE utf8mb4_general_ci DEFAULT '#007bff',
+  `horas_minimas_requeridas` int DEFAULT '0',
+  `puntos_por_hora` int DEFAULT '10',
+  `valida_para_creditos` tinyint(1) DEFAULT '1',
+  `codigo_ley` varchar(20) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `creado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `categoria_evento`
+--
+
+LOCK TABLES `categoria_evento` WRITE;
+/*!40000 ALTER TABLE `categoria_evento` DISABLE KEYS */;
+INSERT INTO `categoria_evento` VALUES (1,'Medio Ambiente','Actividades de conservación y reforestación','#28a745',0,20,1,NULL,'2025-09-14 00:00:00'),(2,'Educación','Apoyo educativo y alfabetización','#007bff',0,15,1,NULL,'2025-09-14 00:00:00'),(3,'Salud Comunitaria','Campañas de salud y prevención','#dc3545',0,18,1,NULL,'2025-09-14 00:00:00'),(4,'Actividades Sociales','Eventos recreativos y culturales','#ffc107',0,5,0,NULL,'2025-09-14 00:00:00');
+/*!40000 ALTER TABLE `categoria_evento` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `certificado`
 --
 
@@ -126,9 +157,12 @@ CREATE TABLE `evento` (
   `cupo_maximo` int DEFAULT '0',
   `organizador_id` bigint NOT NULL,
   `creado_en` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `categoria_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `organizador_id` (`organizador_id`),
+  KEY `fk_evento_categoria` (`categoria_id`),
   CONSTRAINT `evento_ibfk_1` FOREIGN KEY (`organizador_id`) REFERENCES `usuario` (`id`)
+  CONSTRAINT `fk_evento_categoria` FOREIGN KEY (`categoria_id`) REFERENCES `categoria_evento` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -138,7 +172,7 @@ CREATE TABLE `evento` (
 
 LOCK TABLES `evento` WRITE;
 /*!40000 ALTER TABLE `evento` DISABLE KEYS */;
-INSERT INTO `evento` VALUES (1,'Reforestación en Arequipa','Plantaremos 100 árboles en la comunidad.','2025-09-20 14:00:00','2025-09-20 22:00:00','Ccollpapampa',30,1,'2025-09-10 08:18:00');
+INSERT INTO `evento` VALUES (1,'Reforestación en Arequipa','Plantaremos 100 árboles en la comunidad.','2025-09-20 14:00:00','2025-09-20 22:00:00','Ccollpapampa',30,1,'2025-09-10 08:18:00',1);
 /*!40000 ALTER TABLE `evento` ENABLE KEYS */;
 UNLOCK TABLES;
 
