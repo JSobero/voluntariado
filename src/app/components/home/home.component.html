@@ -1,0 +1,179 @@
+<!-- src/app/components/home/home.component.html -->
+<div class="home-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Cargando datos...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <div class="error-message">
+      <h3>⚠️ Error</h3>
+      <p>{{error}}</p>
+      <button class="btn-retry" (click)="cargarDatos()">Reintentar</button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!isLoading && !error && usuarioActual">
+    <!-- Header/Hero Section -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <div class="welcome-text">
+          <h1>¡Hola, {{usuarioActual.nombre}}! 👋</h1>
+          <p>Bienvenido de nuevo a tu plataforma de voluntariado</p>
+        </div>
+        <div class="user-stats">
+          <div class="stat-card points">
+            <div class="stat-icon">🏆</div>
+            <div class="stat-info">
+              <span class="stat-number">{{usuarioActual.puntos}}</span>
+              <span class="stat-label">Puntos</span>
+            </div>
+          </div>
+          <div class="stat-card hours">
+            <div class="stat-icon">⏰</div>
+            <div class="stat-info">
+              <span class="stat-number">{{usuarioActual.horasAcumuladas}}</span>
+              <span class="stat-label">Horas</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-background"></div>
+    </section>
+
+    <!-- Quick Stats Section -->
+    <section class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-item eventos">
+          <div class="stat-content">
+            <div class="stat-number">{{estadisticas.totalEventos}}</div>
+            <div class="stat-title">Eventos Activos</div>
+          </div>
+          <div class="stat-icon">📅</div>
+        </div>
+        <div class="stat-item voluntarios">
+          <div class="stat-content">
+            <div class="stat-number">{{estadisticas.voluntariosActivos}}</div>
+            <div class="stat-title">Voluntarios Activos</div>
+          </div>
+          <div class="stat-icon">👥</div>
+        </div>
+        <div class="stat-item horas">
+          <div class="stat-content">
+            <div class="stat-number">{{estadisticas.horasTotales}}</div>
+            <div class="stat-title">Horas Totales</div>
+          </div>
+          <div class="stat-icon">🕐</div>
+        </div>
+        <div class="stat-item recompensas">
+          <div class="stat-content">
+            <div class="stat-number">{{estadisticas.recompensasDisponibles}}</div>
+            <div class="stat-title">Recompensas</div>
+          </div>
+          <div class="stat-icon">🎁</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Eventos Próximos Section -->
+    <section class="eventos-section">
+      <div class="section-header">
+        <h2>🌟 Próximos Eventos</h2>
+        <button class="btn-ver-mas" (click)="verTodosEventos()">Ver todos</button>
+      </div>
+      
+      <!-- Empty State for Events -->
+      <div *ngIf="eventosProximos.length === 0" class="empty-state">
+        <div class="empty-icon">📅</div>
+        <h3>No hay eventos próximos</h3>
+        <p>¡Mantente atento! Pronto habrán nuevas oportunidades de voluntariado.</p>
+      </div>
+
+      <div *ngIf="eventosProximos.length > 0" class="eventos-grid">
+        <div class="evento-card" *ngFor="let evento of eventosProximos">
+          <div class="evento-header">
+            <div class="evento-fecha">
+              <div class="fecha-dia">{{formatearFecha(evento.fechaInicio).split(' ')[0]}}</div>
+              <div class="fecha-mes">{{formatearFecha(evento.fechaInicio).split(' ')[1]}}</div>
+            </div>
+            <div class="evento-info">
+              <h3>{{evento.titulo}}</h3>
+              <p class="evento-lugar">📍 {{evento.lugar}}</p>
+              <p class="evento-hora">🕐 {{formatearFecha(evento.fechaInicio).split(' ')[3]}}</p>
+            </div>
+          </div>
+          <div class="evento-body">
+            <p class="evento-descripcion">{{evento.descripcion}}</p>
+            <div class="evento-meta">
+              <span class="cupo">👥 {{evento.cupoMaximo}} lugares</span>
+            </div>
+          </div>
+          <div class="evento-footer">
+            <button class="btn-inscribirse" (click)="inscribirseEvento(evento.id)">
+              ✨ Inscribirse
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Recompensas Section -->
+    <section class="recompensas-section">
+      <div class="section-header">
+        <h2>🏆 Tienda de Recompensas</h2>
+        <button class="btn-ver-mas" (click)="verTodasRecompensas()">Ver tienda completa</button>
+      </div>
+
+      <!-- Empty State for Rewards -->
+      <div *ngIf="recompensasDestacadas.length === 0" class="empty-state">
+        <div class="empty-icon">🎁</div>
+        <h3>No hay recompensas disponibles</h3>
+        <p>¡Sigue participando en eventos para desbloquear nuevas recompensas!</p>
+      </div>
+
+      <div *ngIf="recompensasDestacadas.length > 0" class="recompensas-grid">
+        <div class="recompensa-card" *ngFor="let recompensa of recompensasDestacadas">
+          <div class="recompensa-header">
+            <div class="recompensa-icon">🎁</div>
+            <div class="stock-badge" [class.low-stock]="recompensa.stock <= 5">
+              📦 {{recompensa.stock}} disponibles
+            </div>
+          </div>
+          <div class="recompensa-body">
+            <h3>{{recompensa.nombre}}</h3>
+            <p>{{recompensa.descripcion}}</p>
+            <div class="precio-container">
+              <span class="precio">{{recompensa.puntosNecesarios}} puntos</span>
+              <span class="disponibilidad" [class.puede-canjear]="usuarioActual.puntos >= recompensa.puntosNecesarios">
+                {{usuarioActual.puntos >= recompensa.puntosNecesarios ? '✅ Disponible' : '❌ Faltan ' + (recompensa.puntosNecesarios - usuarioActual.puntos) + ' puntos'}}
+              </span>
+            </div>
+          </div>
+          <div class="recompensa-footer">
+            <button 
+              class="btn-canjear" 
+              [disabled]="usuarioActual.puntos < recompensa.puntosNecesarios || recompensa.stock <= 0"
+              (click)="canjearRecompensa(recompensa.id)">
+              {{usuarioActual.puntos >= recompensa.puntosNecesarios ? '🛒 Canjear' : 'Puntos insuficientes'}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+      <div class="cta-content">
+        <h2>¿Listo para hacer la diferencia?</h2>
+        <p>Únete a nuestra comunidad de voluntarios y empieza a ganar puntos mientras ayudas a otros</p>
+        <div class="cta-buttons">
+          <button class="btn-primary" (click)="verTodosEventos()">🌟 Explorar Eventos</button>
+          <button class="btn-secondary" (click)="verPerfil()">👤 Ver mi Perfil</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
