@@ -4,28 +4,31 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: '/home',
-    pathMatch: 'full'
+    loadComponent: () => import('./components/main/main.component').then(m => m.LandingComponent)
+  },
+  {
+    path: 'eventos',
+    loadComponent: () => import('./components/eventos/eventos.component').then(m => m.EventosComponent)
   },
   {
     path: 'home',
     loadComponent: () => import('./components/home/home.component').then(m => m.HomeComponent)
   },
-  // Aquí puedes agregar más rutas cuando crees otros componentes
+  // Rutas futuras que necesitarás crear
+  // {
+  //   path: 'login',
+  //   loadComponent: () => import('./components/auth/login/login.component').then(m => m.LoginComponent)
+  // },
+  // {
+  //   path: 'register',
+  //   loadComponent: () => import('./components/auth/register/register.component').then(m => m.RegisterComponent)
+  // },
   // {
   //   path: 'eventos',
   //   loadComponent: () => import('./components/eventos/eventos.component').then(m => m.EventosComponent)
   // },
-  // {
-  //   path: 'recompensas',
-  //   loadComponent: () => import('./components/recompensas/recompensas.component').then(m => m.RecompensasComponent)
-  // },
-  // {
-  //   path: 'perfil',
-  //   loadComponent: () => import('./components/perfil/perfil.component').then(m => m.PerfilComponent)
-  // },
   {
     path: '**',
-    redirectTo: '/home'  // Redirect para rutas no encontradas
+    redirectTo: ''
   }
 ];

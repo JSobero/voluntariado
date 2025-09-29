@@ -1,0 +1,267 @@
+<div class="landing-page">
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <span class="logo-icon">🤝</span>
+        <span class="logo-text">Voluntariado</span>
+      </div>
+      <ul class="nav-menu">
+        <li><a (click)="scrollToSection('inicio')">Inicio</a></li>
+        <li><a (click)="scrollToSection('eventos')">Eventos</a></li>
+        <li><a (click)="scrollToSection('categorias')">Categorías</a></li>
+        <li><a (click)="scrollToSection('testimonios')">Testimonios</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="btn-login" (click)="navigateToLogin()">Iniciar sesión</button>
+        <button class="btn-register" (click)="navigateToRegister()">Registrarse</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Carousel -->
+  <section id="inicio" class="hero-carousel">
+    <div class="carousel-container">
+      <div class="carousel-slides" [style.transform]="'translateX(-' + (currentSlide * 100) + '%)'">
+        <div class="slide" *ngFor="let slide of heroSlides">
+          <div class="slide-background" [style.backgroundImage]="'url(' + slide.image + ')'"></div>
+          <div class="slide-overlay"></div>
+          <div class="slide-content">
+            <h1 class="slide-title">{{slide.title}}</h1>
+            <p class="slide-subtitle">{{slide.subtitle}}</p>
+            <button class="cta-button" (click)="navigateToRegister()">{{slide.cta}}</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="carousel-btn prev" (click)="prevSlide()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+      <button class="carousel-btn next" (click)="nextSlide()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+
+      <div class="carousel-indicators">
+        <button
+          *ngFor="let slide of heroSlides; let i = index"
+          [class.active]="i === currentSlide"
+          (click)="goToSlide(i)">
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item" *ngFor="let stat of stats">
+          <h3 class="stat-value">{{stat.value}}</h3>
+          <p class="stat-label">{{stat.label}}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="about-section">
+    <div class="container">
+      <div class="about-content">
+        <div class="about-text">
+          <h2>¿Por qué ser voluntario?</h2>
+          <p>El voluntariado es una forma de contribuir activamente a la sociedad mientras desarrollas nuevas habilidades y conoces personas increíbles. Nuestra plataforma te conecta con organizaciones confiables y eventos que realmente marcan la diferencia.</p>
+          <ul class="benefits-list">
+            <li>
+              <span class="benefit-icon">✓</span>
+              <div>
+                <strong>Gana puntos canjeables</strong>
+                <p>Cada hora de voluntariado suma puntos que puedes canjear por recompensas</p>
+              </div>
+            </li>
+            <li>
+              <span class="benefit-icon">✓</span>
+              <div>
+                <strong>Certificados digitales</strong>
+                <p>Obtén certificados oficiales de participación para tu CV</p>
+              </div>
+            </li>
+            <li>
+              <span class="benefit-icon">✓</span>
+              <div>
+                <strong>Comunidad activa</strong>
+                <p>Conecta con miles de voluntarios que comparten tus valores</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="about-image">
+          <img src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=600&h=700&fit=crop" alt="Voluntarios">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section id="categorias" class="categories-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Explora por categorías</h2>
+        <p>Encuentra eventos que se ajusten a tus intereses y pasiones</p>
+      </div>
+      <div class="categories-grid">
+        <div class="category-card" *ngFor="let category of categories">
+          <div class="category-icon">{{category.icon}}</div>
+          <h3>{{category.name}}</h3>
+          <p>{{category.description}}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Events Section -->
+  <section id="eventos" class="events-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Eventos destacados</h2>
+        <p>Únete a estas increíbles oportunidades de voluntariado</p>
+      </div>
+      <div class="events-grid">
+        <div class="event-card" *ngFor="let event of featuredEvents">
+          <div class="event-image" [style.backgroundImage]="'url(' + event.image + ')'">
+            <div class="event-badge">{{event.points}} pts</div>
+          </div>
+          <div class="event-content">
+            <h3>{{event.title}}</h3>
+            <div class="event-details">
+              <span class="event-date">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                {{event.date}}
+              </span>
+              <span class="event-location">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                {{event.location}}
+              </span>
+            </div>
+            <div class="event-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width]="(event.participants / event.maxParticipants * 100) + '%'"></div>
+              </div>
+              <span class="progress-text">{{event.participants}}/{{event.maxParticipants}} inscritos</span>
+            </div>
+            <button class="event-btn">Inscribirse ahora</button>
+          </div>
+        </div>
+      </div>
+      <div class="section-cta">
+        <button class="btn-view-all" (click)="navigateToEvents()">Ver todos los eventos</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section id="testimonios" class="testimonials-section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Lo que dicen nuestros voluntarios</h2>
+        <p>Historias reales de personas que están cambiando el mundo</p>
+      </div>
+      <div class="testimonial-carousel">
+        <button class="testimonial-btn prev" (click)="prevTestimonial()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+
+        <div class="testimonial-content">
+          <div class="testimonial-card" *ngFor="let testimonial of testimonials; let i = index" [class.active]="i === currentTestimonial">
+            <div class="testimonial-stars">
+              <span *ngFor="let star of [1,2,3,4,5]">⭐</span>
+            </div>
+            <p class="testimonial-text">"{{testimonial.text}}"</p>
+            <div class="testimonial-author">
+              <img [src]="testimonial.avatar" [alt]="testimonial.name">
+              <div>
+                <h4>{{testimonial.name}}</h4>
+                <p>{{testimonial.role}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="testimonial-btn next" (click)="nextTestimonial()">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Final Section -->
+  <section class="final-cta">
+    <div class="container">
+      <div class="cta-content">
+        <h2>¿Listo para comenzar tu viaje de voluntariado?</h2>
+        <p>Únete a miles de personas que ya están marcando la diferencia</p>
+        <div class="cta-buttons">
+          <button class="btn-primary" (click)="navigateToRegister()">Crear cuenta gratis</button>
+          <button class="btn-secondary" (click)="navigateToEvents()">Explorar eventos</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Voluntariado</h3>
+          <p>Conectando voluntarios con causas que importan desde 2020</p>
+        </div>
+        <div class="footer-section">
+          <h4>Enlaces rápidos</h4>
+          <ul>
+            <li><a href="#">Sobre nosotros</a></li>
+            <li><a href="#">Eventos</a></li>
+            <li><a href="#">Organizaciones</a></li>
+            <li><a href="#">Blog</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Soporte</h4>
+          <ul>
+            <li><a href="#">Preguntas frecuentes</a></li>
+            <li><a href="#">Contacto</a></li>
+            <li><a href="#">Términos de uso</a></li>
+            <li><a href="#">Privacidad</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h4>Síguenos</h4>
+          <div class="social-links">
+            <a href="#">Facebook</a>
+            <a href="#">Instagram</a>
+            <a href="#">Twitter</a>
+            <a href="#">LinkedIn</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 Voluntariado. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </footer>
+</div>
