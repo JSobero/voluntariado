@@ -45,7 +45,7 @@ export class EventosComponent implements OnInit {
   isLoading = true;
   error: string | null = null;
 
-  // Categorías disponibles
+  // Categorías disponibles (simplificadas - sin el horrible diseño de bloques)
   categorias = [
     { id: 'todas', nombre: 'Todas', icon: '🌟' },
     { id: 'medio-ambiente', nombre: 'Medio Ambiente', icon: '🌱' },
@@ -54,8 +54,7 @@ export class EventosComponent implements OnInit {
     { id: 'animales', nombre: 'Animales', icon: '🐕' },
     { id: 'adultos-mayores', nombre: 'Adultos Mayores', icon: '👵' },
     { id: 'arte-cultura', nombre: 'Arte y Cultura', icon: '🎨' },
-    { id: 'construccion', nombre: 'Construcción', icon: '🏗️' },
-    { id: 'otros', nombre: 'Otros', icon: '✨' }
+    { id: 'construccion', nombre: 'Construcción', icon: '🏗️' }
   ];
 
   // Imágenes por defecto según categoría
@@ -120,7 +119,7 @@ export class EventosComponent implements OnInit {
       return 'construccion';
     }
 
-    return 'otros';
+    return 'otras';
   }
 
   asignarImagen(evento: Evento): string {
@@ -246,5 +245,9 @@ export class EventosComponent implements OnInit {
 
   volverInicio(): void {
     this.router.navigate(['/']);
+  }
+
+  navigateTo(path: string): void {
+    this.router.navigate([path]);
   }
 }

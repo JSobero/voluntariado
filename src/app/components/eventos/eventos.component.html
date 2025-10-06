@@ -1,30 +1,58 @@
 <div class="eventos-page">
-  <!-- Header/Hero Section -->
+  <!-- Navbar (igual al de main) -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a class="logo" (click)="volverInicio()">
+        <span class="logo-icon">🤝</span>
+        <span class="logo-text">NEXO V</span>
+      </a>
+      <ul class="nav-menu">
+        <li><a (click)="volverInicio()">Inicio</a></li>
+        <li><a>Eventos</a></li>
+        <li><a (click)="navigateTo('/categorias')">Categorías</a></li>
+        <li><a (click)="navigateTo('/testimonios')">Testimonios</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="btn-nav" (click)="navigateTo('/login')">Iniciar sesión</button>
+        <button class="btn-nav primary" (click)="navigateTo('/register')">Registrarse</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section mejorado -->
   <section class="hero-section">
     <div class="hero-content">
-      <button class="back-button" (click)="volverInicio()">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="19" y1="12" x2="5" y2="12"></line>
-          <polyline points="12 19 5 12 12 5"></polyline>
-        </svg>
-        Volver
-      </button>
-      <h1>Encuentra el voluntariado<br>al que quisieras participar</h1>
-      <p class="hero-subtitle">Elige las causas ideales para ti</p>
+      <h1>Encuentra tu próximo<br>proyecto de voluntariado</h1>
+      <p class="hero-subtitle">Explora cientos de oportunidades para hacer la diferencia en tu comunidad</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-value">{{eventosFiltrados.length}}</span>
+          <span class="hero-stat-label">Eventos disponibles</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-value">50+</span>
+          <span class="hero-stat-label">Organizaciones</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-value">1000+</span>
+          <span class="hero-stat-label">Voluntarios activos</span>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Categories Filter -->
-  <section class="categories-filter">
-    <div class="container">
-      <div class="categories-scroll">
+  <!-- Filtros rápidos en chips -->
+  <section class="filters-bar">
+    <div class="filters-container">
+      <div class="filters-title">Filtrar por categoría</div>
+      <div class="filters-chips">
         <button
           *ngFor="let cat of categorias"
-          class="category-btn"
+          class="filter-chip"
           [class.active]="categoriaSeleccionada === cat.id"
           (click)="seleccionarCategoria(cat.id)">
-          <span class="category-icon">{{cat.icon}}</span>
-          <span class="category-name">{{cat.nombre}}</span>
+          <span class="filter-chip-icon">{{cat.icon}}</span>
+          <span>{{cat.nombre}}</span>
         </button>
       </div>
     </div>
@@ -32,187 +60,190 @@
 
   <!-- Main Content -->
   <div class="main-content">
-    <div class="container">
-      <div class="content-grid">
-        <!-- Sidebar Filters -->
-        <aside class="filters-sidebar">
-          <div class="filters-card">
-            <h2>Filtros</h2>
+    <div class="content-grid">
+      <!-- Sidebar Filters (mejorado) -->
+      <aside class="filters-sidebar">
+        <div class="filters-card">
+          <h2>Filtros</h2>
+          <p class="filters-subtitle">Refina tu búsqueda</p>
 
-            <div class="filter-group">
-              <label>Buscar</label>
-              <div class="search-box">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <path d="m21 21-4.35-4.35"></path>
-                </svg>
-                <input
-                  type="text"
-                  [(ngModel)]="searchTerm"
-                  (input)="aplicarFiltros()"
-                  placeholder="Buscar eventos...">
-              </div>
-            </div>
-
-            <div class="filter-group">
-              <label>Fecha de inicio</label>
+          <div class="filter-group">
+            <label>Buscar eventos</label>
+            <div class="search-box">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
               <input
-                type="date"
-                class="date-input"
-                [(ngModel)]="fechaInicio"
-                (change)="aplicarFiltros()">
+                type="text"
+                [(ngModel)]="searchTerm"
+                (input)="aplicarFiltros()"
+                placeholder="Buscar por título o descripción...">
             </div>
+          </div>
 
-            <div class="filter-group">
-              <label>Fecha de fin</label>
+          <div class="filter-divider"></div>
+
+          <div class="filter-group">
+            <label>Fecha de inicio</label>
+            <input
+              type="date"
+              class="date-input"
+              [(ngModel)]="fechaInicio"
+              (change)="aplicarFiltros()">
+          </div>
+
+          <div class="filter-group">
+            <label>Fecha de fin</label>
+            <input
+              type="date"
+              class="date-input"
+              [(ngModel)]="fechaFin"
+              (change)="aplicarFiltros()">
+          </div>
+
+          <div class="filter-divider"></div>
+
+          <div class="filter-group">
+            <label>Ubicación</label>
+            <div class="search-box">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
               <input
-                type="date"
-                class="date-input"
-                [(ngModel)]="fechaFin"
-                (change)="aplicarFiltros()">
+                type="text"
+                [(ngModel)]="lugarFilter"
+                (input)="aplicarFiltros()"
+                placeholder="Lima, Perú">
             </div>
+          </div>
 
-            <div class="filter-group">
-              <label>Lugar</label>
-              <div class="search-box">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                  <circle cx="12" cy="10" r="3"></circle>
-                </svg>
-                <input
-                  type="text"
-                  [(ngModel)]="lugarFilter"
-                  (input)="aplicarFiltros()"
-                  placeholder="Lima, Perú">
+          <button class="clear-btn" (click)="limpiarFiltros()">
+            Limpiar todos los filtros
+          </button>
+        </div>
+      </aside>
+
+      <!-- Events List -->
+      <main class="events-section">
+        <div class="events-header">
+          <div class="results-info">
+            <h2>Eventos disponibles</h2>
+            <p>{{eventosFiltrados.length}} {{eventosFiltrados.length === 1 ? 'resultado' : 'resultados'}} encontrados</p>
+          </div>
+          <div class="sort-controls">
+            <label>Ordenar por:</label>
+            <select
+              [(ngModel)]="ordenarPor"
+              (change)="aplicarOrden()"
+              class="sort-select">
+              <option value="relevancia">Relevancia</option>
+              <option value="fecha-asc">Fecha (próximos)</option>
+              <option value="fecha-desc">Fecha (lejanos)</option>
+              <option value="puntos">Más puntos</option>
+              <option value="cupos">Más cupos</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="loading-state">
+          <div class="spinner"></div>
+          <p>Cargando eventos...</p>
+        </div>
+
+        <!-- Error State -->
+        <div *ngIf="error && !isLoading" class="error-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <h3>Error al cargar eventos</h3>
+          <p>{{error}}</p>
+          <button class="retry-btn" (click)="cargarEventos()">Reintentar</button>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!isLoading && !error && eventosFiltrados.length === 0" class="empty-state">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+          <h3>No se encontraron eventos</h3>
+          <p>Intenta ajustar tus filtros de búsqueda</p>
+          <button class="clear-btn" (click)="limpiarFiltros()">Limpiar filtros</button>
+        </div>
+
+        <!-- Events Grid -->
+        <div *ngIf="!isLoading && !error && eventosFiltrados.length > 0" class="events-grid">
+          <article class="event-card" *ngFor="let evento of eventosFiltrados">
+            <div class="event-image" [style.backgroundImage]="'url(' + evento.imagen + ')'">
+              <div class="event-badges">
+                <span class="badge badge-points">{{evento.puntos}} pts</span>
+                <span class="badge badge-category">{{evento.categoria}}</span>
               </div>
             </div>
 
-            <button class="clear-btn" (click)="limpiarFiltros()">
-              Limpiar filtros
-            </button>
-          </div>
-        </aside>
+            <div class="event-content">
+              <h3 class="event-title">{{evento.titulo}}</h3>
+              <p class="event-organizer">{{evento.organizador?.nombre || 'Organización'}}</p>
 
-        <!-- Events List -->
-        <main class="events-section">
-          <div class="events-header">
-            <div class="results-info">
-              <h2>Eventos disponibles</h2>
-              <p>{{eventosFiltrados.length}} resultados encontrados</p>
-            </div>
-            <div class="sort-controls">
-              <label>Ordenar por:</label>
-              <select
-                [(ngModel)]="ordenarPor"
-                (change)="aplicarOrden()"
-                class="sort-select">
-                <option value="relevancia">Relevancia</option>
-                <option value="fecha-asc">Fecha (próximos)</option>
-                <option value="fecha-desc">Fecha (lejanos)</option>
-                <option value="puntos">Más puntos</option>
-                <option value="cupos">Más cupos</option>
-              </select>
-            </div>
-          </div>
+              <div class="event-meta">
+                <div class="meta-item">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                  <span>Del {{formatearFecha(evento.fechaInicio)}} al {{formatearFecha(evento.fechaFin)}}</span>
+                </div>
 
-          <!-- Loading State -->
-          <div *ngIf="isLoading" class="loading-state">
-            <div class="spinner"></div>
-            <p>Cargando eventos...</p>
-          </div>
+                <div class="meta-item">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  <span>Horario flexible</span>
+                </div>
 
-          <!-- Error State -->
-          <div *ngIf="error && !isLoading" class="error-state">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="12"></line>
-              <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-            <h3>Error al cargar eventos</h3>
-            <p>{{error}}</p>
-            <button class="retry-btn" (click)="cargarEventos()">Reintentar</button>
-          </div>
-
-          <!-- Empty State -->
-          <div *ngIf="!isLoading && !error && eventosFiltrados.length === 0" class="empty-state">
-            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="15" y1="9" x2="9" y2="15"></line>
-              <line x1="9" y1="9" x2="15" y2="15"></line>
-            </svg>
-            <h3>No se encontraron eventos</h3>
-            <p>Intenta ajustar tus filtros de búsqueda</p>
-            <button class="clear-btn" (click)="limpiarFiltros()">Limpiar filtros</button>
-          </div>
-
-          <!-- Events Grid -->
-          <div *ngIf="!isLoading && !error && eventosFiltrados.length > 0" class="events-grid">
-            <article class="event-card" *ngFor="let evento of eventosFiltrados">
-              <div class="event-image" [style.backgroundImage]="'url(' + evento.imagen + ')'">
-                <div class="event-badges">
-                  <span class="badge badge-points">{{evento.puntos}} pts</span>
-                  <span class="badge badge-category">{{evento.categoria}}</span>
+                <div class="meta-item">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  <span>{{evento.lugar}}</span>
                 </div>
               </div>
 
-              <div class="event-content">
-                <h3 class="event-title">{{evento.titulo}}</h3>
-                <p class="event-organizer">{{evento.organizador?.nombre || 'Organización'}}</p>
+              <div class="event-description">
+                <p>{{evento.descripcion}}</p>
+              </div>
 
-                <div class="event-meta">
-                  <div class="meta-item">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                      <line x1="16" y1="2" x2="16" y2="6"></line>
-                      <line x1="8" y1="2" x2="8" y2="6"></line>
-                      <line x1="3" y1="10" x2="21" y2="10"></line>
-                    </svg>
-                    <span>Del {{formatearFecha(evento.fechaInicio)}} al {{formatearFecha(evento.fechaFin)}}</span>
+              <div class="event-footer">
+                <div class="cupos-info">
+                  <div class="cupos-bar">
+                    <div class="cupos-fill" [style.width.%]="obtenerPorcentajeInscritos(evento)"></div>
                   </div>
-
-                  <div class="meta-item">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <circle cx="12" cy="12" r="10"></circle>
-                      <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg>
-                    <span>Horario flexible</span>
-                  </div>
-
-                  <div class="meta-item">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                      <circle cx="12" cy="10" r="3"></circle>
-                    </svg>
-                    <span>{{evento.lugar}}</span>
-                  </div>
+                  <span class="cupos-text">Cupos disponibles: {{evento.cupoMaximo - (evento.inscritos || 0)}}</span>
                 </div>
 
-                <div class="event-description">
-                  <p>{{evento.descripcion}}</p>
-                </div>
-
-                <div class="event-footer">
-                  <div class="cupos-info">
-                    <div class="cupos-bar">
-                      <div class="cupos-fill" [style.width.%]="obtenerPorcentajeInscritos(evento)"></div>
-                    </div>
-                    <span class="cupos-text">Cupos disponibles: {{evento.cupoMaximo - (evento.inscritos || 0)}}</span>
-                  </div>
-
-                  <div class="event-actions">
-                    <button class="btn-join" (click)="inscribirseEvento(evento.id)">
-                      Únete
-                    </button>
-                    <button class="btn-share" (click)="compartirEvento(evento)">
-                      Compartir
-                    </button>
-                  </div>
+                <div class="event-actions">
+                  <button class="btn-join" (click)="inscribirseEvento(evento.id)">
+                    Únete
+                  </button>
+                  <button class="btn-share" (click)="compartirEvento(evento)">
+                    Compartir
+                  </button>
                 </div>
               </div>
-            </article>
-          </div>
-        </main>
-      </div>
+            </div>
+          </article>
+        </div>
+      </main>
     </div>
   </div>
 </div>
