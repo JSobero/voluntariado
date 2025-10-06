@@ -42,14 +42,15 @@
   gap: 0.5rem;
   font-size: 1.5rem;
   font-weight: 700;
-  color: #6366f1;
+  color: #5A2986;
   cursor: pointer;
 }
 
 .logo-icon {
-  width: 40px;  /* Ajusta el tamaño */
-  height: 40px;
+  width: 60px;  /* Ajusta el tamaño */
+  height: 60px;
   object-fit: contain; /* Mantiene proporciones */
+
 }
 
 .nav-menu {
@@ -59,7 +60,7 @@
 }
 
 .nav-menu li a {
-  color: #374151;
+  color: #5A2986;
   text-decoration: none;
   font-weight: 500;
   cursor: pointer;
@@ -77,7 +78,7 @@
 
 .btn-login {
   background: transparent;
-  color: #6366f1;
+  color: #5A2986;
   border: none;
   padding: 0.625rem 1.5rem;
   border-radius: 8px;
@@ -91,7 +92,7 @@
 }
 
 .btn-register {
-  background: #6366f1;
+  background: #5A2986;
   color: white;
   border: none;
   padding: 0.625rem 1.5rem;
