@@ -1,0 +1,195 @@
+<!-- src/app/components/home/home.component.html -->
+<div class="home-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Cargando información...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="error-container">
+    <div class="error-card">
+      <div class="error-icon">⚠️</div>
+      <h3>Algo salió mal</h3>
+      <p>{{error}}</p>
+      <button class="retry-btn" (click)="cargarDatos()">Intentar nuevamente</button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!isLoading && !error && usuarioActual" class="content-wrapper">
+
+    <!-- Hero Section -->
+    <header class="hero">
+      <div class="hero-content">
+        <div class="greeting">
+          <h1>Hola, {{usuarioActual.nombre}}</h1>
+          <p>Es bueno verte de nuevo</p>
+        </div>
+
+        <div class="user-metrics">
+          <div class="metric">
+            <span class="metric-value">{{usuarioActual.puntos}}</span>
+            <span class="metric-label">Puntos</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value">{{usuarioActual.horasAcumuladas}}</span>
+            <span class="metric-label">Horas</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Stats Overview -->
+    <section class="stats-overview">
+      <div class="stat-box">
+        <div class="stat-info">
+          <h3>{{estadisticas.totalEventos}}</h3>
+          <p>Eventos activos</p>
+        </div>
+        <div class="stat-icon">📅</div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-info">
+          <h3>{{estadisticas.voluntariosActivos}}</h3>
+          <p>Voluntarios</p>
+        </div>
+        <div class="stat-icon">👥</div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-info">
+          <h3>{{estadisticas.horasTotales}}</h3>
+          <p>Horas totales</p>
+        </div>
+        <div class="stat-icon">⏱️</div>
+      </div>
+
+      <div class="stat-box">
+        <div class="stat-info">
+          <h3>{{estadisticas.recompensasDisponibles}}</h3>
+          <p>Recompensas</p>
+        </div>
+        <div class="stat-icon">🎁</div>
+      </div>
+    </section>
+
+    <!-- Eventos Section -->
+    <section class="eventos-section">
+      <div class="section-header">
+        <h2>Próximos eventos</h2>
+        <button class="link-button" (click)="verTodosEventos()">
+          Ver todos →
+        </button>
+      </div>
+
+      <div *ngIf="eventosProximos.length === 0" class="empty-message">
+        <span class="empty-icon">📭</span>
+        <p>No hay eventos programados por el momento</p>
+      </div>
+
+      <div *ngIf="eventosProximos.length > 0" class="eventos-grid">
+        <article class="evento-card" *ngFor="let evento of eventosProximos">
+          <div class="evento-date">
+            <span class="date-day">{{formatearFecha(evento.fechaInicio).split(' ')[0]}}</span>
+            <span class="date-month">{{formatearFecha(evento.fechaInicio).split(' ')[1]}}</span>
+          </div>
+
+          <div class="evento-content">
+            <h3>{{evento.titulo}}</h3>
+
+            <div class="evento-details">
+              <span class="detail">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                {{evento.lugar}}
+              </span>
+              <span class="detail">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                {{formatearFecha(evento.fechaInicio).split(' ')[3]}}
+              </span>
+            </div>
+
+            <p class="evento-description">{{evento.descripcion}}</p>
+
+            <div class="evento-footer">
+              <span class="cupo-badge">{{evento.cupoMaximo}} lugares</span>
+              <button class="join-btn" (click)="inscribirseEvento(evento.id)">
+                Inscribirse
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Recompensas Section -->
+    <section class="recompensas-section">
+      <div class="section-header">
+        <h2>Tienda de recompensas</h2>
+        <button class="link-button" (click)="verTodasRecompensas()">
+          Ver tienda →
+        </button>
+      </div>
+
+      <div *ngIf="recompensasDestacadas.length === 0" class="empty-message">
+        <span class="empty-icon">🎁</span>
+        <p>No hay recompensas disponibles en este momento</p>
+      </div>
+
+      <div *ngIf="recompensasDestacadas.length > 0" class="recompensas-grid">
+        <article class="recompensa-card" *ngFor="let recompensa of recompensasDestacadas">
+          <div class="recompensa-header">
+            <span class="reward-icon">🎁</span>
+            <span class="stock-indicator" [class.low]="recompensa.stock <= 5">
+              {{recompensa.stock}} disponibles
+            </span>
+          </div>
+
+          <div class="recompensa-body">
+            <h3>{{recompensa.nombre}}</h3>
+            <p>{{recompensa.descripcion}}</p>
+          </div>
+
+          <div class="recompensa-footer">
+            <div class="price-info">
+              <span class="price">{{recompensa.puntosNecesarios}} pts</span>
+              <span class="availability" [class.available]="usuarioActual.puntos >= recompensa.puntosNecesarios">
+                {{usuarioActual.puntos >= recompensa.puntosNecesarios ? 'Disponible' : 'Faltan ' + (recompensa.puntosNecesarios - usuarioActual.puntos) + ' pts'}}
+              </span>
+            </div>
+            <button
+              class="redeem-btn"
+              [disabled]="usuarioActual.puntos < recompensa.puntosNecesarios || recompensa.stock <= 0"
+              (click)="canjearRecompensa(recompensa.id)">
+              {{usuarioActual.puntos >= recompensa.puntosNecesarios ? 'Canjear' : 'Bloqueado'}}
+            </button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <div class="cta-content">
+        <h2>Marca la diferencia</h2>
+        <p>Únete a nuestra comunidad y comienza a acumular puntos mientras contribuyes a causas importantes</p>
+        <div class="cta-actions">
+          <button class="primary-btn" (click)="verTodosEventos()">
+            Explorar eventos
+          </button>
+          <button class="secondary-btn" (click)="verPerfil()">
+            Mi perfil
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
