@@ -1,0 +1,78 @@
+<div class="admin-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar" [ngClass]="{'sidebar-collapsed': !sidebarOpen}">
+    <!-- Logo / Header -->
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="logo-icon">🤝</span>
+        <span class="logo-text" *ngIf="sidebarOpen">Voluntariado</span>
+      </div>
+      <button (click)="toggleSidebar()" class="toggle-btn" [title]="sidebarOpen ? 'Colapsar menú' : 'Expandir menú'">
+        <span class="toggle-icon">{{ sidebarOpen ? '◀' : '▶' }}</span>
+      </button>
+    </div>
+
+    <!-- Navigation Menu -->
+    <nav class="sidebar-nav">
+      <a *ngFor="let item of menuItems"
+         [routerLink]="item.route"
+         routerLinkActive="active"
+         [routerLinkActiveOptions]="{exact: false}"
+         class="nav-item"
+         [title]="!sidebarOpen ? item.label : ''">
+        <span class="nav-icon">{{ item.icon }}</span>
+        <span class="nav-label" *ngIf="sidebarOpen">{{ item.label }}</span>
+      </a>
+    </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer">
+      <button class="footer-btn" [title]="!sidebarOpen ? 'Configuración' : ''">
+        <span class="nav-icon">⚙️</span>
+        <span class="nav-label" *ngIf="sidebarOpen">Configuración</span>
+      </button>
+      <button class="footer-btn logout" [title]="!sidebarOpen ? 'Cerrar Sesión' : ''">
+        <span class="nav-icon">🚪</span>
+        <span class="nav-label" *ngIf="sidebarOpen">Cerrar Sesión</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="header-left">
+        <button (click)="toggleSidebar()" class="mobile-menu-btn">
+          <span>☰</span>
+        </button>
+        <h2 class="page-title">Panel de Administración</h2>
+      </div>
+
+      <div class="header-right">
+        <!-- Search Bar -->
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Buscar..." class="search-input">
+        </div>
+
+        <!-- Notifications -->
+        <button class="icon-btn" title="Notificaciones">
+          <span class="badge">3</span>
+          🔔
+        </button>
+
+        <!-- User Menu -->
+        <div class="user-menu">
+          <img src="https://i.pravatar.cc/40?img=1" alt="Admin" class="user-avatar">
+          <span class="user-name">Admin</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content Container -->
+    <main class="content-container">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
