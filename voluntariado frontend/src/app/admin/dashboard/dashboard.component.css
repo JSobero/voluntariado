@@ -1,0 +1,23 @@
+.bg-blue-500 {
+  background-color: #3b82f6;
+}
+
+.bg-green-500 {
+  background-color: #10b981;
+}
+
+.bg-purple-500 {
+  background-color: #8b5cf6;
+}
+
+.bg-orange-500 {
+  background-color: #f97316;
+}
+
+.stat-card {
+  transition: transform 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+}
