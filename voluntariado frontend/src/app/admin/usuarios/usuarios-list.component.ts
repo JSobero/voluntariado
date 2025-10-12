@@ -62,6 +62,10 @@ export class UsuariosListComponent implements OnInit {
     );
   }
 
+  getUsuariosByRole(rolNombre: string): Usuario[] {
+    return this.usuarios.filter(u => u.rol.nombre === rolNombre);
+  }
+
   openModal(usuario?: Usuario) {
     this.showModal = true;
     if (usuario) {
@@ -79,13 +83,27 @@ export class UsuariosListComponent implements OnInit {
   }
 
   saveUsuario() {
+    // Validaciones
+    if (!this.currentUsuario.nombre || !this.currentUsuario.correo || !this.currentUsuario.rol.nombre) {
+      alert('Por favor completa todos los campos requeridos');
+      return;
+    }
+
+    if (!this.editMode && !this.currentUsuario.password) {
+      alert('La contraseña es requerida para crear un nuevo usuario');
+      return;
+    }
+
     if (this.editMode && this.currentUsuario.id) {
       this.usuarioService.update(this.currentUsuario.id, this.currentUsuario).subscribe({
         next: () => {
           this.loadUsuarios();
           this.closeModal();
         },
-        error: (err) => console.error('Error al actualizar:', err)
+        error: (err) => {
+          console.error('Error al actualizar:', err);
+          alert('Error al actualizar el usuario');
+        }
       });
     } else {
       this.usuarioService.create(this.currentUsuario).subscribe({
@@ -93,16 +111,24 @@ export class UsuariosListComponent implements OnInit {
           this.loadUsuarios();
           this.closeModal();
         },
-        error: (err) => console.error('Error al crear:', err)
+        error: (err) => {
+          console.error('Error al crear:', err);
+          alert('Error al crear el usuario');
+        }
       });
     }
   }
 
   deleteUsuario(id: number) {
-    if (confirm('¿Está seguro de eliminar este usuario?')) {
+    if (confirm('¿Está seguro de eliminar este usuario? Esta acción no se puede deshacer.')) {
       this.usuarioService.delete(id).subscribe({
-        next: () => this.loadUsuarios(),
-        error: (err) => console.error('Error al eliminar:', err)
+        next: () => {
+          this.loadUsuarios();
+        },
+        error: (err) => {
+          console.error('Error al eliminar:', err);
+          alert('Error al eliminar el usuario');
+        }
       });
     }
   }
@@ -115,16 +141,46 @@ export class UsuariosListComponent implements OnInit {
       telefono: '',
       puntos: 0,
       horasAcumuladas: 0,
-      rol: { nombre: 'VOLUNTARIO' }
+      rol: { nombre: '' }
     };
   }
 
   getRolBadgeClass(rolNombre: string): string {
     switch(rolNombre) {
-      case 'ADMIN': return 'bg-red-100 text-red-800';
-      case 'ORGANIZADOR': return 'bg-blue-100 text-blue-800';
-      case 'VOLUNTARIO': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'ADMIN':
+        return 'role-admin';
+      case 'ORGANIZADOR':
+        return 'role-organizador';
+      case 'VOLUNTARIO':
+        return 'role-voluntario';
+      default:
+        return 'role-default';
+    }
+  }
+
+  getRolAvatarClass(rolNombre: string): string {
+    switch(rolNombre) {
+      case 'ADMIN':
+        return 'avatar-admin';
+      case 'ORGANIZADOR':
+        return 'avatar-organizador';
+      case 'VOLUNTARIO':
+        return 'avatar-voluntario';
+      default:
+        return 'avatar-default';
+    }
+  }
+
+  getRolIcon(rolNombre: string): string {
+    switch(rolNombre) {
+      case 'ADMIN':
+        return '👨‍💼';
+      case 'ORGANIZADOR':
+        return '📋';
+      case 'VOLUNTARIO':
+        return '🤝';
+      default:
+        return '👤';
     }
   }
 }
