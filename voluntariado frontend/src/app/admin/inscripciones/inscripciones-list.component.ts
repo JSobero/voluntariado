@@ -8,108 +8,137 @@ import { Inscripcion } from '../../core/models/inscripcion.model';
   selector: 'app-inscripciones-list',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  template: `
-    <div class="p-6">
-      <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-        <h1 class="text-3xl font-bold text-gray-800">Gestión de Inscripciones</h1>
-        <p class="text-gray-600 mt-1">Administra las inscripciones a eventos</p>
-      </div>
-
-      <div *ngIf="loading" class="bg-white rounded-lg shadow p-6 text-center">
-        <p class="text-gray-600">Cargando inscripciones...</p>
-      </div>
-
-      <div *ngIf="!loading" class="bg-white rounded-lg shadow overflow-hidden">
-        <table class="w-full">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Voluntario</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Evento</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha Solicitud</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200">
-            <tr *ngFor="let inscripcion of inscripciones" class="hover:bg-gray-50">
-              <td class="px-6 py-4 whitespace-nowrap text-sm">{{ inscripcion.id }}</td>
-              <td class="px-6 py-4 whitespace-nowrap font-medium">{{ inscripcion.usuario.nombre }}</td>
-              <td class="px-6 py-4">{{ inscripcion.evento.titulo }}</td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <select [(ngModel)]="inscripcion.estado"
-                        (change)="updateEstado(inscripcion)"
-                        [ngClass]="getEstadoClass(inscripcion.estado)"
-                        class="px-3 py-1 rounded-full text-xs font-medium">
-                  <option value="PENDIENTE">PENDIENTE</option>
-                  <option value="ACEPTADA">ACEPTADA</option>
-                  <option value="RECHAZADA">RECHAZADA</option>
-                </select>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm">
-                {{ inscripcion.solicitadoEn | date:'dd/MM/yyyy HH:mm' }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm">
-                <button (click)="deleteInscripcion(inscripcion.id!)"
-                        class="text-red-600 hover:text-red-800">
-                  🗑️ Eliminar
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  `
+  templateUrl: './inscripciones-list.component.html',
+  styleUrls: ['./inscripciones-list.component.css']
 })
 export class InscripcionesListComponent implements OnInit {
   inscripciones: Inscripcion[] = [];
-  loading = false;
+  inscripcionesFiltradas: Inscripcion[] = [];
+  cargando = false;
+  terminoBusqueda = '';
+  filtroEstado = '';
 
   constructor(private inscripcionService: InscripcionService) {}
 
   ngOnInit() {
-    this.loadInscripciones();
+    this.cargarInscripciones();
   }
 
-  loadInscripciones() {
-    this.loading = true;
+  cargarInscripciones() {
+    this.cargando = true;
     this.inscripcionService.getAll().subscribe({
-      next: (data) => {
-        this.inscripciones = data;
-        this.loading = false;
+      next: (datos) => {
+        this.inscripciones = datos;
+        this.inscripcionesFiltradas = datos;
+        this.cargando = false;
       },
       error: (err) => {
-        console.error('Error:', err);
-        this.loading = false;
+        console.error('Error al cargar inscripciones:', err);
+        this.cargando = false;
       }
     });
   }
 
-  updateEstado(inscripcion: Inscripcion) {
+  filtrarInscripciones() {
+    let filtradas = [...this.inscripciones];
+
+    // Filtrar por búsqueda
+    if (this.terminoBusqueda) {
+      const termino = this.terminoBusqueda.toLowerCase();
+      filtradas = filtradas.filter(i =>
+        i.usuario.nombre.toLowerCase().includes(termino) ||
+        i.evento.titulo.toLowerCase().includes(termino)
+      );
+    }
+
+    // Filtrar por estado
+    if (this.filtroEstado) {
+      filtradas = filtradas.filter(i => i.estado === this.filtroEstado);
+    }
+
+    this.inscripcionesFiltradas = filtradas;
+  }
+
+  limpiarFiltros() {
+    this.terminoBusqueda = '';
+    this.filtroEstado = '';
+    this.inscripcionesFiltradas = this.inscripciones;
+  }
+
+  obtenerInscripcionesPorEstado(estado: string): Inscripcion[] {
+    return this.inscripciones.filter(i => i.estado === estado);
+  }
+
+  actualizarEstado(inscripcion: Inscripcion) {
     if (inscripcion.id) {
       this.inscripcionService.update(inscripcion.id, inscripcion).subscribe({
-        next: () => this.loadInscripciones(),
-        error: (err) => console.error('Error:', err)
+        next: () => {
+          this.cargarInscripciones();
+        },
+        error: (err) => {
+          console.error('Error al actualizar:', err);
+          alert('Error al actualizar el estado de la inscripción');
+        }
       });
     }
   }
 
-  deleteInscripcion(id: number) {
-    if (confirm('¿Eliminar inscripción?')) {
+  eliminarInscripcion(id: number) {
+    if (confirm('¿Está seguro de eliminar esta inscripción? Esta acción no se puede deshacer.')) {
       this.inscripcionService.delete(id).subscribe({
-        next: () => this.loadInscripciones(),
-        error: (err) => console.error('Error:', err)
+        next: () => {
+          this.cargarInscripciones();
+        },
+        error: (err) => {
+          console.error('Error al eliminar:', err);
+          alert('Error al eliminar la inscripción');
+        }
       });
     }
   }
 
-  getEstadoClass(estado: string): string {
+  obtenerClaseEstado(estado: string): string {
     switch(estado) {
-      case 'PENDIENTE': return 'bg-yellow-100 text-yellow-800';
-      case 'ACEPTADA': return 'bg-green-100 text-green-800';
-      case 'RECHAZADA': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'PENDIENTE':
+        return 'estado-pendiente';
+      case 'ACEPTADA':
+        return 'estado-aceptada';
+      case 'RECHAZADA':
+        return 'estado-rechazada';
+      default:
+        return 'estado-default';
     }
   }
+
+  obtenerIconoEstado(estado: string): string {
+    switch(estado) {
+      case 'PENDIENTE':
+        return '⏳';
+      case 'ACEPTADA':
+        return '✅';
+      case 'RECHAZADA':
+        return '❌';
+      default:
+        return '❓';
+    }
+  }
+
+  obtenerTiempoTranscurrido(fecha?: string | Date): string {
+    if (!fecha) return 'Fecha no disponible';
+
+    const fechaObj = typeof fecha === 'string' ? new Date(fecha) : fecha;
+    const ahora = new Date().getTime();
+    const fechaInscripcion = fechaObj.getTime();
+    const diferencia = ahora - fechaInscripcion;
+
+    const minutos = Math.floor(diferencia / 60000);
+    const horas = Math.floor(diferencia / 3600000);
+    const dias = Math.floor(diferencia / 86400000);
+
+    if (dias > 0) return `Hace ${dias} día${dias > 1 ? 's' : ''}`;
+    if (horas > 0) return `Hace ${horas} hora${horas > 1 ? 's' : ''}`;
+    if (minutos > 0) return `Hace ${minutos} minuto${minutos > 1 ? 's' : ''}`;
+    return 'Hace un momento';
+  }
+
 }
