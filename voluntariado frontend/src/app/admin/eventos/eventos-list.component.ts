@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { EventoService } from '../../core/services/evento.service';
@@ -11,133 +11,204 @@ import { Usuario } from '../../core/models/usuario.model';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './eventos-list.component.html',
-  styleUrls: ['./eventos-list.component.css']
+  styleUrls: ['./eventos-list.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush // ✅ Fuerza actualización manual
 })
 export class EventosListComponent implements OnInit {
   eventos: Evento[] = [];
-  filteredEventos: Evento[] = [];
+  eventosFiltrados: Evento[] = [];
   organizadores: Usuario[] = [];
-  loading = false;
-  searchTerm = '';
+  cargando = false;
+  terminoBusqueda = '';
 
-  showModal = false;
-  editMode = false;
-  currentEvento: Evento = this.getEmptyEvento();
+  mostrarModal = false;
+  modoEdicion = false;
+  eventoActual: Evento = this.obtenerEventoVacio();
 
   constructor(
     private eventoService: EventoService,
-    private usuarioService: UsuarioService
+    private usuarioService: UsuarioService,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this.loadEventos();
-    this.loadOrganizadores();
+    this.cargarEventos();
+    this.cargarOrganizadores();
+
+    // ✅ Asegura que Angular actualice el DOM tras el primer render (corrige el "no se muestra completo")
+    setTimeout(() => this.cdRef.detectChanges(), 150);
   }
 
-  loadEventos() {
-    this.loading = true;
-    this.eventoService.getAll().subscribe({
-      next: (data) => {
-        this.eventos = data;
-        this.filteredEventos = data;
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error('Error al cargar eventos:', err);
-        this.loading = false;
-      }
-    });
-  }
+ cargarEventos() {
+   this.cargando = true;
+   this.eventoService.getAll().subscribe({
+     next: (datos) => {
+       // ✅ Convertimos las fechas en cadenas ISO sin usar Date directamente
+       this.eventos = datos.map(e => {
+         const fechaInicio = this.convertirFecha(e.fechaInicio);
+         const fechaFin = e.fechaFin ? this.convertirFecha(e.fechaFin) : undefined;
+         return {
+           ...e,
+           fechaInicio: fechaInicio || '',
+           fechaFin: fechaFin || undefined
+         };
+       });
 
-  loadOrganizadores() {
+       this.eventosFiltrados = this.eventos;
+       this.cargando = false;
+       this.cdRef.detectChanges();
+     },
+     error: (err) => {
+       console.error('Error al cargar eventos:', err);
+       this.cargando = false;
+       this.cdRef.detectChanges();
+     }
+   });
+ }
+
+
+
+
+ // ✅ Nueva función auxiliar — versión corregida
+ convertirFecha(fechaTexto: any): string {
+   if (!fechaTexto) return '';
+
+   if (Array.isArray(fechaTexto)) {
+     const [año, mes, día, hora = 0, minuto = 0] = fechaTexto;
+     const fecha = new Date(año, mes - 1, día, hora, minuto);
+     return fecha.toISOString().slice(0, 16); // formato 'YYYY-MM-DDTHH:mm'
+   }
+
+   if (typeof fechaTexto === 'string') {
+     // Si ya es string, lo normalizamos
+     return new Date(fechaTexto).toISOString().slice(0, 16);
+   }
+
+   return '';
+ }
+
+
+
+
+
+
+  cargarOrganizadores() {
     this.usuarioService.getAll().subscribe({
-      next: (data) => {
-        this.organizadores = data.filter(u =>
+      next: (datos) => {
+        this.organizadores = datos.filter(u =>
           u.rol.nombre === 'ADMIN' || u.rol.nombre === 'ORGANIZADOR'
         );
+        this.cdRef.detectChanges(); // ✅ Actualiza lista de organizadores al llegar
       },
       error: (err) => console.error('Error al cargar organizadores:', err)
     });
   }
 
-  filterEventos() {
-    if (!this.searchTerm) {
-      this.filteredEventos = this.eventos;
+  filtrarEventos() {
+    if (!this.terminoBusqueda) {
+      this.eventosFiltrados = this.eventos;
+      this.cdRef.detectChanges();
       return;
     }
 
-    const term = this.searchTerm.toLowerCase();
-    this.filteredEventos = this.eventos.filter(e =>
-      e.titulo.toLowerCase().includes(term) ||
-      e.descripcion?.toLowerCase().includes(term) ||
-      e.lugar.toLowerCase().includes(term)
+    const termino = this.terminoBusqueda.toLowerCase();
+    this.eventosFiltrados = this.eventos.filter(e =>
+      e.titulo.toLowerCase().includes(termino) ||
+      e.descripcion?.toLowerCase().includes(termino) ||
+      e.lugar.toLowerCase().includes(termino)
     );
+    this.cdRef.detectChanges(); // ✅ Actualiza la vista después del filtro
   }
 
-  openModal(evento?: Evento) {
-    this.showModal = true;
+  abrirModal(evento?: Evento) {
+    this.mostrarModal = true;
     if (evento) {
-      this.editMode = true;
-      this.currentEvento = {
+      this.modoEdicion = true;
+      this.eventoActual = {
         ...evento,
-        fechaInicio: this.formatDateForInput(evento.fechaInicio),
-        fechaFin: evento.fechaFin ? this.formatDateForInput(evento.fechaFin) : undefined
+        fechaInicio: this.formatearFechaParaInput(evento.fechaInicio),
+        fechaFin: evento.fechaFin ? this.formatearFechaParaInput(evento.fechaFin) : undefined
       };
     } else {
-      this.editMode = false;
-      this.currentEvento = this.getEmptyEvento();
+      this.modoEdicion = false;
+      this.eventoActual = this.obtenerEventoVacio();
     }
+    this.cdRef.detectChanges(); // ✅ Asegura render inmediato del modal
   }
 
-  closeModal() {
-    this.showModal = false;
-    this.currentEvento = this.getEmptyEvento();
+  cerrarModal() {
+    this.mostrarModal = false;
+    this.eventoActual = this.obtenerEventoVacio();
+    this.cdRef.detectChanges();
   }
 
-  saveEvento() {
-    // Asegurar que el organizador sea un objeto completo
-    const organizadorId = (this.currentEvento.organizador as any);
-    const organizadorCompleto = this.organizadores.find(o => o.id === Number(organizadorId));
+  guardarEvento() {
+    if (!this.eventoActual.titulo || !this.eventoActual.fechaInicio || !this.eventoActual.lugar) {
+      alert('Por favor completa todos los campos requeridos');
+      return;
+    }
+
+    const idOrganizador = (this.eventoActual.organizador as any);
+    const organizadorCompleto = this.organizadores.find(o => o.id === Number(idOrganizador));
 
     if (!organizadorCompleto) {
       alert('Por favor seleccione un organizador válido');
       return;
     }
 
-    const eventoToSave = {
-      ...this.currentEvento,
+    const eventoParaGuardar = {
+      ...this.eventoActual,
       organizador: organizadorCompleto
     };
 
-    if (this.editMode && this.currentEvento.id) {
-      this.eventoService.update(this.currentEvento.id, eventoToSave).subscribe({
-        next: () => {
-          this.loadEventos();
-          this.closeModal();
+    if (this.modoEdicion && this.eventoActual.id) {
+      this.eventoService.update(this.eventoActual.id, eventoParaGuardar).subscribe({
+        next: (eventoActualizado) => {
+          const indice = this.eventos.findIndex(e => e.id === eventoActualizado.id);
+          if (indice !== -1) {
+            this.eventos[indice] = eventoActualizado;
+            this.eventosFiltrados = [...this.eventos];
+          }
+          this.cerrarModal();
+          this.cdRef.detectChanges(); // ✅ Refresca tabla tras edición
         },
-        error: (err) => console.error('Error al actualizar:', err)
+        error: (err) => {
+          console.error('Error al actualizar:', err);
+          alert('Error al actualizar el evento');
+        }
       });
     } else {
-      this.eventoService.create(eventoToSave).subscribe({
+      this.eventoService.create(eventoParaGuardar).subscribe({
         next: () => {
-          this.loadEventos();
-          this.closeModal();
+          this.cargarEventos();
+          this.cerrarModal();
+          this.cdRef.detectChanges(); // ✅ Refresca vista tras crear nuevo evento
         },
-        error: (err) => console.error('Error al crear:', err)
+        error: (err) => {
+          console.error('Error al crear:', err);
+          alert('Error al crear el evento');
+        }
       });
     }
   }
 
-  deleteEvento(id: number) {
-    if (confirm('¿Está seguro de eliminar este evento?')) {
+  eliminarEvento(id: number) {
+    if (confirm('¿Está seguro de eliminar este evento? Esta acción no se puede deshacer.')) {
       this.eventoService.delete(id).subscribe({
-        next: () => this.loadEventos(),
-        error: (err) => console.error('Error al eliminar:', err)
+        next: () => {
+          this.eventos = this.eventos.filter(e => e.id !== id);
+          this.eventosFiltrados = this.eventosFiltrados.filter(e => e.id !== id);
+          this.cdRef.detectChanges(); // ✅ Actualiza tabla después de eliminar
+        },
+        error: (err) => {
+          console.error('Error al eliminar:', err);
+          alert('Error al eliminar el evento');
+        }
       });
     }
   }
 
-  getEmptyEvento(): Evento {
+  obtenerEventoVacio(): Evento {
     return {
       titulo: '',
       descripcion: '',
@@ -149,21 +220,22 @@ export class EventosListComponent implements OnInit {
     };
   }
 
-  formatDateForInput(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toISOString().slice(0, 16);
+  formatearFechaParaInput(fechaTexto: string): string {
+    const fecha = new Date(fechaTexto);
+    return fecha.toISOString().slice(0, 16);
   }
 
-  isEventoPast(fechaInicio: string): boolean {
+  esEventoPasado(fechaInicio: string): boolean {
     return new Date(fechaInicio) < new Date();
   }
 
-  getEventoStatusClass(fechaInicio: string): string {
-    return this.isEventoPast(fechaInicio) ?
-      'bg-gray-100 text-gray-800' : 'bg-green-100 text-green-800';
+  obtenerClaseEstadoEvento(fechaInicio: string): string {
+    return this.esEventoPasado(fechaInicio)
+      ? 'insignia-estado-gris'
+      : 'insignia-estado-verde';
   }
 
-  getEventoStatus(fechaInicio: string): string {
-    return this.isEventoPast(fechaInicio) ? 'Finalizado' : 'Próximo';
+  obtenerEstadoEvento(fechaInicio: string): string {
+    return this.esEventoPasado(fechaInicio) ? 'Finalizado' : 'Próximo';
   }
 }

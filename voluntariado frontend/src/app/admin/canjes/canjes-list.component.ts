@@ -8,121 +8,176 @@ import { Canje } from '../../core/models/canje.model';
   selector: 'app-canjes-list',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  template: `
-    <div class="p-6">
-      <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-        <h1 class="text-3xl font-bold text-gray-800">Gestión de Canjes</h1>
-        <p class="text-gray-600 mt-1">Administra los canjes de recompensas</p>
-      </div>
-
-      <div *ngIf="loading" class="bg-white rounded-lg shadow p-6 text-center">
-        <p class="text-gray-600">Cargando canjes...</p>
-      </div>
-
-      <div *ngIf="!loading" class="bg-white rounded-lg shadow overflow-hidden">
-        <table class="w-full">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Usuario</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Recompensa</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Puntos Usados</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200">
-            <tr *ngFor="let canje of canjes" class="hover:bg-gray-50">
-              <td class="px-6 py-4 whitespace-nowrap text-sm">{{ canje.id }}</td>
-              <td class="px-6 py-4 whitespace-nowrap font-medium">
-                <div>{{ canje.usuario.nombre }}</div>
-                <div class="text-xs text-gray-500">{{ canje.usuario.correo }}</div>
-              </td>
-              <td class="px-6 py-4">{{ canje.recompensa.nombre }}</td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">
-                  {{ canje.puntosUsados }} pts
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm">
-                {{ canje.fecha | date:'dd/MM/yyyy HH:mm' }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <select [(ngModel)]="canje.estado"
-                        (change)="updateEstado(canje)"
-                        [ngClass]="getEstadoClass(canje.estado)"
-                        class="px-3 py-1 rounded-full text-xs font-medium">
-                  <option value="PENDIENTE">PENDIENTE</option>
-                  <option value="ENTREGADO">ENTREGADO</option>
-                  <option value="CANCELADO">CANCELADO</option>
-                </select>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm">
-                <button (click)="deleteCanje(canje.id!)"
-                        class="text-red-600 hover:text-red-800">
-                  🗑️ Eliminar
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div *ngIf="canjes.length === 0" class="p-6 text-center text-gray-600">
-          No hay canjes registrados
-        </div>
-      </div>
-    </div>
-  `
+  templateUrl: './canjes-list.component.html',
+  styleUrls: ['./canjes-list.component.css']
 })
 export class CanjesListComponent implements OnInit {
   canjes: Canje[] = [];
-  loading = false;
+  canjesFiltrados: Canje[] = [];
+  cargando = false;
+  terminoBusqueda = '';
+  filtroEstado = '';
 
   constructor(private canjeService: CanjeService) {}
 
   ngOnInit() {
-    this.loadCanjes();
+    this.cargarCanjes();
   }
 
-  loadCanjes() {
-    this.loading = true;
+  // PASO 1: AÑADIR LA FUNCIÓN DE CONVERSIÓN AQUÍ
+  // <--- INICIO DEL CÓDIGO AÑADIDO ---
+  convertirArrayAFecha(arrayFecha: number[]): Date {
+    // El constructor de Date usa: año, mes (0-11), día, hora, minuto, segundo.
+    // Restamos 1 al mes porque el backend probablemente envía 1 para Enero, pero Date necesita 0.
+    return new Date(
+      arrayFecha[0],      // Año
+      arrayFecha[1] - 1,  // Mes (ajustado)
+      arrayFecha[2],      // Día
+      arrayFecha[3],      // Hora
+      arrayFecha[4],      // Minuto
+      arrayFecha[5] || 0  // Segundo (opcional)
+    );
+  }
+  // <--- FIN DEL CÓDIGO AÑADIDO ---
+
+  // En canjes-list.component.ts
+
+  cargarCanjes() {
+    this.cargando = true;
     this.canjeService.getAll().subscribe({
-      next: (data) => {
-        this.canjes = data;
-        this.loading = false;
+      next: (datos) => {
+        this.canjes = datos.map(canje => {
+          // Obtenemos el valor de la propiedad 'fecha'
+          const fechaComoArray = canje.fecha as unknown as number[]; // <--- CORREGIDO
+
+          return {
+            ...canje, // Copia todas las propiedades originales
+            // Sobrescribimos la propiedad 'fecha' con la fecha ya convertida
+            fecha: this.convertirArrayAFecha(fechaComoArray) as any // <--- CORREGIDO
+          };
+        });
+
+        this.canjesFiltrados = this.canjes;
+        this.cargando = false;
       },
       error: (err) => {
-        console.error('Error:', err);
-        this.loading = false;
+        console.error('Error al cargar canjes:', err);
+        this.cargando = false;
       }
     });
   }
 
-  updateEstado(canje: Canje) {
-    if (canje.id) {
-      this.canjeService.update(canje.id, canje).subscribe({
-        next: () => console.log('Actualizado'),
-        error: (err) => console.error('Error:', err)
-      });
+  filtrarCanjes() {
+    let filtrados = [...this.canjes];
+
+    // Filtrar por búsqueda
+    if (this.terminoBusqueda) {
+      const termino = this.terminoBusqueda.toLowerCase();
+      filtrados = filtrados.filter(c =>
+        c.usuario.nombre.toLowerCase().includes(termino) ||
+        c.recompensa.nombre.toLowerCase().includes(termino)
+      );
     }
+
+    // Filtrar por estado
+    if (this.filtroEstado) {
+      filtrados = filtrados.filter(c => c.estado === this.filtroEstado);
+    }
+
+    this.canjesFiltrados = filtrados;
   }
 
-  deleteCanje(id: number) {
-    if (confirm('¿Eliminar canje?')) {
+  limpiarFiltros() {
+    this.terminoBusqueda = '';
+    this.filtroEstado = '';
+    this.canjesFiltrados = this.canjes;
+  }
+
+  obtenerCanjesPorEstado(estado: string): Canje[] {
+    return this.canjes.filter(c => c.estado === estado);
+  }
+
+  calcularTotalPuntosCanjeados(): number {
+    return this.canjes.reduce((total, canje) => total + canje.puntosUsados, 0);
+  }
+
+  actualizarEstado(canje: Canje) {
+      if (canje.id) {
+        // Guardar el estado anterior por si falla
+        const estadoAnterior = canje.estado;
+
+        this.canjeService.update(canje.id, canje).subscribe({
+          next: () => {
+            // Éxito: el estado ya está actualizado en la vista
+            console.log('Estado actualizado correctamente');
+          },
+          error: (err) => {
+            // Si falla, revertir el cambio
+            canje.estado = estadoAnterior;
+            console.error('Error al actualizar:', err);
+            alert('Error al actualizar el estado del canje');
+          }
+        });
+      }
+    }
+
+
+  eliminarCanje(id: number) {
+    if (confirm('¿Está seguro de eliminar este canje? Esta acción no se puede deshacer.')) {
       this.canjeService.delete(id).subscribe({
-        next: () => this.loadCanjes(),
-        error: (err) => console.error('Error:', err)
+        next: () => {
+          this.cargarCanjes();
+        },
+        error: (err) => {
+          console.error('Error al eliminar:', err);
+          alert('Error al eliminar el canje');
+        }
       });
     }
   }
 
-  getEstadoClass(estado: string): string {
+  obtenerClaseEstado(estado: string): string {
     switch(estado) {
-      case 'PENDIENTE': return 'bg-yellow-100 text-yellow-800';
-      case 'ENTREGADO': return 'bg-green-100 text-green-800';
-      case 'CANCELADO': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'PENDIENTE':
+        return 'estado-pendiente';
+      case 'ENTREGADO':
+        return 'estado-entregado';
+      case 'CANCELADO':
+        return 'estado-cancelado';
+      default:
+        return 'estado-default';
     }
   }
+
+  obtenerIconoEstado(estado: string): string {
+    switch(estado) {
+      case 'PENDIENTE':
+        return '⏳';
+      case 'ENTREGADO':
+        return '✅';
+      case 'CANCELADO':
+        return '❌';
+      default:
+        return '❓';
+    }
+  }
+
+  obtenerTiempoTranscurrido(fecha?: string | Date): string {
+    if (!fecha) return 'Sin fecha'; // por si el valor llega vacío
+
+    const fechaCanje = new Date(fecha).getTime();
+    const ahora = Date.now();
+    const diferencia = ahora - fechaCanje;
+
+    const minutos = Math.floor(diferencia / 60000);
+    const horas = Math.floor(diferencia / 3600000);
+    const dias = Math.floor(diferencia / 86400000);
+
+    if (dias > 0) return `Hace ${dias} día${dias > 1 ? 's' : ''}`;
+    if (horas > 0) return `Hace ${horas} hora${horas > 1 ? 's' : ''}`;
+    if (minutos > 0) return `Hace ${minutos} minuto${minutos > 1 ? 's' : ''}`;
+    return 'Hace un momento';
+  }
+
 }
+

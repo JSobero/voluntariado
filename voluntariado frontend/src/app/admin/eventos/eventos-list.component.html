@@ -1,44 +1,40 @@
-<div class="page-container">
-  <!-- Page Header -->
-  <div class="page-header">
-    <div class="header-left">
-      <h1 class="page-title">
-        <span class="title-icon">📅</span>
+<div class="contenedor-pagina">
+  <div class="encabezado-pagina">
+    <div class="encabezado-izquierda">
+      <h1 class="titulo-pagina">
+        <i class="icono-titulo bi bi-calendar-event"></i>
         Gestión de Eventos
       </h1>
-      <p class="page-subtitle">Administra todos los eventos de voluntariado</p>
+      <p class="subtitulo-pagina">Administra todos los eventos de voluntariado</p>
     </div>
-    <div class="header-actions">
-      <button class="btn btn-primary" (click)="openModal()">
-        <span class="btn-icon">➕</span>
+    <div class="acciones-encabezado">
+      <button class="boton boton-primario" (click)="abrirModal()">
+        <i class="icono-boton bi bi-plus-lg"></i>
         Nuevo Evento
       </button>
     </div>
   </div>
 
-  <!-- Search & Filters -->
-  <div class="filters-section">
-    <div class="search-container">
-      <span class="search-icon">🔍</span>
+  <div class="seccion-filtros">
+    <div class="contenedor-busqueda">
+      <i class="icono-busqueda bi bi-search"></i>
       <input
         type="text"
-        class="search-input"
+        class="entrada-busqueda"
         placeholder="Buscar eventos por título, descripción o lugar..."
-        [(ngModel)]="searchTerm"
-        (ngModelChange)="filterEventos()">
+        [(ngModel)]="terminoBusqueda"
+        (ngModelChange)="filtrarEventos()">
     </div>
   </div>
 
-  <!-- Loading State -->
-  <div *ngIf="loading" class="loading-container">
-    <div class="spinner"></div>
+  <div *ngIf="cargando" class="contenedor-carga">
+    <div class="giratorio"></div>
     <p>Cargando eventos...</p>
   </div>
 
-  <!-- Events Table -->
-  <div *ngIf="!loading" class="table-card">
-    <div class="table-responsive">
-      <table class="data-table">
+  <div *ngIf="!cargando" class="tarjeta-tabla">
+    <div class="tabla-responsiva">
+      <table class="tabla-datos">
         <thead>
         <tr>
           <th>ID</th>
@@ -52,172 +48,168 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let evento of filteredEventos" class="table-row">
-          <td class="id-cell">
-            <span class="id-badge">{{ evento.id }}</span>
+        <tr *ngFor="let evento of eventosFiltrados" class="fila-tabla">
+          <td class="celda-id">
+            <span class="insignia-id">{{ evento.id }}</span>
           </td>
-          <td class="evento-cell">
-            <div class="evento-info">
-              <span class="evento-icon">📅</span>
+          <td class="celda-evento">
+            <div class="info-evento">
+              <i class="icono-evento bi bi-calendar4-week"></i>
               <div>
-                <div class="evento-title">{{ evento.titulo }}</div>
-                <div class="evento-description">{{ evento.descripcion }}</div>
+                <div class="titulo-evento">{{ evento.titulo }}</div>
+                <div class="descripcion-evento">{{ evento.descripcion }}</div>
               </div>
             </div>
           </td>
-          <td class="date-cell">
-            <div class="date-wrapper">
-              <span class="date-icon">🗓️</span>
+          <td class="celda-fecha">
+            <div class="envoltorio-fecha">
+              <i class="icono-fecha bi bi-calendar-check"></i>
               <span>{{ evento.fechaInicio | date:'dd/MM/yyyy' }}</span>
             </div>
-            <div class="time-wrapper">
-              <span class="time-icon">🕐</span>
+            <div class="envoltorio-hora">
+              <i class="icono-hora bi bi-clock"></i>
               <span>{{ evento.fechaInicio | date:'HH:mm' }}</span>
             </div>
           </td>
-          <td class="location-cell">
-            <div class="location-wrapper">
-              <span class="location-icon">📍</span>
+          <td class="celda-ubicacion">
+            <div class="envoltorio-ubicacion">
+              <i class="icono-ubicacion bi bi-geo-alt-fill"></i>
               <span>{{ evento.lugar }}</span>
             </div>
           </td>
-          <td class="capacity-cell">
-              <span class="capacity-badge">
-                {{ evento.cupoMaximo }} personas
-              </span>
+          <td class="celda-capacidad">
+            <span class="insignia-capacidad">
+              {{ evento.cupoMaximo }} personas
+            </span>
           </td>
-          <td class="status-cell">
-              <span [ngClass]="getEventoStatusClass(evento.fechaInicio)" class="status-badge">
-                {{ getEventoStatus(evento.fechaInicio) }}
-              </span>
+          <td class="celda-estado">
+            <span [ngClass]="obtenerClaseEstadoEvento(evento.fechaInicio)" class="insignia-estado">
+              {{ obtenerEstadoEvento(evento.fechaInicio) }}
+            </span>
           </td>
-          <td class="organizer-cell">
-            <div class="organizer-info">
-              <div class="organizer-avatar">
+          <td class="celda-organizador">
+            <div class="info-organizador">
+              <div class="avatar-organizador">
                 {{ evento.organizador.nombre.charAt(0) }}
               </div>
               <span>{{ evento.organizador.nombre }}</span>
             </div>
           </td>
-          <td class="actions-cell">
-            <button class="btn-action btn-edit" (click)="openModal(evento)" title="Editar">
-              ✏️
+          <td class="celda-acciones">
+            <button class="boton-accion boton-editar" (click)="abrirModal(evento)" title="Editar">
+              <i class="bi bi-pencil-fill"></i>
             </button>
-            <button class="btn-action btn-delete" (click)="deleteEvento(evento.id!)" title="Eliminar">
-              🗑️
+            <button class="boton-accion boton-eliminar" (click)="eliminarEvento(evento.id!)" title="Eliminar">
+              <i class="bi bi-trash-fill"></i>
             </button>
           </td>
         </tr>
         </tbody>
       </table>
 
-      <!-- Empty State -->
-      <div *ngIf="filteredEventos.length === 0" class="empty-state">
-        <div class="empty-icon">📅</div>
+      <div *ngIf="eventosFiltrados.length === 0" class="estado-vacio">
+        <div class="icono-vacio"><i class="bi bi-calendar-x"></i></div>
         <h3>No se encontraron eventos</h3>
         <p>Intenta con otros términos de búsqueda o crea un nuevo evento</p>
       </div>
     </div>
   </div>
 
-  <!-- Modal -->
-  <div *ngIf="showModal" class="modal-overlay" (click)="closeModal()">
-    <div class="modal-container" (click)="$event.stopPropagation()">
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h2 class="modal-title">
-          <span class="modal-icon">{{ editMode ? '✏️' : '➕' }}</span>
-          {{ editMode ? 'Editar Evento' : 'Nuevo Evento' }}
+  <div *ngIf="mostrarModal" class="superposicion-modal" (click)="cerrarModal()">
+    <div class="contenedor-modal" (click)="$event.stopPropagation()">
+      <div class="encabezado-modal">
+        <h2 class="titulo-modal">
+          <i class="icono-modal" [ngClass]="modoEdicion ? 'bi bi-pencil-fill' : 'bi bi-plus-lg'"></i>
+          {{ modoEdicion ? 'Editar Evento' : 'Nuevo Evento' }}
         </h2>
-        <button class="modal-close" (click)="closeModal()">✕</button>
+        <button class="cerrar-modal" (click)="cerrarModal()"><i class="bi bi-x-lg"></i></button>
       </div>
 
-      <!-- Modal Body -->
-      <div class="modal-body">
-        <div class="form-group">
-          <label class="form-label">
-            <span class="label-text">Título</span>
-            <span class="label-required">*</span>
+      <div class="cuerpo-modal">
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario">
+            <span class="texto-etiqueta">Título</span>
+            <span class="etiqueta-requerido">*</span>
           </label>
           <input
             type="text"
-            class="form-input"
-            [(ngModel)]="currentEvento.titulo"
+            class="entrada-formulario"
+            [(ngModel)]="eventoActual.titulo"
             placeholder="Ej: Limpieza de playas"
             required>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">
-            <span class="label-text">Descripción</span>
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario">
+            <span class="texto-etiqueta">Descripción</span>
           </label>
           <textarea
-            class="form-textarea"
-            [(ngModel)]="currentEvento.descripcion"
+            class="area-texto-formulario"
+            [(ngModel)]="eventoActual.descripcion"
             rows="3"
             placeholder="Describe el evento..."></textarea>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">
-              <span class="label-text">Fecha Inicio</span>
-              <span class="label-required">*</span>
+        <div class="fila-formulario">
+          <div class="grupo-formulario">
+            <label class="etiqueta-formulario">
+              <span class="texto-etiqueta">Fecha Inicio</span>
+              <span class="etiqueta-requerido">*</span>
             </label>
             <input
               type="datetime-local"
-              class="form-input"
-              [(ngModel)]="currentEvento.fechaInicio"
+              class="entrada-formulario"
+              [(ngModel)]="eventoActual.fechaInicio"
               required>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">
-              <span class="label-text">Fecha Fin</span>
+          <div class="grupo-formulario">
+            <label class="etiqueta-formulario">
+              <span class="texto-etiqueta">Fecha Fin</span>
             </label>
             <input
               type="datetime-local"
-              class="form-input"
-              [(ngModel)]="currentEvento.fechaFin">
+              class="entrada-formulario"
+              [(ngModel)]="eventoActual.fechaFin">
           </div>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">
-            <span class="label-text">Lugar</span>
-            <span class="label-required">*</span>
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario">
+            <span class="texto-etiqueta">Lugar</span>
+            <span class="etiqueta-requerido">*</span>
           </label>
           <input
             type="text"
-            class="form-input"
-            [(ngModel)]="currentEvento.lugar"
+            class="entrada-formulario"
+            [(ngModel)]="eventoActual.lugar"
             placeholder="Ej: Playa Costa Verde, Lima"
             required>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">
-              <span class="label-text">Cupo Máximo</span>
-              <span class="label-required">*</span>
+        <div class="fila-formulario">
+          <div class="grupo-formulario">
+            <label class="etiqueta-formulario">
+              <span class="texto-etiqueta">Cupo Máximo</span>
+              <span class="etiqueta-requerido">*</span>
             </label>
             <input
               type="number"
-              class="form-input"
-              [(ngModel)]="currentEvento.cupoMaximo"
+              class="entrada-formulario"
+              [(ngModel)]="eventoActual.cupoMaximo"
               min="1"
               placeholder="50"
               required>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">
-              <span class="label-text">Organizador</span>
-              <span class="label-required">*</span>
+          <div class="grupo-formulario">
+            <label class="etiqueta-formulario">
+              <span class="texto-etiqueta">Organizador</span>
+              <span class="etiqueta-requerido">*</span>
             </label>
             <select
-              class="form-select"
-              [(ngModel)]="currentEvento.organizador"
+              class="selector-formulario"
+              [(ngModel)]="eventoActual.organizador"
               required>
               <option value="">Seleccionar organizador...</option>
               <option *ngFor="let org of organizadores" [ngValue]="org.id">
@@ -228,14 +220,13 @@
         </div>
       </div>
 
-      <!-- Modal Footer -->
-      <div class="modal-footer">
-        <button class="btn btn-secondary" (click)="closeModal()">
+      <div class="pie-modal">
+        <button class="boton boton-secundario" (click)="cerrarModal()">
           Cancelar
         </button>
-        <button class="btn btn-primary" (click)="saveEvento()">
-          <span class="btn-icon">{{ editMode ? '💾' : '➕' }}</span>
-          {{ editMode ? 'Actualizar' : 'Crear' }} Evento
+        <button class="boton boton-primario" (click)="guardarEvento()">
+          <i class="icono-boton" [ngClass]="modoEdicion ? 'bi bi-save-fill' : 'bi bi-plus-lg'"></i>
+          {{ modoEdicion ? 'Actualizar' : 'Crear' }} Evento
         </button>
       </div>
     </div>

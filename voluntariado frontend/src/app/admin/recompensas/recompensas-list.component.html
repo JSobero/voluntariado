@@ -1,159 +1,148 @@
-<div class="page-container">
-  <!-- Page Header -->
-  <div class="page-header">
-    <div class="header-left">
-      <h1 class="page-title">
-        <span class="title-icon">🎁</span>
+<div class="contenedor-pagina">
+  <div class="encabezado-pagina">
+    <div class="encabezado-izquierda">
+      <h1 class="titulo-pagina">
+        <i class="icono-titulo bi bi-gift-fill"></i>
         Gestión de Recompensas
       </h1>
-      <p class="page-subtitle">Administra el catálogo de recompensas canjeables</p>
+      <p class="subtitulo-pagina">Administra el catálogo de recompensas canjeables</p>
     </div>
-    <div class="header-actions">
-      <button class="btn btn-primary" (click)="openModal()">
-        <span class="btn-icon">➕</span>
+    <div class="acciones-encabezado">
+      <button class="btn btn-primario" (click)="abrirModal()">
+        <i class="btn-icono bi bi-plus-lg"></i>
         Nueva Recompensa
       </button>
     </div>
   </div>
 
-  <!-- Search Bar -->
-  <div class="filters-section">
-    <div class="search-container">
-      <span class="search-icon">🔍</span>
+  <div class="seccion-filtros">
+    <div class="contenedor-busqueda">
+      <i class="icono-busqueda bi bi-search"></i>
       <input
         type="text"
-        class="search-input"
+        class="input-busqueda"
         placeholder="Buscar recompensas por nombre o descripción..."
-        [(ngModel)]="searchTerm"
-        (ngModelChange)="filterRecompensas()">
+        [(ngModel)]="terminoBusqueda"
+        (ngModelChange)="filtrarRecompensas()">
     </div>
   </div>
 
-  <!-- Loading State -->
-  <div *ngIf="loading" class="loading-container">
+  <div *ngIf="cargando" class="contenedor-carga">
     <div class="spinner"></div>
     <p>Cargando recompensas...</p>
   </div>
 
-  <!-- Rewards Grid -->
-  <div *ngIf="!loading" class="rewards-grid">
-    <div *ngFor="let recompensa of filteredRecompensas" class="reward-card">
-      <!-- Card Header -->
-      <div class="card-header-section">
-        <div class="reward-icon-wrapper">
-          <span class="reward-icon">🎁</span>
+  <div *ngIf="!cargando" class="cuadricula-recompensas">
+    <div *ngFor="let recompensa of recompensasFiltradas" class="tarjeta-recompensa">
+      <div class="seccion-encabezado-tarjeta">
+        <div class="contenedor-icono-recompensa">
+          <i class="icono-recompensa bi bi-gift-fill"></i>
         </div>
-        <div class="points-badge">
-          <span class="points-icon">⭐</span>
-          <span class="points-value">{{ recompensa.puntosNecesarios }}</span>
+        <div class="insignia-puntos">
+          <i class="icono-puntos bi bi-star-fill"></i>
+          <span class="valor-puntos">{{ recompensa.puntosNecesarios }}</span>
         </div>
       </div>
 
-      <!-- Card Body -->
-      <div class="card-body-section">
-        <h3 class="reward-name">{{ recompensa.nombre }}</h3>
-        <p class="reward-description">{{ recompensa.descripcion || 'Sin descripción' }}</p>
+      <div class="seccion-cuerpo-tarjeta">
+        <h3 class="nombre-recompensa">{{ recompensa.nombre }}</h3>
+        <p class="descripcion-recompensa">{{ recompensa.descripcion || 'Sin descripción' }}</p>
       </div>
 
-      <!-- Card Footer -->
-      <div class="card-footer-section">
-        <div class="stock-info">
-          <span class="stock-label">Stock:</span>
-          <span [ngClass]="getStockClass(recompensa.stock)" class="stock-badge">
-            <span class="stock-dot"></span>
+      <div class="seccion-pie-tarjeta">
+        <div class="info-stock">
+          <span class="etiqueta-stock">Stock:</span>
+          <span [ngClass]="obtenerClaseStock(recompensa.stock)" class="insignia-stock">
+            <span class="punto-stock"></span>
             {{ recompensa.stock }} unidades
           </span>
         </div>
-        <div class="card-actions">
-          <button class="btn-action btn-edit" (click)="openModal(recompensa)" title="Editar">
-            <span>✏️</span>
+        <div class="acciones-tarjeta">
+          <button class="btn-accion btn-editar" (click)="abrirModal(recompensa)" title="Editar">
+            <i class="bi bi-pencil-fill"></i>
           </button>
-          <button class="btn-action btn-delete" (click)="deleteRecompensa(recompensa.id!)" title="Eliminar">
-            <span>🗑️</span>
+          <button class="btn-accion btn-eliminar" (click)="eliminarRecompensa(recompensa.id!)" title="Eliminar">
+            <i class="bi bi-trash-fill"></i>
           </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Empty State -->
-  <div *ngIf="!loading && filteredRecompensas.length === 0" class="empty-state">
-    <div class="empty-icon">🎁</div>
+  <div *ngIf="!cargando && recompensasFiltradas.length === 0" class="estado-vacio">
+    <div class="icono-vacio"><i class="bi bi-gift"></i></div>
     <h3>No se encontraron recompensas</h3>
     <p>Intenta con otros términos de búsqueda o crea una nueva recompensa</p>
-    <button class="btn btn-primary" (click)="openModal()">
-      <span class="btn-icon">➕</span>
+    <button class="btn btn-primario" (click)="abrirModal()">
+      <i class="btn-icono bi bi-plus-lg"></i>
       Crear primera recompensa
     </button>
   </div>
 
-  <!-- Modal -->
-  <div *ngIf="showModal" class="modal-overlay" (click)="closeModal()">
-    <div class="modal-container" (click)="$event.stopPropagation()">
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h2 class="modal-title">
-          <span class="modal-icon">{{ editMode ? '✏️' : '➕' }}</span>
-          {{ editMode ? 'Editar Recompensa' : 'Nueva Recompensa' }}
+  <div *ngIf="mostrarModal" class="superposicion-modal" (click)="cerrarModal()">
+    <div class="contenedor-modal" (click)="$event.stopPropagation()">
+      <div class="encabezado-modal">
+        <h2 class="titulo-modal">
+          <i class="icono-modal" [ngClass]="modoEdicion ? 'bi bi-pencil-fill' : 'bi bi-plus-lg'"></i>
+          {{ modoEdicion ? 'Editar Recompensa' : 'Nueva Recompensa' }}
         </h2>
-        <button class="modal-close" (click)="closeModal()">✕</button>
+        <button class="btn-cerrar-modal" (click)="cerrarModal()"><i class="bi bi-x-lg"></i></button>
       </div>
 
-      <!-- Modal Body -->
-      <div class="modal-body">
-        <div class="form-group">
-          <label class="form-label">
-            <span class="label-text">Nombre de la Recompensa</span>
-            <span class="label-required">*</span>
+      <div class="cuerpo-modal">
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario">
+            <span class="texto-etiqueta">Nombre de la Recompensa</span>
+            <span class="etiqueta-requerido">*</span>
           </label>
           <input
             type="text"
-            class="form-input"
-            [(ngModel)]="currentRecompensa.nombre"
+            class="input-formulario"
+            [(ngModel)]="recompensaActual.nombre"
             placeholder="Ej: Entrada al cine"
             required>
         </div>
 
-        <div class="form-group">
-          <label class="form-label">
-            <span class="label-text">Descripción</span>
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario">
+            <span class="texto-etiqueta">Descripción</span>
           </label>
           <textarea
-            class="form-textarea"
-            [(ngModel)]="currentRecompensa.descripcion"
+            class="textarea-formulario"
+            [(ngModel)]="recompensaActual.descripcion"
             rows="3"
             placeholder="Describe la recompensa..."></textarea>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">
-              <span class="label-text">Puntos Necesarios</span>
-              <span class="label-required">*</span>
+        <div class="fila-formulario">
+          <div class="grupo-formulario">
+            <label class="etiqueta-formulario">
+              <span class="texto-etiqueta">Puntos Necesarios</span>
+              <span class="etiqueta-requerido">*</span>
             </label>
-            <div class="input-with-icon">
-              <span class="input-icon">⭐</span>
+            <div class="input-con-icono">
+              <i class="icono-input bi bi-star-fill"></i>
               <input
                 type="number"
-                class="form-input"
-                [(ngModel)]="currentRecompensa.puntosNecesarios"
+                class="input-formulario"
+                [(ngModel)]="recompensaActual.puntosNecesarios"
                 min="1"
                 placeholder="100"
                 required>
             </div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">
-              <span class="label-text">Stock Disponible</span>
-              <span class="label-required">*</span>
+          <div class="grupo-formulario">
+            <label class="etiqueta-formulario">
+              <span class="texto-etiqueta">Stock Disponible</span>
+              <span class="etiqueta-requerido">*</span>
             </label>
-            <div class="input-with-icon">
-              <span class="input-icon">📦</span>
+            <div class="input-con-icono">
+              <i class="icono-input bi bi-box2-fill"></i>
               <input
                 type="number"
-                class="form-input"
-                [(ngModel)]="currentRecompensa.stock"
+                class="input-formulario"
+                [(ngModel)]="recompensaActual.stock"
                 min="0"
                 placeholder="50"
                 required>
@@ -161,36 +150,34 @@
           </div>
         </div>
 
-        <!-- Preview Card -->
-        <div class="preview-section">
-          <label class="form-label">
-            <span class="label-text">Vista Previa</span>
+        <div class="seccion-vista-previa">
+          <label class="etiqueta-formulario">
+            <span class="texto-etiqueta">Vista Previa</span>
           </label>
-          <div class="preview-card">
-            <div class="preview-header">
-              <span class="preview-icon">🎁</span>
-              <span class="preview-points">
-                <span class="points-icon">⭐</span>
-                {{ currentRecompensa.puntosNecesarios || 0 }}
+          <div class="tarjeta-vista-previa">
+            <div class="encabezado-vista-previa">
+              <i class="icono-vista-previa bi bi-gift"></i>
+              <span class="puntos-vista-previa">
+                <i class="icono-puntos bi bi-star-fill"></i>
+                {{ recompensaActual.puntosNecesarios || 0 }}
               </span>
             </div>
-            <h4 class="preview-name">{{ currentRecompensa.nombre || 'Nombre de la recompensa' }}</h4>
-            <p class="preview-description">{{ currentRecompensa.descripcion || 'Descripción de la recompensa' }}</p>
-            <div class="preview-stock">
-              Stock: {{ currentRecompensa.stock || 0 }} unidades
+            <h4 class="nombre-vista-previa">{{ recompensaActual.nombre || 'Nombre de la recompensa' }}</h4>
+            <p class="descripcion-vista-previa">{{ recompensaActual.descripcion || 'Descripción de la recompensa' }}</p>
+            <div class="stock-vista-previa">
+              Stock: {{ recompensaActual.stock || 0 }} unidades
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Modal Footer -->
-      <div class="modal-footer">
-        <button class="btn btn-secondary" (click)="closeModal()">
+      <div class="pie-modal">
+        <button class="btn btn-secundario" (click)="cerrarModal()">
           Cancelar
         </button>
-        <button class="btn btn-primary" (click)="saveRecompensa()">
-          <span class="btn-icon">{{ editMode ? '💾' : '➕' }}</span>
-          {{ editMode ? 'Actualizar' : 'Crear' }} Recompensa
+        <button class="btn btn-primario" (click)="guardarRecompensa()">
+          <i class="btn-icono" [ngClass]="modoEdicion ? 'bi bi-save-fill' : 'bi bi-plus-lg'"></i>
+          {{ modoEdicion ? 'Actualizar' : 'Crear' }} Recompensa
         </button>
       </div>
     </div>

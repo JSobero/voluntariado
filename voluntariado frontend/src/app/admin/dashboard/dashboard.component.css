@@ -391,8 +391,9 @@
   font-weight: 600;
 }
 
-.event-date,
-.event-location {
+/* --- Código NUEVO (corregido) --- */
+.event-date > div,
+.event-location > div {
   color: #64748b;
   display: flex;
   align-items: center;

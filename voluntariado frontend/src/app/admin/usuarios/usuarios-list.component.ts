@@ -12,14 +12,15 @@ import { Usuario } from '../../core/models/usuario.model';
   styleUrls: ['./usuarios-list.component.css']
 })
 export class UsuariosListComponent implements OnInit {
+  // --- PROPIEDADES ---
   usuarios: Usuario[] = [];
-  filteredUsuarios: Usuario[] = [];
-  loading = false;
-  searchTerm = '';
+  usuariosFiltrados: Usuario[] = [];
+  cargando = false;
+  terminoBusqueda = '';
 
-  showModal = false;
-  editMode = false;
-  currentUsuario: Usuario = this.getEmptyUsuario();
+  mostrarModal = false;
+  modoEdicion = false;
+  usuarioActual: Usuario = this.obtenerUsuarioVacio();
 
   roles = [
     { id: 1, nombre: 'ADMIN' },
@@ -27,78 +28,80 @@ export class UsuariosListComponent implements OnInit {
     { id: 3, nombre: 'VOLUNTARIO' }
   ];
 
-  constructor(private usuarioService: UsuarioService) {}
+  constructor(private usuarioServicio: UsuarioService) {}
 
   ngOnInit() {
-    this.loadUsuarios();
+    this.cargarUsuarios();
   }
 
-  loadUsuarios() {
-    this.loading = true;
-    this.usuarioService.getAll().subscribe({
+  // --- MÉTODOS PARA CARGAR Y FILTRAR DATOS ---
+  cargarUsuarios() {
+    this.cargando = true;
+    this.usuarioServicio.getAll().subscribe({
       next: (data) => {
         this.usuarios = data;
-        this.filteredUsuarios = data;
-        this.loading = false;
+        this.usuariosFiltrados = data;
+        this.cargando = false;
       },
       error: (err) => {
         console.error('Error al cargar usuarios:', err);
-        this.loading = false;
+        this.cargando = false;
       }
     });
   }
 
-  filterUsuarios() {
-    if (!this.searchTerm) {
-      this.filteredUsuarios = this.usuarios;
+  filtrarUsuarios() {
+    if (!this.terminoBusqueda) {
+      this.usuariosFiltrados = this.usuarios;
       return;
     }
 
-    const term = this.searchTerm.toLowerCase();
-    this.filteredUsuarios = this.usuarios.filter(u =>
-      u.nombre.toLowerCase().includes(term) ||
-      u.correo.toLowerCase().includes(term) ||
-      u.telefono?.toLowerCase().includes(term)
+    const termino = this.terminoBusqueda.toLowerCase();
+    this.usuariosFiltrados = this.usuarios.filter(u =>
+      u.nombre.toLowerCase().includes(termino) ||
+      u.correo.toLowerCase().includes(termino) ||
+      u.telefono?.toLowerCase().includes(termino)
     );
   }
 
-  getUsuariosByRole(rolNombre: string): Usuario[] {
-    return this.usuarios.filter(u => u.rol.nombre === rolNombre);
+  obtenerUsuariosPorRol(nombreRol: string): Usuario[] {
+    return this.usuarios.filter(u => u.rol.nombre === nombreRol);
   }
 
-  openModal(usuario?: Usuario) {
-    this.showModal = true;
+  // --- MÉTODOS PARA GESTIONAR EL MODAL ---
+  abrirModal(usuario?: Usuario) {
+    this.mostrarModal = true;
     if (usuario) {
-      this.editMode = true;
-      this.currentUsuario = { ...usuario };
+      this.modoEdicion = true;
+      this.usuarioActual = { ...usuario };
     } else {
-      this.editMode = false;
-      this.currentUsuario = this.getEmptyUsuario();
+      this.modoEdicion = false;
+      this.usuarioActual = this.obtenerUsuarioVacio();
     }
   }
 
-  closeModal() {
-    this.showModal = false;
-    this.currentUsuario = this.getEmptyUsuario();
+  cerrarModal() {
+    this.mostrarModal = false;
+    this.usuarioActual = this.obtenerUsuarioVacio();
   }
 
-  saveUsuario() {
-    // Validaciones
-    if (!this.currentUsuario.nombre || !this.currentUsuario.correo || !this.currentUsuario.rol.nombre) {
+  // --- MÉTODOS CRUD (Crear, Actualizar, Eliminar) ---
+  guardarUsuario() {
+    if (!this.usuarioActual.nombre || !this.usuarioActual.correo || !this.usuarioActual.rol.nombre) {
       alert('Por favor completa todos los campos requeridos');
       return;
     }
 
-    if (!this.editMode && !this.currentUsuario.password) {
+    if (!this.modoEdicion && !this.usuarioActual.password) {
       alert('La contraseña es requerida para crear un nuevo usuario');
       return;
     }
 
-    if (this.editMode && this.currentUsuario.id) {
-      this.usuarioService.update(this.currentUsuario.id, this.currentUsuario).subscribe({
+    if (this.modoEdicion && this.usuarioActual.id) {
+      this.usuarioServicio.update(this.usuarioActual.id, this.usuarioActual).subscribe({
         next: () => {
-          this.loadUsuarios();
-          this.closeModal();
+          this.cargarUsuarios();
+          this.cerrarModal();
         },
         error: (err) => {
           console.error('Error al actualizar:', err);
@@ -106,10 +109,10 @@ export class UsuariosListComponent implements OnInit {
         }
       });
     } else {
-      this.usuarioService.create(this.currentUsuario).subscribe({
+      this.usuarioServicio.create(this.usuarioActual).subscribe({
         next: () => {
-          this.loadUsuarios();
-          this.closeModal();
+          this.cargarUsuarios();
+          this.cerrarModal();
         },
         error: (err) => {
           console.error('Error al crear:', err);
@@ -119,11 +122,11 @@ export class UsuariosListComponent implements OnInit {
     }
   }
 
-  deleteUsuario(id: number) {
+  eliminarUsuario(id: number) {
     if (confirm('¿Está seguro de eliminar este usuario? Esta acción no se puede deshacer.')) {
-      this.usuarioService.delete(id).subscribe({
+      this.usuarioServicio.delete(id).subscribe({
         next: () => {
-          this.loadUsuarios();
+          this.cargarUsuarios();
         },
         error: (err) => {
           console.error('Error al eliminar:', err);
@@ -133,7 +136,8 @@ export class UsuariosListComponent implements OnInit {
     }
   }
 
-  getEmptyUsuario(): Usuario {
+  // --- MÉTODOS AUXILIARES ---
+  obtenerUsuarioVacio(): Usuario {
     return {
       nombre: '',
       correo: '',
@@ -145,21 +149,21 @@ export class UsuariosListComponent implements OnInit {
     };
   }
 
-  getRolBadgeClass(rolNombre: string): string {
-    switch(rolNombre) {
+  obtenerClaseInsigniaRol(nombreRol: string): string {
+    switch(nombreRol) {
       case 'ADMIN':
-        return 'role-admin';
+        return 'rol-admin';
       case 'ORGANIZADOR':
-        return 'role-organizador';
+        return 'rol-organizador';
       case 'VOLUNTARIO':
-        return 'role-voluntario';
+        return 'rol-voluntario';
       default:
-        return 'role-default';
+        return 'rol-defecto';
     }
   }
 
-  getRolAvatarClass(rolNombre: string): string {
-    switch(rolNombre) {
+  obtenerClaseAvatarRol(nombreRol: string): string {
+    switch(nombreRol) {
       case 'ADMIN':
         return 'avatar-admin';
       case 'ORGANIZADOR':
@@ -167,20 +171,21 @@ export class UsuariosListComponent implements OnInit {
       case 'VOLUNTARIO':
         return 'avatar-voluntario';
       default:
-        return 'avatar-default';
+        return 'avatar-defecto';
     }
   }
 
-  getRolIcon(rolNombre: string): string {
-    switch(rolNombre) {
+
+  obtenerIconoRol(nombreRol: string): string {
+    switch(nombreRol) {
       case 'ADMIN':
-        return '👨‍💼';
+        return 'bi bi-person-video3';
       case 'ORGANIZADOR':
-        return '📋';
+        return 'bi bi-person-rolodex';
       case 'VOLUNTARIO':
-        return '🤝';
+        return 'bi bi-person-heart';
       default:
-        return '👤';
+        return 'bi bi-person-fill';
     }
   }
 }

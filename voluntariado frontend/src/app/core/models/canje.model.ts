@@ -4,7 +4,7 @@ export interface Canje {
   id?: number;
   usuario: Usuario;
   recompensa: Recompensa;
-  fecha?: string;
+  fecha?: string | Date | any;
   puntosUsados: number;
   estado: 'PENDIENTE' | 'ENTREGADO' | 'CANCELADO';
 }

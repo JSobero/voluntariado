@@ -1,69 +1,64 @@
-<div class="page-container">
-  <!-- Page Header -->
-  <div class="page-header">
-    <div class="header-left">
-      <h1 class="page-title">
-        <span class="title-icon">👥</span>
+<div class="contenedor-pagina">
+  <div class="encabezado-pagina">
+    <div class="encabezado-izquierda">
+      <h1 class="titulo-pagina">
+        <i class="icono-titulo bi bi-people-fill"></i>
         Gestión de Usuarios
       </h1>
-      <p class="page-subtitle">Administra todos los usuarios del sistema</p>
+      <p class="subtitulo-pagina">Administra todos los usuarios del sistema</p>
     </div>
-    <div class="header-actions">
-      <button class="btn btn-primary" (click)="openModal()">
-        <span class="btn-icon">➕</span>
+    <div class="acciones-encabezado">
+      <button class="btn btn-primario" (click)="abrirModal()">
+        <i class="btn-icono bi bi-plus-lg"></i>
         Nuevo Usuario
       </button>
     </div>
   </div>
 
-  <!-- Stats Cards -->
-  <div class="stats-mini-grid">
-    <div class="stat-mini-card stat-admin">
-      <div class="stat-mini-icon">👨‍💼</div>
-      <div class="stat-mini-content">
-        <p class="stat-mini-value">{{ getUsuariosByRole('ADMIN').length }}</p>
-        <p class="stat-mini-label">Administradores</p>
+  <div class="cuadricula-mini-estadisticas">
+    <div class="tarjeta-mini-estadistica estadistica-admin">
+      <div class="icono-mini-estadistica"><i class="bi bi-person-video3"></i></div>
+      <div class="contenido-mini-estadistica">
+        <p class="valor-mini-estadistica">{{ obtenerUsuariosPorRol('ADMIN').length }}</p>
+        <p class="etiqueta-mini-estadistica">Administradores</p>
       </div>
     </div>
-    <div class="stat-mini-card stat-organizer">
-      <div class="stat-mini-icon">📋</div>
-      <div class="stat-mini-content">
-        <p class="stat-mini-value">{{ getUsuariosByRole('ORGANIZADOR').length }}</p>
-        <p class="stat-mini-label">Organizadores</p>
+    <div class="tarjeta-mini-estadistica estadistica-organizador">
+      <div class="icono-mini-estadistica"><i class="bi bi-person-rolodex"></i></div>
+      <div class="contenido-mini-estadistica">
+        <p class="valor-mini-estadistica">{{ obtenerUsuariosPorRol('ORGANIZADOR').length }}</p>
+        <p class="etiqueta-mini-estadistica">Organizadores</p>
       </div>
     </div>
-    <div class="stat-mini-card stat-volunteer">
-      <div class="stat-mini-icon">🤝</div>
-      <div class="stat-mini-content">
-        <p class="stat-mini-value">{{ getUsuariosByRole('VOLUNTARIO').length }}</p>
-        <p class="stat-mini-label">Voluntarios</p>
+    <div class="tarjeta-mini-estadistica estadistica-voluntario">
+      <div class="icono-mini-estadistica"><i class="bi bi-person-heart"></i></div>
+      <div class="contenido-mini-estadistica">
+        <p class="valor-mini-estadistica">{{ obtenerUsuariosPorRol('VOLUNTARIO').length }}</p>
+        <p class="etiqueta-mini-estadistica">Voluntarios</p>
       </div>
     </div>
   </div>
 
-  <!-- Search & Filters -->
-  <div class="filters-section">
-    <div class="search-container">
-      <span class="search-icon">🔍</span>
+  <div class="seccion-filtros">
+    <div class="contenedor-busqueda">
+      <i class="icono-busqueda bi bi-search"></i>
       <input
         type="text"
-        class="search-input"
+        class="input-busqueda"
         placeholder="Buscar por nombre, correo o teléfono..."
-        [(ngModel)]="searchTerm"
-        (ngModelChange)="filterUsuarios()">
+        [(ngModel)]="terminoBusqueda"
+        (ngModelChange)="filtrarUsuarios()">
     </div>
   </div>
 
-  <!-- Loading State -->
-  <div *ngIf="loading" class="loading-container">
+  <div *ngIf="cargando" class="contenedor-carga">
     <div class="spinner"></div>
     <p>Cargando usuarios...</p>
   </div>
 
-  <!-- Users Table -->
-  <div *ngIf="!loading" class="table-card">
-    <div class="table-responsive">
-      <table class="data-table">
+  <div *ngIf="!cargando" class="tarjeta-tabla">
+    <div class="tabla-responsiva">
+      <table class="tabla-datos">
         <thead>
         <tr>
           <th>ID</th>
@@ -75,212 +70,139 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let usuario of filteredUsuarios" class="table-row">
-          <td class="id-cell">
-            <span class="id-badge">{{ usuario.id }}</span>
-          </td>
-
-          <td class="user-cell">
-            <div class="user-info">
-              <div class="user-avatar" [ngClass]="getRolAvatarClass(usuario.rol.nombre)">
+        <tr *ngFor="let usuario of usuariosFiltrados" class="fila-tabla">
+          <td class="celda-id"><span class="insignia-id">{{ usuario.id }}</span></td>
+          <td class="celda-usuario">
+            <div class="info-usuario">
+              <div class="avatar-usuario" [ngClass]="obtenerClaseAvatarRol(usuario.rol.nombre)">
                 {{ usuario.nombre.charAt(0).toUpperCase() }}
               </div>
-              <div class="user-details">
-                <div class="user-name">{{ usuario.nombre }}</div>
-                <div class="user-email">{{ usuario.correo }}</div>
+              <div class="detalles-usuario">
+                <div class="nombre-usuario">{{ usuario.nombre }}</div>
+                <div class="correo-usuario">{{ usuario.correo }}</div>
               </div>
             </div>
           </td>
-
-          <td class="contact-cell">
-            <div class="contact-info">
-              <div class="contact-item" *ngIf="usuario.telefono">
-                <span class="contact-icon">📱</span>
+          <td class="celda-contacto">
+            <div class="info-contacto">
+              <div class="item-contacto" *ngIf="usuario.telefono">
+                <i class="icono-contacto bi bi-telephone-fill"></i>
                 <span>{{ usuario.telefono }}</span>
               </div>
-              <div class="contact-item" *ngIf="!usuario.telefono">
-                <span class="no-data">Sin teléfono</span>
+              <div class="item-contacto" *ngIf="!usuario.telefono">
+                <span class="sin-datos">Sin teléfono</span>
               </div>
             </div>
           </td>
-
-          <td class="role-cell">
-              <span [ngClass]="getRolBadgeClass(usuario.rol.nombre)" class="role-badge">
-                <span class="role-icon">{{ getRolIcon(usuario.rol.nombre) }}</span>
-                <span>{{ usuario.rol.nombre }}</span>
-              </span>
+          <td class="celda-rol">
+            <span [ngClass]="obtenerClaseInsigniaRol(usuario.rol.nombre)" class="insignia-rol">
+              <i class="icono-rol" [ngClass]="obtenerIconoRol(usuario.rol.nombre)"></i>
+              <span>{{ usuario.rol.nombre }}</span>
+            </span>
           </td>
-
-          <td class="stats-cell">
-            <div class="user-stats">
-              <div class="stat-item">
-                <span class="stat-icon">⭐</span>
-                <span class="stat-value">{{ usuario.puntos }}</span>
-                <span class="stat-label">pts</span>
+          <td class="celda-estadisticas">
+            <div class="estadisticas-usuario">
+              <div class="item-estadistica">
+                <i class="icono-estadistica bi bi-star-fill"></i>
+                <span class="valor-estadistica">{{ usuario.puntos }}</span>
+                <span class="etiqueta-estadistica">pts</span>
               </div>
-              <div class="stat-item">
-                <span class="stat-icon">⏱️</span>
-                <span class="stat-value">{{ usuario.horasAcumuladas }}</span>
-                <span class="stat-label">hrs</span>
+              <div class="item-estadistica">
+                <i class="icono-estadistica bi bi-clock-history"></i>
+                <span class="valor-estadistica">{{ usuario.horasAcumuladas }}</span>
+                <span class="etiqueta-estadistica">hrs</span>
               </div>
             </div>
           </td>
-
-          <td class="actions-cell">
-            <button class="btn-action btn-edit" (click)="openModal(usuario)" title="Editar">
-              ✏️
+          <td class="celda-acciones">
+            <button class="btn-accion btn-editar" (click)="abrirModal(usuario)" title="Editar">
+              <i class="bi bi-pencil-fill"></i>
             </button>
-            <button class="btn-action btn-delete" (click)="deleteUsuario(usuario.id!)" title="Eliminar">
-              🗑️
+            <button class="btn-accion btn-eliminar" (click)="eliminarUsuario(usuario.id!)" title="Eliminar">
+              <i class="bi bi-trash-fill"></i>
             </button>
           </td>
         </tr>
         </tbody>
       </table>
 
-      <!-- Empty State -->
-      <div *ngIf="filteredUsuarios.length === 0" class="empty-state">
-        <div class="empty-icon">👥</div>
+      <div *ngIf="usuariosFiltrados.length === 0" class="estado-vacio">
+        <div class="icono-vacio"><i class="bi bi-person-slash"></i></div>
         <h3>No se encontraron usuarios</h3>
         <p>Intenta con otros términos de búsqueda o crea un nuevo usuario</p>
       </div>
     </div>
   </div>
 
-  <!-- Modal -->
-  <div *ngIf="showModal" class="modal-overlay" (click)="closeModal()">
-    <div class="modal-container" (click)="$event.stopPropagation()">
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h2 class="modal-title">
-          <span class="modal-icon">{{ editMode ? '✏️' : '➕' }}</span>
-          {{ editMode ? 'Editar Usuario' : 'Nuevo Usuario' }}
+  <div *ngIf="mostrarModal" class="superposicion-modal" (click)="cerrarModal()">
+    <div class="contenedor-modal" (click)="$event.stopPropagation()">
+      <div class="encabezado-modal">
+        <h2 class="titulo-modal">
+          <i class="icono-modal" [ngClass]="modoEdicion ? 'bi bi-pencil-fill' : 'bi bi-plus-lg'"></i>
+          {{ modoEdicion ? 'Editar Usuario' : 'Nuevo Usuario' }}
         </h2>
-        <button class="modal-close" (click)="closeModal()">✕</button>
+        <button class="btn-cerrar-modal" (click)="cerrarModal()"><i class="bi bi-x-lg"></i></button>
       </div>
 
-      <!-- Modal Body -->
-      <div class="modal-body">
-        <div class="form-group">
-          <label class="form-label">
-            <span class="label-text">Nombre Completo</span>
-            <span class="label-required">*</span>
-          </label>
-          <div class="input-with-icon">
-            <span class="input-icon">👤</span>
-            <input
-              type="text"
-              class="form-input"
-              [(ngModel)]="currentUsuario.nombre"
-              placeholder="Ej: Juan Pérez"
-              required>
+      <div class="cuerpo-modal">
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario"><span class="texto-etiqueta">Nombre Completo</span><span class="etiqueta-requerido">*</span></label>
+          <div class="input-con-icono">
+            <i class="icono-input bi bi-person-fill"></i>
+            <input type="text" class="input-formulario" [(ngModel)]="usuarioActual.nombre" placeholder="Ej: Juan Pérez" required>
           </div>
         </div>
-
-        <div class="form-group">
-          <label class="form-label">
-            <span class="label-text">Correo Electrónico</span>
-            <span class="label-required">*</span>
-          </label>
-          <div class="input-with-icon">
-            <span class="input-icon">📧</span>
-            <input
-              type="email"
-              class="form-input"
-              [(ngModel)]="currentUsuario.correo"
-              placeholder="usuario@ejemplo.com"
-              required>
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario"><span class="texto-etiqueta">Correo Electrónico</span><span class="etiqueta-requerido">*</span></label>
+          <div class="input-con-icono">
+            <i class="icono-input bi bi-envelope-fill"></i>
+            <input type="email" class="input-formulario" [(ngModel)]="usuarioActual.correo" placeholder="usuario@ejemplo.com" required>
           </div>
         </div>
-
-        <div class="form-group" *ngIf="!editMode">
-          <label class="form-label">
-            <span class="label-text">Contraseña</span>
-            <span class="label-required">*</span>
-          </label>
-          <div class="input-with-icon">
-            <span class="input-icon">🔒</span>
-            <input
-              type="password"
-              class="form-input"
-              [(ngModel)]="currentUsuario.password"
-              placeholder="••••••••"
-              required>
+        <div class="grupo-formulario" *ngIf="!modoEdicion">
+          <label class="etiqueta-formulario"><span class="texto-etiqueta">Contraseña</span><span class="etiqueta-requerido">*</span></label>
+          <div class="input-con-icono">
+            <i class="icono-input bi bi-key-fill"></i>
+            <input type="password" class="input-formulario" [(ngModel)]="usuarioActual.password" placeholder="••••••••" required>
           </div>
         </div>
-
-        <div class="form-group">
-          <label class="form-label">
-            <span class="label-text">Teléfono</span>
-          </label>
-          <div class="input-with-icon">
-            <span class="input-icon">📱</span>
-            <input
-              type="tel"
-              class="form-input"
-              [(ngModel)]="currentUsuario.telefono"
-              placeholder="+51 999 999 999">
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario"><span class="texto-etiqueta">Teléfono</span></label>
+          <div class="input-con-icono">
+            <i class="icono-input bi bi-telephone-fill"></i>
+            <input type="tel" class="input-formulario" [(ngModel)]="usuarioActual.telefono" placeholder="+51 999 999 999">
           </div>
         </div>
-
-        <div class="form-group">
-          <label class="form-label">
-            <span class="label-text">Rol del Usuario</span>
-            <span class="label-required">*</span>
-          </label>
-          <select
-            class="form-select"
-            [(ngModel)]="currentUsuario.rol.nombre"
-            required>
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario"><span class="texto-etiqueta">Rol del Usuario</span><span class="etiqueta-requerido">*</span></label>
+          <select class="select-formulario" [(ngModel)]="usuarioActual.rol.nombre" required>
             <option value="">Seleccionar rol...</option>
-            <option *ngFor="let rol of roles" [value]="rol.nombre">
-              {{ rol.nombre }}
-            </option>
+            <option *ngFor="let rol of roles" [value]="rol.nombre">{{ rol.nombre }}</option>
           </select>
         </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">
-              <span class="label-text">Puntos</span>
-            </label>
-            <div class="input-with-icon">
-              <span class="input-icon">⭐</span>
-              <input
-                type="number"
-                class="form-input"
-                [(ngModel)]="currentUsuario.puntos"
-                min="0"
-                placeholder="0">
+        <div class="fila-formulario">
+          <div class="grupo-formulario">
+            <label class="etiqueta-formulario"><span class="texto-etiqueta">Puntos</span></label>
+            <div class="input-con-icono">
+              <i class="icono-input bi bi-star-fill"></i>
+              <input type="number" class="input-formulario" [(ngModel)]="usuarioActual.puntos" min="0" placeholder="0">
             </div>
           </div>
-
-          <div class="form-group">
-            <label class="form-label">
-              <span class="label-text">Horas Acumuladas</span>
-            </label>
-            <div class="input-with-icon">
-              <span class="input-icon">⏱️</span>
-              <input
-                type="number"
-                class="form-input"
-                [(ngModel)]="currentUsuario.horasAcumuladas"
-                step="0.5"
-                min="0"
-                placeholder="0">
+          <div class="grupo-formulario">
+            <label class="etiqueta-formulario"><span class="texto-etiqueta">Horas Acumuladas</span></label>
+            <div class="input-con-icono">
+              <i class="icono-input bi bi-clock-history"></i>
+              <input type="number" class="input-formulario" [(ngModel)]="usuarioActual.horasAcumuladas" step="0.5" min="0" placeholder="0">
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Modal Footer -->
-      <div class="modal-footer">
-        <button class="btn btn-secondary" (click)="closeModal()">
-          Cancelar
-        </button>
-        <button class="btn btn-primary" (click)="saveUsuario()">
-          <span class="btn-icon">{{ editMode ? '💾' : '➕' }}</span>
-          {{ editMode ? 'Actualizar' : 'Crear' }} Usuario
+      <div class="pie-modal">
+        <button class="btn btn-secundario" (click)="cerrarModal()">Cancelar</button>
+        <button class="btn btn-primario" (click)="guardarUsuario()">
+          <i class="btn-icono" [ngClass]="modoEdicion ? 'bi bi-save-fill' : 'bi bi-plus-lg'"></i>
+          {{ modoEdicion ? 'Actualizar' : 'Crear' }} Usuario
         </button>
       </div>
     </div>

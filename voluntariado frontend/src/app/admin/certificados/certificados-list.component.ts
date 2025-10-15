@@ -2,185 +2,137 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CertificadoService } from '../../core/services/certificado.service';
+import { UsuarioService } from '../../core/services/usuario.service';
+import { EventoService } from '../../core/services/evento.service';
 import { Certificado } from '../../core/models/certificado.model';
+import { Usuario } from '../../core/models/usuario.model';
+import { Evento } from '../../core/models/evento.model';
 
 @Component({
   selector: 'app-certificados-list',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  template: `
-    <div class="p-6">
-      <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-        <div class="flex justify-between items-center">
-          <div>
-            <h1 class="text-3xl font-bold text-gray-800">Gestión de Certificados</h1>
-            <p class="text-gray-600 mt-1">Administra los certificados emitidos</p>
-          </div>
-          <button (click)="openModal()"
-                  class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">
-            ➕ Nuevo Certificado
-          </button>
-        </div>
-      </div>
-
-      <div *ngIf="loading" class="bg-white rounded-lg shadow p-6 text-center">
-        <p class="text-gray-600">Cargando certificados...</p>
-      </div>
-
-      <div *ngIf="!loading" class="bg-white rounded-lg shadow overflow-hidden">
-        <table class="w-full">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Usuario</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Evento</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fecha Emisión</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">PDF</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200">
-            <tr *ngFor="let certificado of certificados" class="hover:bg-gray-50">
-              <td class="px-6 py-4 whitespace-nowrap text-sm">{{ certificado.id }}</td>
-              <td class="px-6 py-4 whitespace-nowrap font-medium">
-                <div>{{ certificado.usuario.nombre }}</div>
-                <div class="text-xs text-gray-500">{{ certificado.usuario.correo }}</div>
-              </td>
-              <td class="px-6 py-4">
-                <div class="font-medium">{{ certificado.evento.titulo }}</div>
-                <div class="text-xs text-gray-500">{{ certificado.evento.fechaInicio | date:'dd/MM/yyyy' }}</div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm">
-                {{ certificado.fechaEmision | date:'dd/MM/yyyy HH:mm' }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <a *ngIf="certificado.urlPdf"
-                   [href]="certificado.urlPdf"
-                   target="_blank"
-                   class="text-blue-600 hover:text-blue-800">
-                  📄 Ver PDF
-                </a>
-                <span *ngIf="!certificado.urlPdf" class="text-gray-400">Sin PDF</span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm">
-                <button (click)="openModal(certificado)"
-                        class="text-blue-600 hover:text-blue-800 mr-3">
-                  ✏️ Editar
-                </button>
-                <button (click)="deleteCertificado(certificado.id!)"
-                        class="text-red-600 hover:text-red-800">
-                  🗑️ Eliminar
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div *ngIf="certificados.length === 0" class="p-6 text-center text-gray-600">
-          No hay certificados emitidos
-        </div>
-      </div>
-
-      <!-- Modal -->
-      <div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
-          <div class="border-b px-6 py-4">
-            <h2 class="text-xl font-bold">{{ editMode ? 'Editar' : 'Nuevo' }} Certificado</h2>
-          </div>
-          <div class="p-6 space-y-4">
-            <div>
-              <label class="block text-sm font-medium mb-1">URL del PDF</label>
-              <input type="url"
-                     [(ngModel)]="currentCertificado.urlPdf"
-                     placeholder="https://ejemplo.com/certificado.pdf"
-                     class="w-full px-3 py-2 border rounded-lg">
-            </div>
-            <p class="text-sm text-gray-600">
-              * Para crear un certificado nuevo, selecciona el usuario y evento desde la lista principal
-            </p>
-          </div>
-          <div class="border-t px-6 py-4 flex justify-end gap-3">
-            <button (click)="closeModal()" class="px-4 py-2 bg-gray-200 rounded-lg">Cancelar</button>
-            <button (click)="saveCertificado()" class="px-4 py-2 bg-blue-600 text-white rounded-lg">
-              {{ editMode ? 'Actualizar' : 'Crear' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  `
+  templateUrl: './certificados-list.component.html',
+  styleUrls: ['./certificados-list.component.css']
 })
 export class CertificadosListComponent implements OnInit {
   certificados: Certificado[] = [];
-  loading = false;
-  showModal = false;
-  editMode = false;
-  currentCertificado: Certificado = this.getEmpty();
+  listaUsuarios: Usuario[] = []; // <--- AÑADIR
+  listaEventos: Evento[] = [];   // <--- AÑADIR
 
-  constructor(private certificadoService: CertificadoService) {}
+  cargando = false;
+  mostrarModal = false;
+  modoEdicion = false;
+  certificadoActual: any = this.obtenerCertificadoVacio(); // Usamos 'any' para flexibilidad en el form
+
+  // <--- INYECTAR NUEVOS SERVICIOS
+  constructor(
+    private certificadoService: CertificadoService,
+    private usuarioService: UsuarioService,
+    private eventoService: EventoService
+  ) {}
 
   ngOnInit() {
-    this.loadCertificados();
+    this.cargarCertificados();
+    this.cargarDatosParaModal(); // <--- AÑADIR
   }
 
-  loadCertificados() {
-    this.loading = true;
+  // <--- NUEVA FUNCIÓN PARA CARGAR DATOS DE LOS SELECTS
+  cargarDatosParaModal() {
+    this.usuarioService.getAll().subscribe(data => this.listaUsuarios = data);
+    this.eventoService.getAll().subscribe(data => this.listaEventos = data);
+  }
+
+  convertirArrayAFecha(arrayFecha: any): Date {
+    if (!Array.isArray(arrayFecha)) return arrayFecha;
+    return new Date(arrayFecha[0], arrayFecha[1] - 1, arrayFecha[2], arrayFecha[3] || 0, arrayFecha[4] || 0, arrayFecha[5] || 0);
+  }
+
+  cargarCertificados() {
+    this.cargando = true;
     this.certificadoService.getAll().subscribe({
-      next: (data) => {
-        this.certificados = data;
-        this.loading = false;
+      next: (datos) => {
+        this.certificados = datos.map(certificado => {
+          const eventoConvertido = {
+            ...certificado.evento,
+            fechaInicio: this.convertirArrayAFecha(certificado.evento.fechaInicio)
+          };
+          return { ...certificado, fechaEmision: this.convertirArrayAFecha(certificado.fechaEmision), evento: eventoConvertido };
+        });
+        this.cargando = false;
       },
       error: (err) => {
-        console.error('Error:', err);
-        this.loading = false;
+        console.error('Error al cargar certificados:', err);
+        this.cargando = false;
       }
     });
   }
 
-  openModal(certificado?: Certificado) {
-    this.showModal = true;
+  abrirModal(certificado?: Certificado) {
+    this.mostrarModal = true;
     if (certificado) {
-      this.editMode = true;
-      this.currentCertificado = { ...certificado };
+      this.modoEdicion = true;
+      // Para edición, nos aseguramos de que tengamos los IDs
+      this.certificadoActual = {
+        ...certificado,
+        usuarioId: certificado.usuario.id,
+        eventoId: certificado.evento.id
+      };
     } else {
-      this.editMode = false;
-      this.currentCertificado = this.getEmpty();
+      this.modoEdicion = false;
+      this.certificadoActual = this.obtenerCertificadoVacio();
     }
   }
 
-  closeModal() {
-    this.showModal = false;
+  cerrarModal() {
+    this.mostrarModal = false;
   }
 
-  saveCertificado() {
-    if (this.editMode && this.currentCertificado.id) {
-      this.certificadoService.update(this.currentCertificado.id, this.currentCertificado).subscribe({
-        next: () => {
-          this.loadCertificados();
-          this.closeModal();
-        }
+  // En certificados-list.component.ts
+
+  guardarCertificado() {
+    // Preparamos el objeto final para enviar al backend
+    const certificadoParaGuardar = {
+      id: this.certificadoActual.id,
+      urlPdf: this.certificadoActual.urlPdf,
+      usuario: { id: this.certificadoActual.usuarioId },
+      evento: { id: this.certificadoActual.eventoId }
+    };
+
+    console.log('Enviando este objeto al backend:', certificadoParaGuardar);
+
+    // --- VALIDACIÓN AÑADIDA ---
+    if (!this.modoEdicion && (!certificadoParaGuardar.usuario.id || !certificadoParaGuardar.evento.id)) {
+      alert('Por favor, selecciona un usuario y un evento antes de crear el certificado.');
+      return; // Detiene la ejecución de la función si los datos faltan
+    }
+
+    if (this.modoEdicion && certificadoParaGuardar.id) {
+      this.certificadoService.update(certificadoParaGuardar.id, certificadoParaGuardar as Certificado).subscribe({
+        next: () => { this.cargarCertificados(); this.cerrarModal(); }
       });
     } else {
-      this.certificadoService.create(this.currentCertificado).subscribe({
-        next: () => {
-          this.loadCertificados();
-          this.closeModal();
+      this.certificadoService.create(certificadoParaGuardar as Certificado).subscribe({
+        next: () => { this.cargarCertificados(); this.cerrarModal(); },
+        error: (err) => {
+          console.error("Falló la creación del certificado:", err);
+          alert("Hubo un error al crear el certificado. Revisa la consola del backend para más detalles.");
         }
       });
     }
   }
 
-  deleteCertificado(id: number) {
-    if (confirm('¿Eliminar certificado?')) {
-      this.certificadoService.delete(id).subscribe(() => this.loadCertificados());
+  eliminarCertificado(id: number) {
+    if (confirm('¿Está seguro de eliminar este certificado?')) {
+      this.certificadoService.delete(id).subscribe(() => this.cargarCertificados());
     }
   }
 
-  getEmpty(): Certificado {
+  obtenerCertificadoVacio(): any {
     return {
-      usuario: {} as any,
-      evento: {} as any,
-      urlPdf: ''
+      urlPdf: '',
+      usuarioId: null, // Campo para el ngModel del select de usuario
+      eventoId: null   // Campo para el ngModel del select de evento
     };
   }
 }

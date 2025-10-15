@@ -5,5 +5,5 @@ export interface Certificado {
   usuario: Usuario;
   evento: Evento;
   urlPdf?: string;
-  fechaEmision?: string;
+   fechaEmision?: string | Date | any;
 }

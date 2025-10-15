@@ -5,80 +5,84 @@ import { RecompensaService } from '../../core/services/recompensa.service';
 import { Recompensa } from '../../core/models/recompensa.model';
 
 @Component({
-  selector: 'app-recompensas-list',
+  selector: 'app-recompensas-lista',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './recompensas-list.component.html',
   styleUrls: ['./recompensas-list.component.css']
 })
 export class RecompensasListComponent implements OnInit {
+  // --- PROPIEDADES ---
   recompensas: Recompensa[] = [];
-  filteredRecompensas: Recompensa[] = [];
-  showModal = false;
-  editMode = false;
-  loading = false;
-  searchTerm = '';
-  currentRecompensa: Recompensa = this.getEmpty();
+  recompensasFiltradas: Recompensa[] = [];
+  mostrarModal = false;
+  modoEdicion = false;
+  cargando = false;
+  terminoBusqueda = '';
+  recompensaActual: Recompensa = this.obtenerRecompensaVacia();
 
-  constructor(private recompensaService: RecompensaService) {}
+  constructor(private recompensaServicio: RecompensaService) {}
 
   ngOnInit() {
-    this.loadRecompensas();
+    this.cargarRecompensas();
   }
 
-  loadRecompensas() {
-    this.loading = true;
-    this.recompensaService.getAll().subscribe({
+  // --- MÉTODOS PARA CARGAR Y FILTRAR DATOS ---
+  cargarRecompensas() {
+    this.cargando = true;
+    this.recompensaServicio.getAll().subscribe({
       next: (data) => {
         this.recompensas = data;
-        this.filteredRecompensas = data;
-        this.loading = false;
+        this.recompensasFiltradas = data;
+        this.cargando = false;
       },
       error: () => {
-        this.loading = false;
+        this.cargando = false;
       }
     });
   }
 
-  filterRecompensas() {
-    const term = this.searchTerm.toLowerCase().trim();
-    if (!term) {
-      this.filteredRecompensas = this.recompensas;
+  filtrarRecompensas() {
+    const termino = this.terminoBusqueda.toLowerCase().trim();
+    if (!termino) {
+      this.recompensasFiltradas = this.recompensas;
       return;
     }
-    this.filteredRecompensas = this.recompensas.filter(r =>
-      r.nombre.toLowerCase().includes(term) ||
-      r.descripcion.toLowerCase().includes(term)
+    this.recompensasFiltradas = this.recompensas.filter(r =>
+      r.nombre.toLowerCase().includes(termino) ||
+      r.descripcion.toLowerCase().includes(termino)
     );
   }
 
-  openModal(recompensa?: Recompensa) {
-    this.showModal = true;
+  // --- MÉTODOS PARA GESTIONAR EL MODAL ---
+  abrirModal(recompensa?: Recompensa) {
+    this.mostrarModal = true;
     if (recompensa) {
-      this.editMode = true;
-      this.currentRecompensa = { ...recompensa };
+      this.modoEdicion = true;
+      this.recompensaActual = { ...recompensa };
     } else {
-      this.editMode = false;
-      this.currentRecompensa = this.getEmpty();
+      this.modoEdicion = false;
+      this.recompensaActual = this.obtenerRecompensaVacia();
     }
   }
 
-  closeModal() {
-    this.showModal = false;
-    this.currentRecompensa = this.getEmpty();
+  cerrarModal() {
+    this.mostrarModal = false;
+    this.recompensaActual = this.obtenerRecompensaVacia();
   }
 
-  saveRecompensa() {
-    if (!this.currentRecompensa.nombre || !this.currentRecompensa.puntosNecesarios) {
+  // --- MÉTODOS CRUD (Crear, Actualizar, Eliminar) ---
+  guardarRecompensa() {
+    if (!this.recompensaActual.nombre || !this.recompensaActual.puntosNecesarios) {
       alert('Por favor completa los campos requeridos');
       return;
     }
 
-    if (this.editMode && this.currentRecompensa.id) {
-      this.recompensaService.update(this.currentRecompensa.id, this.currentRecompensa).subscribe({
+    if (this.modoEdicion && this.recompensaActual.id) {
+      this.recompensaServicio.update(this.recompensaActual.id, this.recompensaActual).subscribe({
         next: () => {
-          this.loadRecompensas();
-          this.closeModal();
+          this.cargarRecompensas();
+          this.cerrarModal();
         },
         error: (err) => {
           console.error('Error al actualizar:', err);
@@ -86,10 +90,10 @@ export class RecompensasListComponent implements OnInit {
         }
       });
     } else {
-      this.recompensaService.create(this.currentRecompensa).subscribe({
+      this.recompensaServicio.create(this.recompensaActual).subscribe({
         next: () => {
-          this.loadRecompensas();
-          this.closeModal();
+          this.cargarRecompensas();
+          this.cerrarModal();
         },
         error: (err) => {
           console.error('Error al crear:', err);
@@ -99,11 +103,11 @@ export class RecompensasListComponent implements OnInit {
     }
   }
 
-  deleteRecompensa(id: number) {
+  eliminarRecompensa(id: number) {
     if (confirm('¿Estás seguro de eliminar esta recompensa? Esta acción no se puede deshacer.')) {
-      this.recompensaService.delete(id).subscribe({
+      this.recompensaServicio.delete(id).subscribe({
         next: () => {
-          this.loadRecompensas();
+          this.cargarRecompensas();
         },
         error: (err) => {
           console.error('Error al eliminar:', err);
@@ -113,19 +117,20 @@ export class RecompensasListComponent implements OnInit {
     }
   }
 
-  getStockClass(stock: number): string {
-    if (stock === 0) return 'stock-out';
-    if (stock < 10) return 'stock-low';
+  // --- MÉTODOS AUXILIARES ---
+  obtenerClaseStock(stock: number): string {
+    if (stock === 0) return 'stock-agotado';
+    if (stock < 10) return 'stock-bajo';
     return 'stock-ok';
   }
 
-  getStockText(stock: number): string {
+  obtenerTextoStock(stock: number): string {
     if (stock === 0) return 'Agotado';
     if (stock < 10) return 'Stock bajo';
     return 'Disponible';
   }
 
-  getEmpty(): Recompensa {
+  obtenerRecompensaVacia(): Recompensa {
     return {
       nombre: '',
       descripcion: '',

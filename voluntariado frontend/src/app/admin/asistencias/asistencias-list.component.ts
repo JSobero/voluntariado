@@ -8,109 +8,130 @@ import { Asistencia } from '../../core/models/asistencia.model';
   selector: 'app-asistencias-list',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  template: `
-    <div class="p-6">
-      <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-        <h1 class="text-3xl font-bold text-gray-800">Gestión de Asistencias</h1>
-        <p class="text-gray-600 mt-1">Registra y confirma la asistencia a eventos</p>
-      </div>
-
-      <div *ngIf="loading" class="bg-white rounded-lg shadow p-6 text-center">
-        <p class="text-gray-600">Cargando asistencias...</p>
-      </div>
-
-      <div *ngIf="!loading" class="bg-white rounded-lg shadow overflow-hidden">
-        <table class="w-full">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Voluntario</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Evento</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Puntos</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Confirmado</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200">
-            <tr *ngFor="let asistencia of asistencias" class="hover:bg-gray-50">
-              <td class="px-6 py-4 whitespace-nowrap text-sm">{{ asistencia.id }}</td>
-              <td class="px-6 py-4 whitespace-nowrap font-medium">{{ asistencia.usuario.nombre }}</td>
-              <td class="px-6 py-4">{{ asistencia.evento.titulo }}</td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <select [(ngModel)]="asistencia.estado"
-                        (change)="updateAsistencia(asistencia)"
-                        [ngClass]="getEstadoClass(asistencia.estado)"
-                        class="px-3 py-1 rounded-full text-xs font-medium">
-                  <option value="CONFIRMADA">CONFIRMADA</option>
-                  <option value="NO_ASISTIO">NO ASISTIÓ</option>
-                </select>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <input type="number"
-                       [(ngModel)]="asistencia.puntosOtorgados"
-                       (change)="updateAsistencia(asistencia)"
-                       class="w-20 px-2 py-1 border border-gray-300 rounded text-center">
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm">
-                {{ asistencia.confirmadoEn | date:'dd/MM/yyyy HH:mm' }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm">
-                <button (click)="deleteAsistencia(asistencia.id!)"
-                        class="text-red-600 hover:text-red-800">
-                  🗑️ Eliminar
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  `
+  templateUrl: './asistencias-list.component.html',
+  styleUrls: ['./asistencias-list.component.css']
 })
 export class AsistenciasListComponent implements OnInit {
   asistencias: Asistencia[] = [];
-  loading = false;
+  asistenciasFiltradas: Asistencia[] = [];
+  cargando = false;
+  terminoBusqueda = '';
+  filtroEstado = '';
 
   constructor(private asistenciaService: AsistenciaService) {}
 
   ngOnInit() {
-    this.loadAsistencias();
+    this.cargarAsistencias();
   }
 
-  loadAsistencias() {
-    this.loading = true;
+  cargarAsistencias() {
+    this.cargando = true;
     this.asistenciaService.getAll().subscribe({
-      next: (data) => {
-        this.asistencias = data;
-        this.loading = false;
+      next: (datos) => {
+        this.asistencias = datos;
+        this.asistenciasFiltradas = datos;
+        this.cargando = false;
       },
       error: (err) => {
-        console.error('Error:', err);
-        this.loading = false;
+        console.error('Error al cargar asistencias:', err);
+        this.cargando = false;
       }
     });
   }
 
-  updateAsistencia(asistencia: Asistencia) {
+  filtrarAsistencias() {
+    let filtradas = [...this.asistencias];
+
+    // Filtrar por búsqueda
+    if (this.terminoBusqueda) {
+      const termino = this.terminoBusqueda.toLowerCase();
+      filtradas = filtradas.filter(a =>
+        a.usuario.nombre.toLowerCase().includes(termino) ||
+        a.evento.titulo.toLowerCase().includes(termino)
+      );
+    }
+
+    // Filtrar por estado
+    if (this.filtroEstado) {
+      filtradas = filtradas.filter(a => a.estado === this.filtroEstado);
+    }
+
+    this.asistenciasFiltradas = filtradas;
+  }
+
+  limpiarFiltros() {
+    this.terminoBusqueda = '';
+    this.filtroEstado = '';
+    this.asistenciasFiltradas = this.asistencias;
+  }
+
+  obtenerAsistenciasPorEstado(estado: string): Asistencia[] {
+    return this.asistencias.filter(a => a.estado === estado);
+  }
+
+  calcularTotalPuntosOtorgados(): number {
+    return this.asistencias
+      .filter(a => a.estado === 'CONFIRMADA')
+      .reduce((total, a) => total + (a.puntosOtorgados || 0), 0);
+  }
+
+  actualizarAsistencia(asistencia: Asistencia) {
     if (asistencia.id) {
+      // Guardar estado anterior por si falla
+      const estadoAnterior = { ...asistencia };
+
       this.asistenciaService.update(asistencia.id, asistencia).subscribe({
-        next: () => console.log('Actualizado'),
-        error: (err) => console.error('Error:', err)
+        next: () => {
+          console.log('Asistencia actualizada correctamente');
+        },
+        error: (err) => {
+          // Revertir cambios si falla
+          Object.assign(asistencia, estadoAnterior);
+          console.error('Error al actualizar:', err);
+          alert('Error al actualizar la asistencia');
+        }
       });
     }
   }
 
-  deleteAsistencia(id: number) {
-    if (confirm('¿Eliminar asistencia?')) {
+  eliminarAsistencia(id: number) {
+    if (confirm('¿Está seguro de eliminar esta asistencia? Esta acción no se puede deshacer.')) {
       this.asistenciaService.delete(id).subscribe({
-        next: () => this.loadAsistencias(),
-        error: (err) => console.error('Error:', err)
+        next: () => {
+          // Eliminar del array local sin recargar
+          this.asistencias = this.asistencias.filter(a => a.id !== id);
+          this.asistenciasFiltradas = this.asistenciasFiltradas.filter(a => a.id !== id);
+        },
+        error: (err) => {
+          console.error('Error al eliminar:', err);
+          alert('Error al eliminar la asistencia');
+        }
       });
     }
   }
 
-  getEstadoClass(estado: string): string {
-    return estado === 'CONFIRMADA' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+  obtenerClaseEstado(estado: string): string {
+    return estado === 'CONFIRMADA' ? 'estado-confirmada' : 'estado-no-asistio';
+  }
+
+  obtenerIconoEstado(estado: string): string {
+    return estado === 'CONFIRMADA' ? '✅' : '❌';
+  }
+
+  obtenerTiempoTranscurrido(fecha: Date | string | undefined): string {
+    if (!fecha) return 'Sin confirmar';
+
+    const ahora = new Date().getTime();
+    const fechaConfirmacion = new Date(fecha).getTime();
+    const diferencia = ahora - fechaConfirmacion;
+
+    const minutos = Math.floor(diferencia / 60000);
+    const horas = Math.floor(diferencia / 3600000);
+    const dias = Math.floor(diferencia / 86400000);
+
+    if (dias > 0) return `Hace ${dias} día${dias > 1 ? 's' : ''}`;
+    if (horas > 0) return `Hace ${horas} hora${horas > 1 ? 's' : ''}`;
+    if (minutos > 0) return `Hace ${minutos} minuto${minutos > 1 ? 's' : ''}`;
+    return 'Hace un momento';
   }
 }
