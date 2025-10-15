@@ -39,6 +39,9 @@ public class Evento {
     @JoinColumn(name = "organizador_id", nullable = false)
     private Usuario organizador;
 
+    @Column(name = "imagen_url")
+    private String imagenUrl;
+
     @Column(name = "creado_en", updatable = false, insertable = false)
     private LocalDateTime creadoEn;
 }
