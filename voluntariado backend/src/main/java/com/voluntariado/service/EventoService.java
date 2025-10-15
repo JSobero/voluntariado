@@ -37,6 +37,7 @@ public class EventoService {
             e.setFechaFin(evento.getFechaFin());
             e.setCupoMaximo(evento.getCupoMaximo());
             e.setOrganizador(evento.getOrganizador());
+            e.setImagenUrl(evento.getImagenUrl());
             return eventoRepository.save(e);
         }).orElseThrow(() -> new RuntimeException("Evento no encontrado"));
     }

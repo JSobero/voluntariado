@@ -34,6 +34,7 @@ public class RecompensaService {
             r.setDescripcion(recompensa.getDescripcion());
             r.setPuntosNecesarios(recompensa.getPuntosNecesarios());
             r.setStock(recompensa.getStock());
+            r.setImagenUrl(recompensa.getImagenUrl());
             return recompensaRepository.save(r);
         }).orElseThrow(() -> new RuntimeException("Recompensa no encontrada"));
     }
