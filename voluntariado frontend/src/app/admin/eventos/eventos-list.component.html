@@ -1,0 +1,234 @@
+<div class="contenedor-pagina">
+  <div class="encabezado-pagina">
+    <div class="encabezado-izquierda">
+      <h1 class="titulo-pagina">
+        <i class="icono-titulo bi bi-calendar-event"></i>
+        Gestión de Eventos
+      </h1>
+      <p class="subtitulo-pagina">Administra todos los eventos de voluntariado</p>
+    </div>
+    <div class="acciones-encabezado">
+      <button class="boton boton-primario" (click)="abrirModal()">
+        <i class="icono-boton bi bi-plus-lg"></i>
+        Nuevo Evento
+      </button>
+    </div>
+  </div>
+
+  <div class="seccion-filtros">
+    <div class="contenedor-busqueda">
+      <i class="icono-busqueda bi bi-search"></i>
+      <input
+        type="text"
+        class="entrada-busqueda"
+        placeholder="Buscar eventos por título, descripción o lugar..."
+        [(ngModel)]="terminoBusqueda"
+        (ngModelChange)="filtrarEventos()">
+    </div>
+  </div>
+
+  <div *ngIf="cargando" class="contenedor-carga">
+    <div class="giratorio"></div>
+    <p>Cargando eventos...</p>
+  </div>
+
+  <div *ngIf="!cargando" class="tarjeta-tabla">
+    <div class="tabla-responsiva">
+      <table class="tabla-datos">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Evento</th>
+          <th>Fecha Inicio</th>
+          <th>Lugar</th>
+          <th>Cupo</th>
+          <th>Estado</th>
+          <th>Organizador</th>
+          <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let evento of eventosFiltrados" class="fila-tabla">
+          <td class="celda-id">
+            <span class="insignia-id">{{ evento.id }}</span>
+          </td>
+          <td class="celda-evento">
+            <div class="info-evento">
+              <i class="icono-evento bi bi-calendar4-week"></i>
+              <div>
+                <div class="titulo-evento">{{ evento.titulo }}</div>
+                <div class="descripcion-evento">{{ evento.descripcion }}</div>
+              </div>
+            </div>
+          </td>
+          <td class="celda-fecha">
+            <div class="envoltorio-fecha">
+              <i class="icono-fecha bi bi-calendar-check"></i>
+              <span>{{ evento.fechaInicio | date:'dd/MM/yyyy' }}</span>
+            </div>
+            <div class="envoltorio-hora">
+              <i class="icono-hora bi bi-clock"></i>
+              <span>{{ evento.fechaInicio | date:'HH:mm' }}</span>
+            </div>
+          </td>
+          <td class="celda-ubicacion">
+            <div class="envoltorio-ubicacion">
+              <i class="icono-ubicacion bi bi-geo-alt-fill"></i>
+              <span>{{ evento.lugar }}</span>
+            </div>
+          </td>
+          <td class="celda-capacidad">
+            <span class="insignia-capacidad">
+              {{ evento.cupoMaximo }} personas
+            </span>
+          </td>
+          <td class="celda-estado">
+            <span [ngClass]="obtenerClaseEstadoEvento(evento.fechaInicio)" class="insignia-estado">
+              {{ obtenerEstadoEvento(evento.fechaInicio) }}
+            </span>
+          </td>
+          <td class="celda-organizador">
+            <div class="info-organizador">
+              <div class="avatar-organizador">
+                {{ evento.organizador.nombre.charAt(0) }}
+              </div>
+              <span>{{ evento.organizador.nombre }}</span>
+            </div>
+          </td>
+          <td class="celda-acciones">
+            <button class="boton-accion boton-editar" (click)="abrirModal(evento)" title="Editar">
+              <i class="bi bi-pencil-fill"></i>
+            </button>
+            <button class="boton-accion boton-eliminar" (click)="eliminarEvento(evento.id!)" title="Eliminar">
+              <i class="bi bi-trash-fill"></i>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="eventosFiltrados.length === 0" class="estado-vacio">
+        <div class="icono-vacio"><i class="bi bi-calendar-x"></i></div>
+        <h3>No se encontraron eventos</h3>
+        <p>Intenta con otros términos de búsqueda o crea un nuevo evento</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="mostrarModal" class="superposicion-modal" (click)="cerrarModal()">
+    <div class="contenedor-modal" (click)="$event.stopPropagation()">
+      <div class="encabezado-modal">
+        <h2 class="titulo-modal">
+          <i class="icono-modal" [ngClass]="modoEdicion ? 'bi bi-pencil-fill' : 'bi bi-plus-lg'"></i>
+          {{ modoEdicion ? 'Editar Evento' : 'Nuevo Evento' }}
+        </h2>
+        <button class="cerrar-modal" (click)="cerrarModal()"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <div class="cuerpo-modal">
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario">
+            <span class="texto-etiqueta">Título</span>
+            <span class="etiqueta-requerido">*</span>
+          </label>
+          <input
+            type="text"
+            class="entrada-formulario"
+            [(ngModel)]="eventoActual.titulo"
+            placeholder="Ej: Limpieza de playas"
+            required>
+        </div>
+
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario">
+            <span class="texto-etiqueta">Descripción</span>
+          </label>
+          <textarea
+            class="area-texto-formulario"
+            [(ngModel)]="eventoActual.descripcion"
+            rows="3"
+            placeholder="Describe el evento..."></textarea>
+        </div>
+
+        <div class="fila-formulario">
+          <div class="grupo-formulario">
+            <label class="etiqueta-formulario">
+              <span class="texto-etiqueta">Fecha Inicio</span>
+              <span class="etiqueta-requerido">*</span>
+            </label>
+            <input
+              type="datetime-local"
+              class="entrada-formulario"
+              [(ngModel)]="eventoActual.fechaInicio"
+              required>
+          </div>
+
+          <div class="grupo-formulario">
+            <label class="etiqueta-formulario">
+              <span class="texto-etiqueta">Fecha Fin</span>
+            </label>
+            <input
+              type="datetime-local"
+              class="entrada-formulario"
+              [(ngModel)]="eventoActual.fechaFin">
+          </div>
+        </div>
+
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario">
+            <span class="texto-etiqueta">Lugar</span>
+            <span class="etiqueta-requerido">*</span>
+          </label>
+          <input
+            type="text"
+            class="entrada-formulario"
+            [(ngModel)]="eventoActual.lugar"
+            placeholder="Ej: Playa Costa Verde, Lima"
+            required>
+        </div>
+
+        <div class="fila-formulario">
+          <div class="grupo-formulario">
+            <label class="etiqueta-formulario">
+              <span class="texto-etiqueta">Cupo Máximo</span>
+              <span class="etiqueta-requerido">*</span>
+            </label>
+            <input
+              type="number"
+              class="entrada-formulario"
+              [(ngModel)]="eventoActual.cupoMaximo"
+              min="1"
+              placeholder="50"
+              required>
+          </div>
+
+          <div class="grupo-formulario">
+            <label class="etiqueta-formulario">
+              <span class="texto-etiqueta">Organizador</span>
+              <span class="etiqueta-requerido">*</span>
+            </label>
+            <select
+              class="selector-formulario"
+              [(ngModel)]="eventoActual.organizador"
+              required>
+              <option value="">Seleccionar organizador...</option>
+              <option *ngFor="let org of organizadores" [ngValue]="org.id">
+                {{ org.nombre }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="pie-modal">
+        <button class="boton boton-secundario" (click)="cerrarModal()">
+          Cancelar
+        </button>
+        <button class="boton boton-primario" (click)="guardarEvento()">
+          <i class="icono-boton" [ngClass]="modoEdicion ? 'bi bi-save-fill' : 'bi bi-plus-lg'"></i>
+          {{ modoEdicion ? 'Actualizar' : 'Crear' }} Evento
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

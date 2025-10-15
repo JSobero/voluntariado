@@ -1,0 +1,152 @@
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <div class="header-content">
+      <div class="header-left">
+        <h1 class="dashboard-title">Dashboard Administrativo</h1>
+        <p class="dashboard-subtitle">Bienvenido de nuevo, Admin 👋</p>
+      </div>
+      <div class="header-right">
+        <div class="user-info">
+          <div class="user-details">
+            <p class="user-role">Administrador</p>
+            <p class="user-email">admin@voluntariado.com</p>
+          </div>
+          <div class="user-avatar">
+            <span>A</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="stats-grid">
+    <div class="stat-card stat-card-blue">
+      <div class="stat-icon-wrapper">
+        <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
+      </div>
+      <div class="stat-content">
+        <p class="stat-value">{{ stats.usuarios }}</p>
+        <p class="stat-label">Total Usuarios</p>
+      </div>
+      <div class="stat-trend stat-trend-up">
+        <i class="trend-icon bi bi-arrow-up-short"></i>
+        <span class="trend-text">12% este mes</span>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card-green">
+      <div class="stat-icon-wrapper">
+        <div class="stat-icon"><i class="bi bi-calendar4-event"></i></div>
+      </div>
+      <div class="stat-content">
+        <p class="stat-value">{{ stats.eventos }}</p>
+        <p class="stat-label">Eventos Activos</p>
+      </div>
+      <div class="stat-trend stat-trend-up">
+        <i class="trend-icon bi bi-arrow-up-short"></i>
+        <span class="trend-text">8% este mes</span>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card-purple">
+      <div class="stat-icon-wrapper">
+        <div class="stat-icon"><i class="bi bi-award-fill"></i></div>
+      </div>
+      <div class="stat-content">
+        <p class="stat-value">{{ stats.certificados }}</p>
+        <p class="stat-label">Certificados Emitidos</p>
+      </div>
+      <div class="stat-trend stat-trend-up">
+        <i class="trend-icon bi bi-arrow-up-short"></i>
+        <span class="trend-text">15% este mes</span>
+      </div>
+    </div>
+
+    <div class="stat-card stat-card-orange">
+      <div class="stat-icon-wrapper">
+        <div class="stat-icon"><i class="bi bi-gift-fill"></i></div>
+      </div>
+      <div class="stat-content">
+        <p class="stat-value">{{ stats.canjes }}</p>
+        <p class="stat-label">Recompensas Canjeadas</p>
+      </div>
+      <div class="stat-trend stat-trend-up">
+        <i class="trend-icon bi bi-arrow-up-short"></i>
+        <span class="trend-text">20% este mes</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="events-section">
+    <div class="section-header">
+      <div class="section-title-wrapper">
+        <h2 class="section-title">Eventos Recientes</h2>
+        <p class="section-subtitle">Últimos eventos registrados en el sistema</p>
+      </div>
+      <button class="btn-view-all">
+        Ver todos
+        <i class="arrow bi bi-arrow-right"></i>
+      </button>
+    </div>
+
+    <div *ngIf="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Cargando datos...</p>
+    </div>
+
+    <div *ngIf="!loading && recentEvents.length === 0" class="empty-state">
+      <div class="empty-icon"><i class="bi bi-calendar-x"></i></div>
+      <h3>No hay eventos registrados</h3>
+      <p>Los eventos aparecerán aquí una vez que sean creados</p>
+    </div>
+
+    <div *ngIf="!loading && recentEvents.length > 0" class="table-container">
+      <table class="events-table">
+        <thead>
+        <tr>
+          <th>Título</th>
+          <th>Fecha Inicio</th>
+          <th>Lugar</th>
+          <th>Cupo</th>
+          <th>Organizador</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let evento of recentEvents" class="table-row">
+          <td class="event-title">
+            <div class="title-with-icon">
+              <span class="event-dot"></span>
+              <span class="title-text">{{ evento.titulo }}</span>
+            </div>
+          </td>
+          <td class="event-date">
+            <div>
+              <i class="date-icon bi bi-calendar2-week"></i>
+              {{ evento.fechaInicio | date:'dd/MM/yyyy, hh:mm a' }}
+            </div>
+          </td>
+          <td class="event-location">
+            <div>
+              <i class="location-icon bi bi-geo-alt-fill"></i>
+              {{ evento.lugar }}
+            </div>
+          </td>
+          <td class="event-capacity">
+            <span class="capacity-badge">
+              {{ evento.cupoMaximo }} personas
+            </span>
+          </td>
+          <td class="event-organizer">
+            <div class="organizer-info">
+              <div class="organizer-avatar">
+                {{ evento.organizador?.nombre?.charAt(0) || 'O' }}
+              </div>
+              <span>{{ evento.organizador?.nombre || 'Sin organizador' }}</span>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

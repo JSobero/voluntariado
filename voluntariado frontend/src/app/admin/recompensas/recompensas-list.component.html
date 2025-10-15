@@ -1,0 +1,185 @@
+<div class="contenedor-pagina">
+  <div class="encabezado-pagina">
+    <div class="encabezado-izquierda">
+      <h1 class="titulo-pagina">
+        <i class="icono-titulo bi bi-gift-fill"></i>
+        Gestión de Recompensas
+      </h1>
+      <p class="subtitulo-pagina">Administra el catálogo de recompensas canjeables</p>
+    </div>
+    <div class="acciones-encabezado">
+      <button class="btn btn-primario" (click)="abrirModal()">
+        <i class="btn-icono bi bi-plus-lg"></i>
+        Nueva Recompensa
+      </button>
+    </div>
+  </div>
+
+  <div class="seccion-filtros">
+    <div class="contenedor-busqueda">
+      <i class="icono-busqueda bi bi-search"></i>
+      <input
+        type="text"
+        class="input-busqueda"
+        placeholder="Buscar recompensas por nombre o descripción..."
+        [(ngModel)]="terminoBusqueda"
+        (ngModelChange)="filtrarRecompensas()">
+    </div>
+  </div>
+
+  <div *ngIf="cargando" class="contenedor-carga">
+    <div class="spinner"></div>
+    <p>Cargando recompensas...</p>
+  </div>
+
+  <div *ngIf="!cargando" class="cuadricula-recompensas">
+    <div *ngFor="let recompensa of recompensasFiltradas" class="tarjeta-recompensa">
+      <div class="seccion-encabezado-tarjeta">
+        <div class="contenedor-icono-recompensa">
+          <i class="icono-recompensa bi bi-gift-fill"></i>
+        </div>
+        <div class="insignia-puntos">
+          <i class="icono-puntos bi bi-star-fill"></i>
+          <span class="valor-puntos">{{ recompensa.puntosNecesarios }}</span>
+        </div>
+      </div>
+
+      <div class="seccion-cuerpo-tarjeta">
+        <h3 class="nombre-recompensa">{{ recompensa.nombre }}</h3>
+        <p class="descripcion-recompensa">{{ recompensa.descripcion || 'Sin descripción' }}</p>
+      </div>
+
+      <div class="seccion-pie-tarjeta">
+        <div class="info-stock">
+          <span class="etiqueta-stock">Stock:</span>
+          <span [ngClass]="obtenerClaseStock(recompensa.stock)" class="insignia-stock">
+            <span class="punto-stock"></span>
+            {{ recompensa.stock }} unidades
+          </span>
+        </div>
+        <div class="acciones-tarjeta">
+          <button class="btn-accion btn-editar" (click)="abrirModal(recompensa)" title="Editar">
+            <i class="bi bi-pencil-fill"></i>
+          </button>
+          <button class="btn-accion btn-eliminar" (click)="eliminarRecompensa(recompensa.id!)" title="Eliminar">
+            <i class="bi bi-trash-fill"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!cargando && recompensasFiltradas.length === 0" class="estado-vacio">
+    <div class="icono-vacio"><i class="bi bi-gift"></i></div>
+    <h3>No se encontraron recompensas</h3>
+    <p>Intenta con otros términos de búsqueda o crea una nueva recompensa</p>
+    <button class="btn btn-primario" (click)="abrirModal()">
+      <i class="btn-icono bi bi-plus-lg"></i>
+      Crear primera recompensa
+    </button>
+  </div>
+
+  <div *ngIf="mostrarModal" class="superposicion-modal" (click)="cerrarModal()">
+    <div class="contenedor-modal" (click)="$event.stopPropagation()">
+      <div class="encabezado-modal">
+        <h2 class="titulo-modal">
+          <i class="icono-modal" [ngClass]="modoEdicion ? 'bi bi-pencil-fill' : 'bi bi-plus-lg'"></i>
+          {{ modoEdicion ? 'Editar Recompensa' : 'Nueva Recompensa' }}
+        </h2>
+        <button class="btn-cerrar-modal" (click)="cerrarModal()"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <div class="cuerpo-modal">
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario">
+            <span class="texto-etiqueta">Nombre de la Recompensa</span>
+            <span class="etiqueta-requerido">*</span>
+          </label>
+          <input
+            type="text"
+            class="input-formulario"
+            [(ngModel)]="recompensaActual.nombre"
+            placeholder="Ej: Entrada al cine"
+            required>
+        </div>
+
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario">
+            <span class="texto-etiqueta">Descripción</span>
+          </label>
+          <textarea
+            class="textarea-formulario"
+            [(ngModel)]="recompensaActual.descripcion"
+            rows="3"
+            placeholder="Describe la recompensa..."></textarea>
+        </div>
+
+        <div class="fila-formulario">
+          <div class="grupo-formulario">
+            <label class="etiqueta-formulario">
+              <span class="texto-etiqueta">Puntos Necesarios</span>
+              <span class="etiqueta-requerido">*</span>
+            </label>
+            <div class="input-con-icono">
+              <i class="icono-input bi bi-star-fill"></i>
+              <input
+                type="number"
+                class="input-formulario"
+                [(ngModel)]="recompensaActual.puntosNecesarios"
+                min="1"
+                placeholder="100"
+                required>
+            </div>
+          </div>
+
+          <div class="grupo-formulario">
+            <label class="etiqueta-formulario">
+              <span class="texto-etiqueta">Stock Disponible</span>
+              <span class="etiqueta-requerido">*</span>
+            </label>
+            <div class="input-con-icono">
+              <i class="icono-input bi bi-box2-fill"></i>
+              <input
+                type="number"
+                class="input-formulario"
+                [(ngModel)]="recompensaActual.stock"
+                min="0"
+                placeholder="50"
+                required>
+            </div>
+          </div>
+        </div>
+
+        <div class="seccion-vista-previa">
+          <label class="etiqueta-formulario">
+            <span class="texto-etiqueta">Vista Previa</span>
+          </label>
+          <div class="tarjeta-vista-previa">
+            <div class="encabezado-vista-previa">
+              <i class="icono-vista-previa bi bi-gift"></i>
+              <span class="puntos-vista-previa">
+                <i class="icono-puntos bi bi-star-fill"></i>
+                {{ recompensaActual.puntosNecesarios || 0 }}
+              </span>
+            </div>
+            <h4 class="nombre-vista-previa">{{ recompensaActual.nombre || 'Nombre de la recompensa' }}</h4>
+            <p class="descripcion-vista-previa">{{ recompensaActual.descripcion || 'Descripción de la recompensa' }}</p>
+            <div class="stock-vista-previa">
+              Stock: {{ recompensaActual.stock || 0 }} unidades
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pie-modal">
+        <button class="btn btn-secundario" (click)="cerrarModal()">
+          Cancelar
+        </button>
+        <button class="btn btn-primario" (click)="guardarRecompensa()">
+          <i class="btn-icono" [ngClass]="modoEdicion ? 'bi bi-save-fill' : 'bi bi-plus-lg'"></i>
+          {{ modoEdicion ? 'Actualizar' : 'Crear' }} Recompensa
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

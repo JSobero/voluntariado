@@ -1,0 +1,91 @@
+<div class="admin-layout">
+  <aside class="sidebar" [ngClass]="{'sidebar-collapsed': !sidebarOpen}">
+    <div class="sidebar-header">
+      <div class="logo">
+        <img src="/logo.png" alt="Logo Nexo V" class="logo-icon">
+        <span class="logo-text" *ngIf="sidebarOpen">NEXO V</span>
+      </div>
+      <button (click)="toggleSidebar()" class="toggle-btn" [title]="sidebarOpen ? 'Colapsar menú' : 'Expandir menú'">
+        <span class="toggle-icon">{{ sidebarOpen ? '◀' : '▶' }}</span>
+      </button>
+    </div>
+    <nav class="sidebar-nav">
+      <a *ngFor="let item of menuItems"
+         [routerLink]="item.route"
+         routerLinkActive="active"
+         [routerLinkActiveOptions]="{exact: false}"
+         class="nav-item"
+         [title]="!sidebarOpen ? item.label : ''">
+        <i class="nav-icon" [ngClass]="item.icon"></i>
+        <span class="nav-label" *ngIf="sidebarOpen">{{ item.label }}</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="footer-btn" [title]="!sidebarOpen ? 'Configuración' : ''">
+        <i class="nav-icon bi bi-gear-fill"></i>
+        <span class="nav-label" *ngIf="sidebarOpen">Configuración</span>
+      </button>
+      <button class="footer-btn logout" [title]="!sidebarOpen ? 'Cerrar Sesión' : ''">
+        <i class="nav-icon bi bi-box-arrow-right"></i>
+        <span class="nav-label" *ngIf="sidebarOpen">Cerrar Sesión</span>
+      </button>
+    </div>
+  </aside>
+
+  <div class="main-content">
+    <header class="top-header">
+      <div class="header-left">
+        <button (click)="toggleSidebar()" class="mobile-menu-btn">
+          <i class="bi bi-list"></i>
+        </button>
+        <div class="page-context">
+          <h2 class="page-title">{{ pageTitle }}</h2>
+          <nav class="breadcrumbs">
+            <a>Admin</a>
+            <i class="bi bi-chevron-right"></i>
+            <span>{{ breadcrumb }}</span>
+          </nav>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="search-box">
+          <i class="search-icon bi bi-search"></i>
+          <input type="text" placeholder="Buscar..." class="search-input">
+          <span class="search-shortcut">Ctrl+K</span>
+        </div>
+
+        <button class="icon-btn notification-btn" title="Notificaciones">
+          <i class="bi bi-bell-fill"></i>
+          <span class="badge">3</span>
+        </button>
+
+        <div class="user-menu" (click)="userMenuOpen = !userMenuOpen" [class.active]="userMenuOpen">
+          <img src="https://i.pravatar.cc/40?img=1" alt="Admin" class="user-avatar">
+          <div class="user-info">
+            <span class="user-name">Admin</span>
+            <span class="user-role">Administrador</span>
+          </div>
+          <i class="bi bi-chevron-down dropdown-arrow"></i>
+
+          <div class="user-dropdown" *ngIf="userMenuOpen">
+            <a class="dropdown-item">
+              <i class="bi bi-person-circle"></i> Mi Perfil
+            </a>
+            <a class="dropdown-item">
+              <i class="bi bi-gear-fill"></i> Configuración
+            </a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item logout">
+              <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="content-container">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

@@ -1,0 +1,143 @@
+<div class="contenedor-pagina">
+  <div class="encabezado-pagina">
+    <div class="encabezado-izquierda">
+      <h1 class="titulo-pagina">
+        <i class="icono-titulo bi bi-award-fill"></i>
+        Gestión de Certificados
+      </h1>
+      <p class="subtitulo-pagina">Administra todos los certificados emitidos</p>
+    </div>
+    <div class="acciones-encabezado">
+      <button class="boton boton-primario" (click)="abrirModal()">
+        <i class="icono-boton bi bi-plus-lg"></i>
+        Nuevo Certificado
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="cargando" class="contenedor-carga">
+    <div class="giratorio"></div>
+    <p>Cargando certificados...</p>
+  </div>
+
+  <div *ngIf="!cargando" class="tarjeta-tabla">
+    <div class="tabla-responsiva">
+      <table class="tabla-datos">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Usuario</th>
+          <th>Evento</th>
+          <th>Fecha de Emisión</th>
+          <th>PDF</th>
+          <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let certificado of certificados" class="fila-tabla">
+          <td class="celda-id">
+            <span class="insignia-id">{{ certificado.id }}</span>
+          </td>
+          <td class="celda-info-principal">
+            <div class="info-principal">
+              <div class="avatar-usuario">
+                {{ certificado.usuario.nombre.charAt(0) }}
+              </div>
+              <div>
+                <div class="texto-titulo">{{ certificado.usuario.nombre }}</div>
+                <div class="texto-subtitulo">{{ certificado.usuario.correo }}</div>
+              </div>
+            </div>
+          </td>
+          <td class="celda-info-secundaria">
+            <div>
+              <div class="texto-titulo">{{ certificado.evento.titulo }}</div>
+              <div class="texto-subtitulo">{{ certificado.evento.fechaInicio | date:'dd/MM/yyyy' }}</div>
+            </div>
+          </td>
+          <td class="celda-fecha">
+            <div class="envoltorio-fecha">
+              <i class="icono-fecha bi bi-calendar2-week"></i>
+              <span>{{ certificado.fechaEmision | date:'dd/MM/yyyy' }}</span>
+            </div>
+            <div class="envoltorio-hora">
+              <i class="icono-hora bi bi-clock"></i>
+              <span>{{ certificado.fechaEmision | date:'HH:mm' }}</span>
+            </div>
+          </td>
+          <td class="celda-enlace">
+            <a *ngIf="certificado.urlPdf" [href]="certificado.urlPdf" target="_blank" class="enlace-pdf">
+              <i class="bi bi-file-earmark-pdf-fill"></i> Ver PDF
+            </a>
+            <span *ngIf="!certificado.urlPdf" class="texto-deshabilitado">Sin PDF</span>
+          </td>
+          <td class="celda-acciones">
+            <button class="boton-accion boton-editar" (click)="abrirModal(certificado)" title="Editar">
+              <i class="bi bi-pencil-fill"></i>
+            </button>
+            <button class="boton-accion boton-eliminar" (click)="eliminarCertificado(certificado.id!)"
+                    title="Eliminar">
+              <i class="bi bi-trash-fill"></i>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="!cargando && certificados.length === 0" class="estado-vacio">
+        <div class="icono-vacio"><i class="bi bi-award"></i></div>
+        <h3>No se encontraron certificados</h3>
+        <p>Los certificados emitidos aparecerán aquí.</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="mostrarModal" class="modal-superposicion" (click)="cerrarModal()">
+    <div class="modal-contenedor" (click)="$event.stopPropagation()">
+      <div class="modal-encabezado">
+        <h2 class="modal-titulo">
+          <i class="icono-modal bi bi-award-fill"></i>
+          {{ modoEdicion ? 'Editar Certificado' : 'Nuevo Certificado' }}
+        </h2>
+        <button class="cerrar-modal" (click)="cerrarModal()"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <div class="modal-cuerpo">
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario">Usuario <span class="etiqueta-requerido">*</span></label>
+          <select [(ngModel)]="certificadoActual.usuarioId" class="selector-formulario" [disabled]="modoEdicion">
+            <option [ngValue]="null" disabled>Selecciona un usuario...</option>
+            <option *ngFor="let usuario of listaUsuarios" [value]="usuario.id">
+              {{ usuario.nombre }} ({{ usuario.correo }})
+            </option>
+          </select>
+        </div>
+
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario">Evento <span class="etiqueta-requerido">*</span></label>
+          <select [(ngModel)]="certificadoActual.eventoId" class="selector-formulario" [disabled]="modoEdicion">
+            <option [ngValue]="null" disabled>Selecciona un evento...</option>
+            <option *ngFor="let evento of listaEventos" [value]="evento.id">
+              {{ evento.titulo }}
+            </option>
+          </select>
+        </div>
+
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario">URL del PDF</label>
+          <input type="url" [(ngModel)]="certificadoActual.urlPdf" placeholder="https://ejemplo.com/certificado.pdf"
+                 class="entrada-formulario">
+        </div>
+      </div>
+
+      <div class="modal-pie">
+        <button (click)="cerrarModal()" class="boton boton-secundario">Cancelar</button>
+        <button (click)="guardarCertificado()" class="boton boton-primario"
+                [disabled]="!modoEdicion && (!certificadoActual.usuarioId || !certificadoActual.eventoId)">
+          <i class="icono-boton" [ngClass]="modoEdicion ? 'bi bi-save-fill' : 'bi bi-plus-lg'"></i>
+          {{ modoEdicion ? 'Actualizar' : 'Crear Certificado' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,164 @@
+<div class="contenedor-pagina">
+  <div class="encabezado-pagina">
+    <div class="encabezado-izquierda">
+      <h1 class="titulo-pagina">
+        <i class="icono-titulo bi bi-patch-check-fill"></i>
+        Gestión de Asistencias
+      </h1>
+      <p class="subtitulo-pagina">Registra y confirma la asistencia a eventos</p>
+    </div>
+  </div>
+
+  <div class="grilla-estadisticas-mini">
+    <div class="tarjeta-estadistica-mini estadistica-confirmada">
+      <div class="icono-estadistica-mini"><i class="bi bi-check-circle-fill"></i></div>
+      <div class="contenido-estadistica-mini">
+        <p class="valor-estadistica-mini">{{ obtenerAsistenciasPorEstado('CONFIRMADA').length }}</p>
+        <p class="etiqueta-estadistica-mini">Confirmadas</p>
+      </div>
+    </div>
+    <div class="tarjeta-estadistica-mini estadistica-no-asistio">
+      <div class="icono-estadistica-mini"><i class="bi bi-x-circle-fill"></i></div>
+      <div class="contenido-estadistica-mini">
+        <p class="valor-estadistica-mini">{{ obtenerAsistenciasPorEstado('NO_ASISTIO').length }}</p>
+        <p class="etiqueta-estadistica-mini">No Asistieron</p>
+      </div>
+    </div>
+    <div class="tarjeta-estadistica-mini estadistica-total">
+      <div class="icono-estadistica-mini"><i class="bi bi-star-fill"></i></div>
+      <div class="contenido-estadistica-mini">
+        <p class="valor-estadistica-mini">{{ calcularTotalPuntosOtorgados() }}</p>
+        <p class="etiqueta-estadistica-mini">Puntos Otorgados</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="seccion-filtros">
+    <div class="fila-filtros">
+      <div class="contenedor-busqueda">
+        <i class="icono-busqueda bi bi-search"></i>
+        <input
+          type="text"
+          class="entrada-busqueda"
+          placeholder="Buscar por voluntario o evento..."
+          [(ngModel)]="terminoBusqueda"
+          (ngModelChange)="filtrarAsistencias()">
+      </div>
+
+      <div class="grupo-filtros">
+        <select class="selector-filtro" [(ngModel)]="filtroEstado" (change)="filtrarAsistencias()">
+          <option value="">Todos los estados</option>
+          <option value="CONFIRMADA">Confirmadas</option>
+          <option value="NO_ASISTIO">No Asistieron</option>
+        </select>
+
+        <button class="boton-limpiar-filtros" (click)="limpiarFiltros()" *ngIf="terminoBusqueda || filtroEstado">
+          <i class="bi bi-arrow-counterclockwise"></i> Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="cargando" class="contenedor-carga">
+    <div class="giratorio"></div>
+    <p>Cargando asistencias...</p>
+  </div>
+
+  <div *ngIf="!cargando" class="tarjeta-tabla">
+    <div class="tabla-responsiva">
+      <table class="tabla-datos">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Voluntario</th>
+          <th>Evento</th>
+          <th>Estado</th>
+          <th>Puntos</th>
+          <th>Confirmado</th>
+          <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let asistencia of asistenciasFiltradas" class="fila-tabla">
+          <td class="celda-id">
+            <span class="insignia-id">{{ asistencia.id }}</span>
+          </td>
+
+          <td class="celda-voluntario">
+            <div class="info-voluntario">
+              <div class="avatar-voluntario">
+                {{ asistencia.usuario.nombre.charAt(0).toUpperCase() }}
+              </div>
+              <div class="detalles-voluntario">
+                <div class="nombre-voluntario">{{ asistencia.usuario.nombre }}</div>
+                <div class="correo-voluntario">{{ asistencia.usuario.correo }}</div>
+              </div>
+            </div>
+          </td>
+
+          <td class="celda-evento">
+            <div class="info-evento-compacta">
+              <i class="icono-evento-pequeno bi bi-calendar-event"></i>
+              <span class="titulo-evento-pequeno">{{ asistencia.evento.titulo }}</span>
+            </div>
+          </td>
+
+          <td class="celda-estado">
+            <select
+              [(ngModel)]="asistencia.estado"
+              (change)="actualizarAsistencia(asistencia)"
+              [ngClass]="obtenerClaseEstado(asistencia.estado)"
+              class="selector-estado">
+              <option value="CONFIRMADA">CONFIRMADA</option>
+              <option value="NO_ASISTIO">NO ASISTIÓ</option>
+            </select>
+          </td>
+
+          <td class="celda-puntos">
+            <div class="contenedor-puntos">
+              <i class="icono-puntos bi bi-star-fill"></i>
+              <input
+                type="number"
+                [(ngModel)]="asistencia.puntosOtorgados"
+                (change)="actualizarAsistencia(asistencia)"
+                class="entrada-puntos"
+                min="0"
+                [disabled]="asistencia.estado !== 'CONFIRMADA'">
+            </div>
+          </td>
+
+          <td class="celda-fecha">
+            <div class="info-fecha" *ngIf="asistencia.confirmadoEn">
+              <div class="fecha-completa">
+                <i class="icono-fecha bi bi-calendar2-week"></i>
+                {{ asistencia.confirmadoEn | date:'dd/MM/yyyy' }}
+              </div>
+              <div class="fecha-relativa">
+                {{ obtenerTiempoTranscurrido(asistencia.confirmadoEn) }}
+              </div>
+            </div>
+            <div class="sin-confirmar" *ngIf="!asistencia.confirmadoEn">
+              Sin confirmar
+            </div>
+          </td>
+
+          <td class="celda-acciones">
+            <button class="boton-accion boton-eliminar" (click)="eliminarAsistencia(asistencia.id!)" title="Eliminar">
+              <i class="bi bi-trash-fill"></i>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="asistenciasFiltradas.length === 0" class="estado-vacio">
+        <div class="icono-vacio"><i class="bi bi-clipboard-x"></i></div>
+        <h3>No se encontraron asistencias</h3>
+        <p>{{ terminoBusqueda || filtroEstado ? 'Intenta con otros filtros' : 'No hay asistencias registradas aún' }}</p>
+        <button class="boton boton-secundario" (click)="limpiarFiltros()" *ngIf="terminoBusqueda || filtroEstado">
+          <i class="bi bi-arrow-counterclockwise"></i> Limpiar filtros
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

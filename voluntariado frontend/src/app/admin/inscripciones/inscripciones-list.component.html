@@ -1,0 +1,142 @@
+<div class="contenedor-pagina">
+  <div class="encabezado-pagina">
+    <div class="encabezado-izquierda">
+      <h1 class="titulo-pagina">
+        <i class="icono-titulo bi bi-clipboard-check-fill"></i>
+        Gestión de Inscripciones
+      </h1>
+      <p class="subtitulo-pagina">Administra las inscripciones a eventos de voluntariado</p>
+    </div>
+  </div>
+
+  <div class="grilla-estadisticas-mini">
+    <div class="tarjeta-estadistica-mini estadistica-pendiente">
+      <div class="icono-estadistica-mini"><i class="bi bi-clock-history"></i></div>
+      <div class="contenido-estadistica-mini">
+        <p class="valor-estadistica-mini">{{ obtenerInscripcionesPorEstado('PENDIENTE').length }}</p>
+        <p class="etiqueta-estadistica-mini">Pendientes</p>
+      </div>
+    </div>
+    <div class="tarjeta-estadistica-mini estadistica-aceptada">
+      <div class="icono-estadistica-mini"><i class="bi bi-check-circle-fill"></i></div>
+      <div class="contenido-estadistica-mini">
+        <p class="valor-estadistica-mini">{{ obtenerInscripcionesPorEstado('ACEPTADA').length }}</p>
+        <p class="etiqueta-estadistica-mini">Aceptadas</p>
+      </div>
+    </div>
+    <div class="tarjeta-estadistica-mini estadistica-rechazada">
+      <div class="icono-estadistica-mini"><i class="bi bi-x-circle-fill"></i></div>
+      <div class="contenido-estadistica-mini">
+        <p class="valor-estadistica-mini">{{ obtenerInscripcionesPorEstado('RECHAZADA').length }}</p>
+        <p class="etiqueta-estadistica-mini">Rechazadas</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="seccion-filtros">
+    <div class="fila-filtros">
+      <div class="contenedor-busqueda">
+        <i class="icono-busqueda bi bi-search"></i>
+        <input
+          type="text"
+          class="entrada-busqueda"
+          placeholder="Buscar por voluntario o evento..."
+          [(ngModel)]="terminoBusqueda"
+          (ngModelChange)="filtrarInscripciones()">
+      </div>
+      <div class="grupo-filtros">
+        <select class="selector-filtro" [(ngModel)]="filtroEstado" (change)="filtrarInscripciones()">
+          <option value="">Todos los estados</option>
+          <option value="PENDIENTE">Pendientes</option>
+          <option value="ACEPTADA">Aceptadas</option>
+          <option value="RECHAZADA">Rechazadas</option>
+        </select>
+        <button class="boton-limpiar-filtros" (click)="limpiarFiltros()" *ngIf="terminoBusqueda || filtroEstado">
+          <i class="bi bi-arrow-counterclockwise"></i> Limpiar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="cargando" class="contenedor-carga">
+    <div class="giratorio"></div>
+    <p>Cargando inscripciones...</p>
+  </div>
+
+  <div *ngIf="!cargando" class="tarjeta-tabla">
+    <div class="tabla-responsiva">
+      <table class="tabla-datos">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Voluntario</th>
+          <th>Evento</th>
+          <th>Estado</th>
+          <th>Fecha Solicitud</th>
+          <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let inscripcion of inscripcionesFiltradas" class="fila-tabla">
+          <td class="celda-id">
+            <span class="insignia-id">{{ inscripcion.id }}</span>
+          </td>
+          <td class="celda-voluntario">
+            <div class="info-voluntario">
+              <div class="avatar-voluntario">
+                {{ inscripcion.usuario.nombre.charAt(0).toUpperCase() }}
+              </div>
+              <div class="detalles-voluntario">
+                <div class="nombre-voluntario">{{ inscripcion.usuario.nombre }}</div>
+                <div class="correo-voluntario">{{ inscripcion.usuario.correo }}</div>
+              </div>
+            </div>
+          </td>
+          <td class="celda-evento">
+            <div class="info-evento-compacta">
+              <i class="icono-evento-pequeno bi bi-calendar-event"></i>
+              <span class="titulo-evento-pequeno">{{ inscripcion.evento.titulo }}</span>
+            </div>
+          </td>
+          <td class="celda-estado">
+            <select
+              [(ngModel)]="inscripcion.estado"
+              (change)="actualizarEstado(inscripcion)"
+              [ngClass]="obtenerClaseEstado(inscripcion.estado)"
+              class="selector-estado">
+              <option value="PENDIENTE">PENDIENTE</option>
+              <option value="ACEPTADA">ACEPTADA</option>
+              <option value="RECHAZADA">RECHAZADA</option>
+            </select>
+          </td>
+          <td class="celda-fecha">
+            <div class="info-fecha">
+              <div class="fecha-completa">
+                <i class="icono-fecha bi bi-calendar2-week"></i>
+                {{ inscripcion.solicitadoEn | date:'dd/MM/yyyy' }}
+              </div>
+              <div class="fecha-relativa">
+                {{ obtenerTiempoTranscurrido(inscripcion.solicitadoEn) }}
+              </div>
+            </div>
+          </td>
+          <td class="celda-acciones">
+            <button class="boton-accion boton-eliminar" (click)="eliminarInscripcion(inscripcion.id!)" title="Eliminar">
+              <i class="bi bi-trash-fill"></i>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="inscripcionesFiltradas.length === 0" class="estado-vacio">
+        <div class="icono-vacio"><i class="bi bi-journal-x"></i></div>
+        <h3>No se encontraron inscripciones</h3>
+        <p>{{ terminoBusqueda || filtroEstado ? 'Intenta con otros filtros' : 'No hay inscripciones registradas aún' }}</p>
+        <button class="boton boton-secundario" (click)="limpiarFiltros()" *ngIf="terminoBusqueda || filtroEstado">
+          <i class="bi bi-arrow-counterclockwise"></i> Limpiar filtros
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

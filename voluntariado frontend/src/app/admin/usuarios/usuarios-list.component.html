@@ -1,0 +1,210 @@
+<div class="contenedor-pagina">
+  <div class="encabezado-pagina">
+    <div class="encabezado-izquierda">
+      <h1 class="titulo-pagina">
+        <i class="icono-titulo bi bi-people-fill"></i>
+        Gestión de Usuarios
+      </h1>
+      <p class="subtitulo-pagina">Administra todos los usuarios del sistema</p>
+    </div>
+    <div class="acciones-encabezado">
+      <button class="btn btn-primario" (click)="abrirModal()">
+        <i class="btn-icono bi bi-plus-lg"></i>
+        Nuevo Usuario
+      </button>
+    </div>
+  </div>
+
+  <div class="cuadricula-mini-estadisticas">
+    <div class="tarjeta-mini-estadistica estadistica-admin">
+      <div class="icono-mini-estadistica"><i class="bi bi-person-video3"></i></div>
+      <div class="contenido-mini-estadistica">
+        <p class="valor-mini-estadistica">{{ obtenerUsuariosPorRol('ADMIN').length }}</p>
+        <p class="etiqueta-mini-estadistica">Administradores</p>
+      </div>
+    </div>
+    <div class="tarjeta-mini-estadistica estadistica-organizador">
+      <div class="icono-mini-estadistica"><i class="bi bi-person-rolodex"></i></div>
+      <div class="contenido-mini-estadistica">
+        <p class="valor-mini-estadistica">{{ obtenerUsuariosPorRol('ORGANIZADOR').length }}</p>
+        <p class="etiqueta-mini-estadistica">Organizadores</p>
+      </div>
+    </div>
+    <div class="tarjeta-mini-estadistica estadistica-voluntario">
+      <div class="icono-mini-estadistica"><i class="bi bi-person-heart"></i></div>
+      <div class="contenido-mini-estadistica">
+        <p class="valor-mini-estadistica">{{ obtenerUsuariosPorRol('VOLUNTARIO').length }}</p>
+        <p class="etiqueta-mini-estadistica">Voluntarios</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="seccion-filtros">
+    <div class="contenedor-busqueda">
+      <i class="icono-busqueda bi bi-search"></i>
+      <input
+        type="text"
+        class="input-busqueda"
+        placeholder="Buscar por nombre, correo o teléfono..."
+        [(ngModel)]="terminoBusqueda"
+        (ngModelChange)="filtrarUsuarios()">
+    </div>
+  </div>
+
+  <div *ngIf="cargando" class="contenedor-carga">
+    <div class="spinner"></div>
+    <p>Cargando usuarios...</p>
+  </div>
+
+  <div *ngIf="!cargando" class="tarjeta-tabla">
+    <div class="tabla-responsiva">
+      <table class="tabla-datos">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>Usuario</th>
+          <th>Contacto</th>
+          <th>Rol</th>
+          <th>Estadísticas</th>
+          <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let usuario of usuariosFiltrados" class="fila-tabla">
+          <td class="celda-id"><span class="insignia-id">{{ usuario.id }}</span></td>
+          <td class="celda-usuario">
+            <div class="info-usuario">
+              <div class="avatar-usuario" [ngClass]="obtenerClaseAvatarRol(usuario.rol.nombre)">
+                {{ usuario.nombre.charAt(0).toUpperCase() }}
+              </div>
+              <div class="detalles-usuario">
+                <div class="nombre-usuario">{{ usuario.nombre }}</div>
+                <div class="correo-usuario">{{ usuario.correo }}</div>
+              </div>
+            </div>
+          </td>
+          <td class="celda-contacto">
+            <div class="info-contacto">
+              <div class="item-contacto" *ngIf="usuario.telefono">
+                <i class="icono-contacto bi bi-telephone-fill"></i>
+                <span>{{ usuario.telefono }}</span>
+              </div>
+              <div class="item-contacto" *ngIf="!usuario.telefono">
+                <span class="sin-datos">Sin teléfono</span>
+              </div>
+            </div>
+          </td>
+          <td class="celda-rol">
+            <span [ngClass]="obtenerClaseInsigniaRol(usuario.rol.nombre)" class="insignia-rol">
+              <i class="icono-rol" [ngClass]="obtenerIconoRol(usuario.rol.nombre)"></i>
+              <span>{{ usuario.rol.nombre }}</span>
+            </span>
+          </td>
+          <td class="celda-estadisticas">
+            <div class="estadisticas-usuario">
+              <div class="item-estadistica">
+                <i class="icono-estadistica bi bi-star-fill"></i>
+                <span class="valor-estadistica">{{ usuario.puntos }}</span>
+                <span class="etiqueta-estadistica">pts</span>
+              </div>
+              <div class="item-estadistica">
+                <i class="icono-estadistica bi bi-clock-history"></i>
+                <span class="valor-estadistica">{{ usuario.horasAcumuladas }}</span>
+                <span class="etiqueta-estadistica">hrs</span>
+              </div>
+            </div>
+          </td>
+          <td class="celda-acciones">
+            <button class="btn-accion btn-editar" (click)="abrirModal(usuario)" title="Editar">
+              <i class="bi bi-pencil-fill"></i>
+            </button>
+            <button class="btn-accion btn-eliminar" (click)="eliminarUsuario(usuario.id!)" title="Eliminar">
+              <i class="bi bi-trash-fill"></i>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="usuariosFiltrados.length === 0" class="estado-vacio">
+        <div class="icono-vacio"><i class="bi bi-person-slash"></i></div>
+        <h3>No se encontraron usuarios</h3>
+        <p>Intenta con otros términos de búsqueda o crea un nuevo usuario</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="mostrarModal" class="superposicion-modal" (click)="cerrarModal()">
+    <div class="contenedor-modal" (click)="$event.stopPropagation()">
+      <div class="encabezado-modal">
+        <h2 class="titulo-modal">
+          <i class="icono-modal" [ngClass]="modoEdicion ? 'bi bi-pencil-fill' : 'bi bi-plus-lg'"></i>
+          {{ modoEdicion ? 'Editar Usuario' : 'Nuevo Usuario' }}
+        </h2>
+        <button class="btn-cerrar-modal" (click)="cerrarModal()"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <div class="cuerpo-modal">
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario"><span class="texto-etiqueta">Nombre Completo</span><span class="etiqueta-requerido">*</span></label>
+          <div class="input-con-icono">
+            <i class="icono-input bi bi-person-fill"></i>
+            <input type="text" class="input-formulario" [(ngModel)]="usuarioActual.nombre" placeholder="Ej: Juan Pérez" required>
+          </div>
+        </div>
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario"><span class="texto-etiqueta">Correo Electrónico</span><span class="etiqueta-requerido">*</span></label>
+          <div class="input-con-icono">
+            <i class="icono-input bi bi-envelope-fill"></i>
+            <input type="email" class="input-formulario" [(ngModel)]="usuarioActual.correo" placeholder="usuario@ejemplo.com" required>
+          </div>
+        </div>
+        <div class="grupo-formulario" *ngIf="!modoEdicion">
+          <label class="etiqueta-formulario"><span class="texto-etiqueta">Contraseña</span><span class="etiqueta-requerido">*</span></label>
+          <div class="input-con-icono">
+            <i class="icono-input bi bi-key-fill"></i>
+            <input type="password" class="input-formulario" [(ngModel)]="usuarioActual.password" placeholder="••••••••" required>
+          </div>
+        </div>
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario"><span class="texto-etiqueta">Teléfono</span></label>
+          <div class="input-con-icono">
+            <i class="icono-input bi bi-telephone-fill"></i>
+            <input type="tel" class="input-formulario" [(ngModel)]="usuarioActual.telefono" placeholder="+51 999 999 999">
+          </div>
+        </div>
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario"><span class="texto-etiqueta">Rol del Usuario</span><span class="etiqueta-requerido">*</span></label>
+          <select class="select-formulario" [(ngModel)]="usuarioActual.rol.nombre" required>
+            <option value="">Seleccionar rol...</option>
+            <option *ngFor="let rol of roles" [value]="rol.nombre">{{ rol.nombre }}</option>
+          </select>
+        </div>
+        <div class="fila-formulario">
+          <div class="grupo-formulario">
+            <label class="etiqueta-formulario"><span class="texto-etiqueta">Puntos</span></label>
+            <div class="input-con-icono">
+              <i class="icono-input bi bi-star-fill"></i>
+              <input type="number" class="input-formulario" [(ngModel)]="usuarioActual.puntos" min="0" placeholder="0">
+            </div>
+          </div>
+          <div class="grupo-formulario">
+            <label class="etiqueta-formulario"><span class="texto-etiqueta">Horas Acumuladas</span></label>
+            <div class="input-con-icono">
+              <i class="icono-input bi bi-clock-history"></i>
+              <input type="number" class="input-formulario" [(ngModel)]="usuarioActual.horasAcumuladas" step="0.5" min="0" placeholder="0">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pie-modal">
+        <button class="btn btn-secundario" (click)="cerrarModal()">Cancelar</button>
+        <button class="btn btn-primario" (click)="guardarUsuario()">
+          <i class="btn-icono" [ngClass]="modoEdicion ? 'bi bi-save-fill' : 'bi bi-plus-lg'"></i>
+          {{ modoEdicion ? 'Actualizar' : 'Crear' }} Usuario
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
