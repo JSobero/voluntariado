@@ -12,7 +12,7 @@ import { Usuario } from '../../core/models/usuario.model';
   imports: [CommonModule, FormsModule],
   templateUrl: './eventos-list.component.html',
   styleUrls: ['./eventos-list.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush // ✅ Fuerza actualización manual
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EventosListComponent implements OnInit {
   eventos: Evento[] = [];
@@ -34,63 +34,51 @@ export class EventosListComponent implements OnInit {
   ngOnInit() {
     this.cargarEventos();
     this.cargarOrganizadores();
-
-    // ✅ Asegura que Angular actualice el DOM tras el primer render (corrige el "no se muestra completo")
-    setTimeout(() => this.cdRef.detectChanges(), 150);
   }
 
- cargarEventos() {
-   this.cargando = true;
-   this.eventoService.getAll().subscribe({
-     next: (datos) => {
-       // ✅ Convertimos las fechas en cadenas ISO sin usar Date directamente
-       this.eventos = datos.map(e => {
-         const fechaInicio = this.convertirFecha(e.fechaInicio);
-         const fechaFin = e.fechaFin ? this.convertirFecha(e.fechaFin) : undefined;
-         return {
-           ...e,
-           fechaInicio: fechaInicio || '',
-           fechaFin: fechaFin || undefined
-         };
-       });
+  cargarEventos() {
+    this.cargando = true;
+    this.eventoService.getAll().subscribe({
+      next: (datos) => {
+        this.eventos = datos.map(e => {
+          const fechaInicio = this.convertirFecha(e.fechaInicio);
+          const fechaFin = e.fechaFin ? this.convertirFecha(e.fechaFin) : undefined;
+          return {
+            ...e,
+            fechaInicio: fechaInicio || '',
+            fechaFin: fechaFin || undefined
+          };
+        });
 
-       this.eventosFiltrados = this.eventos;
-       this.cargando = false;
-       this.cdRef.detectChanges();
-     },
-     error: (err) => {
-       console.error('Error al cargar eventos:', err);
-       this.cargando = false;
-       this.cdRef.detectChanges();
-     }
-   });
- }
+        this.eventosFiltrados = this.eventos;
+        this.cargando = false;
+        this.cdRef.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar eventos:', err);
+        this.cargando = false;
+        this.cdRef.detectChanges();
+      }
+    });
+  }
 
+  convertirFecha(fechaTexto: any): string {
+    if (!fechaTexto) return '';
 
+    if (Array.isArray(fechaTexto)) {
+      const [año, mes, día, hora = 0, minuto = 0] = fechaTexto;
+      const fecha = new Date(año, mes - 1, día, hora, minuto);
+      // Devuelve formato compatible con <input type="datetime-local">
+      return fecha.toISOString().slice(0, 16);
+    }
 
+    if (typeof fechaTexto === 'string') {
+      // Si ya es un string, solo asegúrate de que tenga el formato correcto
+      return new Date(fechaTexto).toISOString().slice(0, 16);
+    }
 
- // ✅ Nueva función auxiliar — versión corregida
- convertirFecha(fechaTexto: any): string {
-   if (!fechaTexto) return '';
-
-   if (Array.isArray(fechaTexto)) {
-     const [año, mes, día, hora = 0, minuto = 0] = fechaTexto;
-     const fecha = new Date(año, mes - 1, día, hora, minuto);
-     return fecha.toISOString().slice(0, 16); // formato 'YYYY-MM-DDTHH:mm'
-   }
-
-   if (typeof fechaTexto === 'string') {
-     // Si ya es string, lo normalizamos
-     return new Date(fechaTexto).toISOString().slice(0, 16);
-   }
-
-   return '';
- }
-
-
-
-
-
+    return '';
+  }
 
   cargarOrganizadores() {
     this.usuarioService.getAll().subscribe({
@@ -98,7 +86,7 @@ export class EventosListComponent implements OnInit {
         this.organizadores = datos.filter(u =>
           u.rol.nombre === 'ADMIN' || u.rol.nombre === 'ORGANIZADOR'
         );
-        this.cdRef.detectChanges(); // ✅ Actualiza lista de organizadores al llegar
+        this.cdRef.detectChanges();
       },
       error: (err) => console.error('Error al cargar organizadores:', err)
     });
@@ -117,7 +105,7 @@ export class EventosListComponent implements OnInit {
       e.descripcion?.toLowerCase().includes(termino) ||
       e.lugar.toLowerCase().includes(termino)
     );
-    this.cdRef.detectChanges(); // ✅ Actualiza la vista después del filtro
+    this.cdRef.detectChanges();
   }
 
   abrirModal(evento?: Evento) {
@@ -133,7 +121,7 @@ export class EventosListComponent implements OnInit {
       this.modoEdicion = false;
       this.eventoActual = this.obtenerEventoVacio();
     }
-    this.cdRef.detectChanges(); // ✅ Asegura render inmediato del modal
+    this.cdRef.detectChanges();
   }
 
   cerrarModal() {
@@ -163,15 +151,12 @@ export class EventosListComponent implements OnInit {
 
     if (this.modoEdicion && this.eventoActual.id) {
       this.eventoService.update(this.eventoActual.id, eventoParaGuardar).subscribe({
-        next: (eventoActualizado) => {
-          const indice = this.eventos.findIndex(e => e.id === eventoActualizado.id);
-          if (indice !== -1) {
-            this.eventos[indice] = eventoActualizado;
-            this.eventosFiltrados = [...this.eventos];
-          }
+        // ===== CÓDIGO CORREGIDO Y SIMPLIFICADO =====
+        next: () => {
+          this.cargarEventos(); // Recarga la lista completa para asegurar consistencia
           this.cerrarModal();
-          this.cdRef.detectChanges(); // ✅ Refresca tabla tras edición
         },
+        // ===========================================
         error: (err) => {
           console.error('Error al actualizar:', err);
           alert('Error al actualizar el evento');
@@ -182,7 +167,6 @@ export class EventosListComponent implements OnInit {
         next: () => {
           this.cargarEventos();
           this.cerrarModal();
-          this.cdRef.detectChanges(); // ✅ Refresca vista tras crear nuevo evento
         },
         error: (err) => {
           console.error('Error al crear:', err);
@@ -198,7 +182,7 @@ export class EventosListComponent implements OnInit {
         next: () => {
           this.eventos = this.eventos.filter(e => e.id !== id);
           this.eventosFiltrados = this.eventosFiltrados.filter(e => e.id !== id);
-          this.cdRef.detectChanges(); // ✅ Actualiza tabla después de eliminar
+          this.cdRef.detectChanges();
         },
         error: (err) => {
           console.error('Error al eliminar:', err);
@@ -220,22 +204,26 @@ export class EventosListComponent implements OnInit {
     };
   }
 
-  formatearFechaParaInput(fechaTexto: string): string {
+  formatearFechaParaInput(fechaTexto: string | Date): string {
+    if (!fechaTexto) return '';
     const fecha = new Date(fechaTexto);
+    // Valida si la fecha es correcta antes de convertirla
+    if (isNaN(fecha.getTime())) return '';
     return fecha.toISOString().slice(0, 16);
   }
 
-  esEventoPasado(fechaInicio: string): boolean {
+  esEventoPasado(fechaInicio: string | Date): boolean {
+    if (!fechaInicio) return false;
     return new Date(fechaInicio) < new Date();
   }
 
-  obtenerClaseEstadoEvento(fechaInicio: string): string {
+  obtenerClaseEstadoEvento(fechaInicio: string | Date): string {
     return this.esEventoPasado(fechaInicio)
       ? 'insignia-estado-gris'
       : 'insignia-estado-verde';
   }
 
-  obtenerEstadoEvento(fechaInicio: string): string {
+  obtenerEstadoEvento(fechaInicio: string | Date): string {
     return this.esEventoPasado(fechaInicio) ? 'Finalizado' : 'Próximo';
   }
 }

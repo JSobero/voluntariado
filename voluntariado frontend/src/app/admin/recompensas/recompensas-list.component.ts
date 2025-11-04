@@ -12,7 +12,7 @@ import { Recompensa } from '../../core/models/recompensa.model';
   styleUrls: ['./recompensas-list.component.css']
 })
 export class RecompensasListComponent implements OnInit {
-  // --- PROPIEDADES ---
+
   recompensas: Recompensa[] = [];
   recompensasFiltradas: Recompensa[] = [];
   mostrarModal = false;
@@ -27,7 +27,7 @@ export class RecompensasListComponent implements OnInit {
     this.cargarRecompensas();
   }
 
-  // --- MÉTODOS PARA CARGAR Y FILTRAR DATOS ---
+
   cargarRecompensas() {
     this.cargando = true;
     this.recompensaServicio.getAll().subscribe({
@@ -54,7 +54,7 @@ export class RecompensasListComponent implements OnInit {
     );
   }
 
-  // --- MÉTODOS PARA GESTIONAR EL MODAL ---
+
   abrirModal(recompensa?: Recompensa) {
     this.mostrarModal = true;
     if (recompensa) {
@@ -71,7 +71,7 @@ export class RecompensasListComponent implements OnInit {
     this.recompensaActual = this.obtenerRecompensaVacia();
   }
 
-  // --- MÉTODOS CRUD (Crear, Actualizar, Eliminar) ---
+
   guardarRecompensa() {
     if (!this.recompensaActual.nombre || !this.recompensaActual.puntosNecesarios) {
       alert('Por favor completa los campos requeridos');
@@ -117,7 +117,7 @@ export class RecompensasListComponent implements OnInit {
     }
   }
 
-  // --- MÉTODOS AUXILIARES ---
+
   obtenerClaseStock(stock: number): string {
     if (stock === 0) return 'stock-agotado';
     if (stock < 10) return 'stock-bajo';

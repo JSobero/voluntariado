@@ -42,7 +42,6 @@ export class AsistenciasListComponent implements OnInit {
   filtrarAsistencias() {
     let filtradas = [...this.asistencias];
 
-    // Filtrar por búsqueda
     if (this.terminoBusqueda) {
       const termino = this.terminoBusqueda.toLowerCase();
       filtradas = filtradas.filter(a =>
@@ -51,7 +50,7 @@ export class AsistenciasListComponent implements OnInit {
       );
     }
 
-    // Filtrar por estado
+
     if (this.filtroEstado) {
       filtradas = filtradas.filter(a => a.estado === this.filtroEstado);
     }
@@ -77,7 +76,7 @@ export class AsistenciasListComponent implements OnInit {
 
   actualizarAsistencia(asistencia: Asistencia) {
     if (asistencia.id) {
-      // Guardar estado anterior por si falla
+
       const estadoAnterior = { ...asistencia };
 
       this.asistenciaService.update(asistencia.id, asistencia).subscribe({
@@ -85,7 +84,7 @@ export class AsistenciasListComponent implements OnInit {
           console.log('Asistencia actualizada correctamente');
         },
         error: (err) => {
-          // Revertir cambios si falla
+
           Object.assign(asistencia, estadoAnterior);
           console.error('Error al actualizar:', err);
           alert('Error al actualizar la asistencia');
@@ -98,7 +97,7 @@ export class AsistenciasListComponent implements OnInit {
     if (confirm('¿Está seguro de eliminar esta asistencia? Esta acción no se puede deshacer.')) {
       this.asistenciaService.delete(id).subscribe({
         next: () => {
-          // Eliminar del array local sin recargar
+
           this.asistencias = this.asistencias.filter(a => a.id !== id);
           this.asistenciasFiltradas = this.asistenciasFiltradas.filter(a => a.id !== id);
         },

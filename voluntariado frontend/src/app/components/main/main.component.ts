@@ -10,11 +10,11 @@ import { Router } from '@angular/router';
   styleUrls: ['./main.component.css']
 })
 export class LandingComponent implements OnInit, OnDestroy {
-  private router = Router;
 
-  // Carrusel de héroe
   currentSlide = 0;
+  currentTestimonial = 0;
   carouselInterval: any;
+
 
   heroSlides = [
     {
@@ -37,7 +37,7 @@ export class LandingComponent implements OnInit, OnDestroy {
     }
   ];
 
-  // Estadísticas
+
   stats = [
     { value: '5,000+', label: 'Voluntarios activos' },
     { value: '150+', label: 'Eventos realizados' },
@@ -45,17 +45,17 @@ export class LandingComponent implements OnInit, OnDestroy {
     { value: '50+', label: 'Organizaciones aliadas' }
   ];
 
-  // Categorías de eventos
+
   categories = [
-    { icon: '🌱', name: 'Medio Ambiente', description: 'Limpieza de playas, reforestación y más' },
-    { icon: '👨‍🏫', name: 'Educación', description: 'Tutorías, talleres y capacitaciones' },
-    { icon: '🏥', name: 'Salud', description: 'Campañas médicas y apoyo comunitario' },
-    { icon: '🐕', name: 'Animales', description: 'Refugios y cuidado de mascotas' },
-    { icon: '👵', name: 'Adultos Mayores', description: 'Compañía y asistencia' },
-    { icon: '🎨', name: 'Arte y Cultura', description: 'Eventos culturales y talleres creativos' }
+    { icon: 'bi bi-tree-fill', name: 'Medio Ambiente', description: 'Limpieza de playas, reforestación y más' },
+    { icon: 'bi bi-mortarboard-fill', name: 'Educación', description: 'Tutorías, talleres y capacitaciones' },
+    { icon: 'bi bi-heart-pulse-fill', name: 'Salud', description: 'Campañas médicas y apoyo comunitario' },
+    { icon: 'bi bi-house-heart-fill', name: 'Animales', description: 'Refugios y cuidado de mascotas' },
+    { icon: 'bi bi-person-heart', name: 'Adultos Mayores', description: 'Compañía y asistencia' },
+    { icon: 'bi bi-palette-fill', name: 'Arte y Cultura', description: 'Eventos culturales y talleres creativos' }
   ];
 
-  // Eventos destacados
+
   featuredEvents = [
     {
       title: 'Limpieza de Playas Costa Verde',
@@ -86,7 +86,7 @@ export class LandingComponent implements OnInit, OnDestroy {
     }
   ];
 
-  // Testimonios
+
   testimonials = [
     {
       name: 'María González',
@@ -111,9 +111,7 @@ export class LandingComponent implements OnInit, OnDestroy {
     }
   ];
 
-  currentTestimonial = 0;
-
-  constructor(private routerService: Router) {}
+  constructor(private router: Router) {}
 
   ngOnInit(): void {
     this.startCarousel();
@@ -125,6 +123,7 @@ export class LandingComponent implements OnInit, OnDestroy {
     }
   }
 
+  // --- Métodos del Carrusel ---
   startCarousel(): void {
     this.carouselInterval = setInterval(() => {
       this.nextSlide();
@@ -143,6 +142,7 @@ export class LandingComponent implements OnInit, OnDestroy {
     this.currentSlide = index;
   }
 
+
   nextTestimonial(): void {
     this.currentTestimonial = (this.currentTestimonial + 1) % this.testimonials.length;
   }
@@ -150,6 +150,7 @@ export class LandingComponent implements OnInit, OnDestroy {
   prevTestimonial(): void {
     this.currentTestimonial = this.currentTestimonial === 0 ? this.testimonials.length - 1 : this.currentTestimonial - 1;
   }
+
 
   scrollToSection(sectionId: string): void {
     const element = document.getElementById(sectionId);
@@ -159,14 +160,14 @@ export class LandingComponent implements OnInit, OnDestroy {
   }
 
   navigateToRegister(): void {
-    this.routerService.navigate(['/register']);
+    this.router.navigate(['/register']);
   }
 
   navigateToLogin(): void {
-    this.routerService.navigate(['/login']);
+    this.router.navigate(['/login']);
   }
 
   navigateToEvents(): void {
-    this.routerService.navigate(['/eventos']);
+    this.router.navigate(['/eventos']);
   }
 }

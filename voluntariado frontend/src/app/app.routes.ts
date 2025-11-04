@@ -14,25 +14,11 @@ export const routes: Routes = [
     path: 'home',
     loadComponent: () => import('./components/home/home.component').then(m => m.HomeComponent)
   },
-  // Rutas futuras que necesitarás crear
-  // {
-  //   path: 'login',
-  //   loadComponent: () => import('./components/auth/login/login.component').then(m => m.LoginComponent)
-  // },
-  // {
-  //   path: 'register',
-  //   loadComponent: () => import('./components/auth/register/register.component').then(m => m.RegisterComponent)
-  // },
-  // {
-  //   path: 'eventos',
-  //   loadComponent: () => import('./components/eventos/eventos.component').then(m => m.EventosComponent)
-  // },
   {
       path: 'admin',
       loadComponent: () =>
         import('./admin/layout/admin-layout.component').then(m => m.AdminLayoutComponent),
-      // Aquí puedes agregar un guard de autenticación después
-      // canActivate: [AuthGuard],
+
       children: [
         {
           path: 'dashboard',
@@ -82,7 +68,6 @@ export const routes: Routes = [
       ]
     },
   {
-
     path: '**',
     redirectTo: ''
   }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// 1. IMPORTA LO NECESARIO PARA LEER LA RUTA ACTIVA
+
 import { RouterModule, Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
 
@@ -13,10 +13,10 @@ import { filter, map } from 'rxjs/operators';
 })
 export class AdminLayoutComponent {
   sidebarOpen = true;
-  // 2. AÑADE UNA VARIABLE PARA CONTROLAR EL MENÚ DESPLEGABLE DEL USUARIO
+
   userMenuOpen = false;
 
-  // 3. AÑADE VARIABLES PARA EL TÍTULO Y BREADCRUMB DINÁMICOS
+
   pageTitle = 'Dashboard';
   breadcrumb = 'Dashboard';
 
@@ -31,14 +31,14 @@ export class AdminLayoutComponent {
     { route: '/admin/certificados', label: 'Certificados', icon: 'bi bi-patch-plus-fill', title: 'Gestión de Certificados' }
   ];
 
-  // 4. INYECTA EL ROUTER Y LA RUTA ACTIVA EN EL CONSTRUCTOR
+
   constructor(private router: Router, private activatedRoute: ActivatedRoute) {
     // Este código escucha los cambios de ruta para actualizar el título
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
       map(() => {
         const currentRoute = this.router.url;
-        // Busca en el array menuItems el título correspondiente a la ruta actual
+
         const activeItem = this.menuItems.find(item => item.route === currentRoute);
         return activeItem ? activeItem.title : 'Dashboard';
       })

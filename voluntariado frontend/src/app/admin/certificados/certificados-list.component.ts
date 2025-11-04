@@ -17,15 +17,15 @@ import { Evento } from '../../core/models/evento.model';
 })
 export class CertificadosListComponent implements OnInit {
   certificados: Certificado[] = [];
-  listaUsuarios: Usuario[] = []; // <--- AÑADIR
-  listaEventos: Evento[] = [];   // <--- AÑADIR
+  listaUsuarios: Usuario[] = [];
+  listaEventos: Evento[] = [];
 
   cargando = false;
   mostrarModal = false;
   modoEdicion = false;
   certificadoActual: any = this.obtenerCertificadoVacio(); // Usamos 'any' para flexibilidad en el form
 
-  // <--- INYECTAR NUEVOS SERVICIOS
+
   constructor(
     private certificadoService: CertificadoService,
     private usuarioService: UsuarioService,
@@ -34,10 +34,10 @@ export class CertificadosListComponent implements OnInit {
 
   ngOnInit() {
     this.cargarCertificados();
-    this.cargarDatosParaModal(); // <--- AÑADIR
+    this.cargarDatosParaModal();
   }
 
-  // <--- NUEVA FUNCIÓN PARA CARGAR DATOS DE LOS SELECTS
+  //
   cargarDatosParaModal() {
     this.usuarioService.getAll().subscribe(data => this.listaUsuarios = data);
     this.eventoService.getAll().subscribe(data => this.listaEventos = data);
@@ -72,7 +72,7 @@ export class CertificadosListComponent implements OnInit {
     this.mostrarModal = true;
     if (certificado) {
       this.modoEdicion = true;
-      // Para edición, nos aseguramos de que tengamos los IDs
+
       this.certificadoActual = {
         ...certificado,
         usuarioId: certificado.usuario.id,
@@ -88,10 +88,10 @@ export class CertificadosListComponent implements OnInit {
     this.mostrarModal = false;
   }
 
-  // En certificados-list.component.ts
+
 
   guardarCertificado() {
-    // Preparamos el objeto final para enviar al backend
+
     const certificadoParaGuardar = {
       id: this.certificadoActual.id,
       urlPdf: this.certificadoActual.urlPdf,
@@ -101,10 +101,10 @@ export class CertificadosListComponent implements OnInit {
 
     console.log('Enviando este objeto al backend:', certificadoParaGuardar);
 
-    // --- VALIDACIÓN AÑADIDA ---
+
     if (!this.modoEdicion && (!certificadoParaGuardar.usuario.id || !certificadoParaGuardar.evento.id)) {
       alert('Por favor, selecciona un usuario y un evento antes de crear el certificado.');
-      return; // Detiene la ejecución de la función si los datos faltan
+      return;
     }
 
     if (this.modoEdicion && certificadoParaGuardar.id) {
@@ -131,8 +131,8 @@ export class CertificadosListComponent implements OnInit {
   obtenerCertificadoVacio(): any {
     return {
       urlPdf: '',
-      usuarioId: null, // Campo para el ngModel del select de usuario
-      eventoId: null   // Campo para el ngModel del select de evento
+      usuarioId: null,
+      eventoId: null
     };
   }
 }

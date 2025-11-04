@@ -31,7 +31,7 @@ export class EventosComponent implements OnInit {
   private router = inject(Router);
   private readonly API_EVENTOS = 'http://localhost:8080/eventos';
 
-  // Filtros
+
   searchTerm = '';
   fechaInicio = '';
   fechaFin = '';
@@ -39,13 +39,13 @@ export class EventosComponent implements OnInit {
   categoriaSeleccionada = 'todas';
   ordenarPor = 'relevancia';
 
-  // Datos
+
   eventos: Evento[] = [];
   eventosFiltrados: Evento[] = [];
   isLoading = true;
   error: string | null = null;
 
-  // Categorías disponibles (simplificadas - sin el horrible diseño de bloques)
+
   categorias = [
     { id: 'todas', nombre: 'Todas', icon: '🌟' },
     { id: 'medio-ambiente', nombre: 'Medio Ambiente', icon: '🌱' },
@@ -57,7 +57,7 @@ export class EventosComponent implements OnInit {
     { id: 'construccion', nombre: 'Construcción', icon: '🏗️' }
   ];
 
-  // Imágenes por defecto según categoría
+
   imagenesCategoria: { [key: string]: string } = {
     'medio-ambiente': 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=300&fit=crop',
     'educacion': 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&h=300&fit=crop',
@@ -79,7 +79,7 @@ export class EventosComponent implements OnInit {
 
     this.http.get<Evento[]>(this.API_EVENTOS).subscribe({
       next: (eventos) => {
-        // Enriquecer eventos con datos adicionales
+
         this.eventos = eventos.map(evento => ({
           ...evento,
           categoria: this.asignarCategoria(evento.titulo, evento.descripcion),
@@ -129,7 +129,7 @@ export class EventosComponent implements OnInit {
   }
 
   calcularPuntos(evento: Evento): number {
-    // Calcular puntos según duración del evento
+
     if (evento.fechaInicio && evento.fechaFin) {
       const inicio = new Date(evento.fechaInicio);
       const fin = new Date(evento.fechaFin);
@@ -141,25 +141,25 @@ export class EventosComponent implements OnInit {
 
   aplicarFiltros(): void {
     this.eventosFiltrados = this.eventos.filter(evento => {
-      // Filtro por búsqueda de texto
+
       const matchSearch = !this.searchTerm ||
         evento.titulo.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
         evento.descripcion.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
         evento.lugar.toLowerCase().includes(this.searchTerm.toLowerCase());
 
-      // Filtro por categoría
+
       const matchCategoria = this.categoriaSeleccionada === 'todas' ||
         evento.categoria === this.categoriaSeleccionada;
 
-      // Filtro por lugar
+
       const matchLugar = !this.lugarFilter ||
         evento.lugar.toLowerCase().includes(this.lugarFilter.toLowerCase());
 
-      // Filtro por fecha de inicio
+
       const matchFechaInicio = !this.fechaInicio ||
         new Date(evento.fechaInicio) >= new Date(this.fechaInicio);
 
-      // Filtro por fecha de fin
+
       const matchFechaFin = !this.fechaFin ||
         new Date(evento.fechaInicio) <= new Date(this.fechaFin);
 
@@ -191,7 +191,7 @@ export class EventosComponent implements OnInit {
           return disponiblesB - disponiblesA;
         });
         break;
-      default: // relevancia
+      default:
         break;
     }
   }
@@ -227,7 +227,7 @@ export class EventosComponent implements OnInit {
 
   inscribirseEvento(eventoId: number): void {
     console.log('Inscribirse al evento:', eventoId);
-    // Aquí implementarás la lógica de inscripción
+
     alert('Funcionalidad de inscripción próximamente');
   }
 

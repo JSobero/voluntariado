@@ -1,4 +1,4 @@
-/* src/app/app.css */
+
 .app-container {
   min-height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -7,7 +7,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Reset básico */
+
 * {
   margin: 0;
   padding: 0;

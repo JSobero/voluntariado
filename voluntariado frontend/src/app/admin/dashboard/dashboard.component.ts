@@ -37,7 +37,7 @@ export class DashboardComponent implements OnInit {
   loadDashboardData() {
     this.loading = true;
 
-    // Cargar estadísticas
+
     this.usuarioService.getAll().subscribe(usuarios => {
       this.stats.usuarios = usuarios.length;
     });
@@ -49,7 +49,7 @@ export class DashboardComponent implements OnInit {
        }
 
 
-      // 🔧 Convertir fechas de los eventos antes de mostrarlos
+
       const eventosConvertidos = eventos.map((e: any) => ({
         ...e,
         fechaInicio: this.convertirFecha(e.fechaInicio),
@@ -70,25 +70,25 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  // 🧠 Función auxiliar para convertir formatos como "2025,9,20,9,0"
+
  convertirFecha(valor: any): Date | null {
    if (!valor) return null;
 
-   // ✅ Si es un array como [2025, 9, 20, 9, 0]
+
    if (Array.isArray(valor) && valor.length >= 3) {
      const [anio, mes, dia, hora = 0, minuto = 0] = valor;
      const fecha = new Date(anio, mes - 1, dia, hora, minuto);
      return isNaN(fecha.getTime()) ? null : fecha;
    }
 
-   // ✅ Si es un string tipo "2025,9,20,9,0"
+
    if (typeof valor === 'string' && valor.includes(',')) {
      const partes = valor.split(',').map(n => parseInt(n, 10));
      const fecha = new Date(partes[0], partes[1] - 1, partes[2], partes[3] || 0, partes[4] || 0);
      return isNaN(fecha.getTime()) ? null : fecha;
    }
 
-   // ✅ Si ya es Date o string ISO
+
    const fecha = new Date(valor);
    return isNaN(fecha.getTime()) ? null : fecha;
  }

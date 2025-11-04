@@ -42,7 +42,7 @@ export class InscripcionesListComponent implements OnInit {
   filtrarInscripciones() {
     let filtradas = [...this.inscripciones];
 
-    // Filtrar por búsqueda
+
     if (this.terminoBusqueda) {
       const termino = this.terminoBusqueda.toLowerCase();
       filtradas = filtradas.filter(i =>
@@ -51,7 +51,7 @@ export class InscripcionesListComponent implements OnInit {
       );
     }
 
-    // Filtrar por estado
+
     if (this.filtroEstado) {
       filtradas = filtradas.filter(i => i.estado === this.filtroEstado);
     }

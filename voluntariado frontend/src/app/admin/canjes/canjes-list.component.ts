@@ -24,36 +24,34 @@ export class CanjesListComponent implements OnInit {
     this.cargarCanjes();
   }
 
-  // PASO 1: AÑADIR LA FUNCIÓN DE CONVERSIÓN AQUÍ
-  // <--- INICIO DEL CÓDIGO AÑADIDO ---
+
   convertirArrayAFecha(arrayFecha: number[]): Date {
-    // El constructor de Date usa: año, mes (0-11), día, hora, minuto, segundo.
-    // Restamos 1 al mes porque el backend probablemente envía 1 para Enero, pero Date necesita 0.
+
     return new Date(
-      arrayFecha[0],      // Año
-      arrayFecha[1] - 1,  // Mes (ajustado)
-      arrayFecha[2],      // Día
-      arrayFecha[3],      // Hora
-      arrayFecha[4],      // Minuto
-      arrayFecha[5] || 0  // Segundo (opcional)
+      arrayFecha[0],
+      arrayFecha[1] - 1,
+      arrayFecha[2],
+      arrayFecha[3],
+      arrayFecha[4],
+      arrayFecha[5] || 0
     );
   }
-  // <--- FIN DEL CÓDIGO AÑADIDO ---
 
-  // En canjes-list.component.ts
+
+
 
   cargarCanjes() {
     this.cargando = true;
     this.canjeService.getAll().subscribe({
       next: (datos) => {
         this.canjes = datos.map(canje => {
-          // Obtenemos el valor de la propiedad 'fecha'
-          const fechaComoArray = canje.fecha as unknown as number[]; // <--- CORREGIDO
+
+          const fechaComoArray = canje.fecha as unknown as number[];
 
           return {
-            ...canje, // Copia todas las propiedades originales
-            // Sobrescribimos la propiedad 'fecha' con la fecha ya convertida
-            fecha: this.convertirArrayAFecha(fechaComoArray) as any // <--- CORREGIDO
+            ...canje,
+
+            fecha: this.convertirArrayAFecha(fechaComoArray) as any
           };
         });
 
@@ -70,7 +68,6 @@ export class CanjesListComponent implements OnInit {
   filtrarCanjes() {
     let filtrados = [...this.canjes];
 
-    // Filtrar por búsqueda
     if (this.terminoBusqueda) {
       const termino = this.terminoBusqueda.toLowerCase();
       filtrados = filtrados.filter(c =>
@@ -79,7 +76,6 @@ export class CanjesListComponent implements OnInit {
       );
     }
 
-    // Filtrar por estado
     if (this.filtroEstado) {
       filtrados = filtrados.filter(c => c.estado === this.filtroEstado);
     }
@@ -103,16 +99,16 @@ export class CanjesListComponent implements OnInit {
 
   actualizarEstado(canje: Canje) {
       if (canje.id) {
-        // Guardar el estado anterior por si falla
+
         const estadoAnterior = canje.estado;
 
         this.canjeService.update(canje.id, canje).subscribe({
           next: () => {
-            // Éxito: el estado ya está actualizado en la vista
+
             console.log('Estado actualizado correctamente');
           },
           error: (err) => {
-            // Si falla, revertir el cambio
+
             canje.estado = estadoAnterior;
             console.error('Error al actualizar:', err);
             alert('Error al actualizar el estado del canje');
@@ -163,7 +159,7 @@ export class CanjesListComponent implements OnInit {
   }
 
   obtenerTiempoTranscurrido(fecha?: string | Date): string {
-    if (!fecha) return 'Sin fecha'; // por si el valor llega vacío
+    if (!fecha) return 'Sin fecha';
 
     const fechaCanje = new Date(fecha).getTime();
     const ahora = Date.now();

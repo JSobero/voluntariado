@@ -103,11 +103,11 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  color: white;
   padding: 8rem 2rem 3rem;
   margin-top: 70px;
   position: relative;
   overflow: hidden;
+  color: white; /* Asegura color base blanco */
 }
 
 .hero-section::before {
@@ -117,8 +117,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
-  opacity: 0.3;
+  /* Capa oscura para mejorar legibilidad del texto */
+  background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4));
 }
 
 .hero-content {
@@ -133,12 +133,14 @@
   font-weight: 700;
   margin-bottom: 1rem;
   line-height: 1.2;
+  color: white !important; /* <-- CAMBIO CLAVE: Fuerza el color blanco */
 }
 
 .hero-subtitle {
   font-size: 1.25rem;
   opacity: 0.95;
   margin-bottom: 2rem;
+  color: white !important; /* <-- CAMBIO CLAVE: Fuerza el color blanco */
 }
 
 .hero-stats {

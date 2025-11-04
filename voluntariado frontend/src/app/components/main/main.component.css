@@ -50,7 +50,6 @@
   width: 60px;  /* Ajusta el tamaño */
   height: 60px;
   object-fit: contain; /* Mantiene proporciones */
-
 }
 
 .nav-menu {
@@ -74,6 +73,7 @@
 .nav-actions {
   display: flex;
   gap: 1rem;
+  align-items: center; /* Alinea verticalmente los items */
 }
 
 .btn-login {
@@ -105,6 +105,14 @@
 .btn-register:hover {
   background: #4f46e5;
 }
+
+/* Estilo para el nombre de usuario */
+.nav-username {
+  font-weight: 600;
+  color: #374151;
+  margin-right: 0.5rem;
+}
+
 
 /* Hero Carousel */
 .hero-carousel {
@@ -163,6 +171,7 @@
   font-weight: 700;
   margin-bottom: 1rem;
   line-height: 1.2;
+  color: white; /* <-- AÑADIDO PARA ASEGURAR EL COLOR */
 }
 
 .slide-subtitle {
@@ -170,6 +179,7 @@
   margin-bottom: 2rem;
   opacity: 0.95;
   line-height: 1.6;
+  color: white; /* <-- AÑADIDO PARA ASEGURAR EL COLOR */
 }
 
 .cta-button {
