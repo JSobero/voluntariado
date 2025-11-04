@@ -1,0 +1,126 @@
+<div class="login-page">
+  <div class="login-container">
+    <!-- Logo y título -->
+    <div class="login-header">
+      <div class="logo" (click)="navigateToHome()">
+        <img src="/logo.png" alt="Logo Nexo V" class="logo-icon">
+        <span class="logo-text">NEXO V</span>
+      </div>
+      <h1>Bienvenido de nuevo</h1>
+      <p>Inicia sesión para continuar</p>
+    </div>
+
+    <!-- Formulario de login -->
+    <form class="login-form" (ngSubmit)="onSubmit()">
+      <!-- Mensaje de error -->
+      <div class="error-message" *ngIf="errorMessage">
+        <i class="bi bi-exclamation-circle"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      <!-- Campo de correo -->
+      <div class="form-group">
+        <label class="form-label">
+          <i class="bi bi-envelope-fill"></i>
+          Correo electrónico
+        </label>
+        <input
+          type="email"
+          class="form-input"
+          [(ngModel)]="credentials.correo"
+          name="correo"
+          placeholder="tu@correo.com"
+          required
+          [disabled]="isLoading">
+      </div>
+
+      <!-- Campo de contraseña -->
+      <div class="form-group">
+        <label class="form-label">
+          <i class="bi bi-lock-fill"></i>
+          Contraseña
+        </label>
+        <div class="password-input-wrapper">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            class="form-input"
+            [(ngModel)]="credentials.password"
+            name="password"
+            placeholder="••••••••"
+            required
+            [disabled]="isLoading">
+          <button
+            type="button"
+            class="password-toggle"
+            (click)="togglePasswordVisibility()"
+            [disabled]="isLoading">
+            <i [class]="showPassword ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Recordarme y olvidé contraseña -->
+      <div class="form-options">
+        <label class="checkbox-label">
+          <input type="checkbox">
+          <span>Recordarme</span>
+        </label>
+        <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+      </div>
+
+      <!-- Botón de login -->
+      <button type="submit" class="btn-login" [disabled]="isLoading">
+        <span *ngIf="!isLoading">Iniciar sesión</span>
+        <span *ngIf="isLoading" class="loading-spinner">
+          <i class="bi bi-arrow-clockwise spin"></i>
+          Iniciando sesión...
+        </span>
+      </button>
+
+      <!-- Divider -->
+      <div class="divider">
+        <span>o</span>
+      </div>
+
+      <!-- Registro -->
+      <div class="register-prompt">
+        <p>¿No tienes una cuenta?</p>
+        <button type="button" class="btn-register" (click)="navigateToRegister()">
+          Crear cuenta
+        </button>
+      </div>
+    </form>
+
+    <!-- Footer -->
+    <div class="login-footer">
+      <p>Al iniciar sesión, aceptas nuestros</p>
+      <div class="footer-links">
+        <a href="#">Términos de servicio</a>
+        <span>•</span>
+        <a href="#">Política de privacidad</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Imagen lateral (opcional) -->
+  <div class="login-image">
+    <div class="image-overlay">
+      <h2>Únete a nuestra comunidad</h2>
+      <p>Más de 5,000 voluntarios ya están marcando la diferencia</p>
+      <div class="features">
+        <div class="feature-item">
+          <i class="bi bi-check-circle-fill"></i>
+          <span>Eventos verificados</span>
+        </div>
+        <div class="feature-item">
+          <i class="bi bi-check-circle-fill"></i>
+          <span>Sistema de puntos</span>
+        </div>
+        <div class="feature-item">
+          <i class="bi bi-check-circle-fill"></i>
+          <span>Certificados digitales</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

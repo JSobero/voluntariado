@@ -1,0 +1,272 @@
+<div class="register-page">
+  <div class="register-container">
+    <!-- Logo y título -->
+    <div class="register-header">
+      <div class="logo" (click)="navigateToHome()">
+        <img src="/logo.png" alt="Logo Nexo V" class="logo-icon">
+        <span class="logo-text">NEXO V</span>
+      </div>
+      <h1>Crea tu cuenta</h1>
+      <p>Únete a nuestra comunidad de voluntarios</p>
+    </div>
+
+    <!-- Indicador de progreso -->
+    <div class="progress-indicator">
+      <div class="progress-step" [class.active]="currentStep >= 1" [class.completed]="currentStep > 1">
+        <div class="step-circle">
+          <span *ngIf="currentStep <= 1">1</span>
+          <i *ngIf="currentStep > 1" class="bi bi-check-lg"></i>
+        </div>
+        <span class="step-label">Datos básicos</span>
+      </div>
+      <div class="progress-line" [class.completed]="currentStep > 1"></div>
+      <div class="progress-step" [class.active]="currentStep >= 2" [class.completed]="currentStep > 2">
+        <div class="step-circle">
+          <span *ngIf="currentStep <= 2">2</span>
+          <i *ngIf="currentStep > 2" class="bi bi-check-lg"></i>
+        </div>
+        <span class="step-label">Seguridad</span>
+      </div>
+      <div class="progress-line" [class.completed]="currentStep > 2"></div>
+      <div class="progress-step" [class.active]="currentStep >= 3">
+        <div class="step-circle">3</div>
+        <span class="step-label">Confirmación</span>
+      </div>
+    </div>
+
+    <!-- Formulario de registro -->
+    <form class="register-form" (ngSubmit)="onSubmit()">
+      <!-- Mensajes -->
+      <div class="error-message" *ngIf="errorMessage">
+        <i class="bi bi-exclamation-circle"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
+
+      <div class="success-message" *ngIf="successMessage">
+        <i class="bi bi-check-circle-fill"></i>
+        <span>{{ successMessage }}</span>
+      </div>
+
+      <!-- Paso 1: Datos básicos -->
+      <div class="form-step" *ngIf="currentStep === 1">
+        <div class="form-group">
+          <label class="form-label">
+            <i class="bi bi-person-fill"></i>
+            Nombre completo
+          </label>
+          <input
+            type="text"
+            class="form-input"
+            [(ngModel)]="registerData.nombre"
+            name="nombre"
+            placeholder="Juan Pérez"
+            (blur)="validateNombre()"
+            [class.invalid]="!validations.nombre.valid && registerData.nombre"
+            required>
+          <span class="validation-message" *ngIf="!validations.nombre.valid && registerData.nombre">
+            {{ validations.nombre.message }}
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <i class="bi bi-envelope-fill"></i>
+            Correo electrónico
+          </label>
+          <input
+            type="email"
+            class="form-input"
+            [(ngModel)]="registerData.correo"
+            name="correo"
+            placeholder="tu@correo.com"
+            (blur)="validateCorreo()"
+            [class.invalid]="!validations.correo.valid && registerData.correo"
+            required>
+          <span class="validation-message" *ngIf="!validations.correo.valid && registerData.correo">
+            {{ validations.correo.message }}
+          </span>
+        </div>
+
+        <button type="button" class="btn-next" (click)="nextStep()">
+          Continuar
+          <i class="bi bi-arrow-right"></i>
+        </button>
+      </div>
+
+      <!-- Paso 2: Seguridad -->
+      <div class="form-step" *ngIf="currentStep === 2">
+        <div class="form-group">
+          <label class="form-label">
+            <i class="bi bi-lock-fill"></i>
+            Contraseña
+          </label>
+          <div class="password-input-wrapper">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              class="form-input"
+              [(ngModel)]="registerData.password"
+              name="password"
+              placeholder="Mínimo 6 caracteres"
+              (blur)="validatePassword()"
+              [class.invalid]="!validations.password.valid && registerData.password"
+              required>
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="togglePasswordVisibility('password')">
+              <i [class]="showPassword ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'"></i>
+            </button>
+          </div>
+          <span class="validation-message" *ngIf="!validations.password.valid && registerData.password">
+            {{ validations.password.message }}
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <i class="bi bi-shield-check"></i>
+            Confirmar contraseña
+          </label>
+          <div class="password-input-wrapper">
+            <input
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              class="form-input"
+              [(ngModel)]="registerData.confirmPassword"
+              name="confirmPassword"
+              placeholder="Repite tu contraseña"
+              (blur)="validateConfirmPassword()"
+              [class.invalid]="!validations.confirmPassword.valid && registerData.confirmPassword"
+              required>
+            <button
+              type="button"
+              class="password-toggle"
+              (click)="togglePasswordVisibility('confirmPassword')">
+              <i [class]="showConfirmPassword ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'"></i>
+            </button>
+          </div>
+          <span class="validation-message" *ngIf="!validations.confirmPassword.valid && registerData.confirmPassword">
+            {{ validations.confirmPassword.message }}
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            <i class="bi bi-telephone-fill"></i>
+            Teléfono (opcional)
+          </label>
+          <input
+            type="tel"
+            class="form-input"
+            [(ngModel)]="registerData.telefono"
+            name="telefono"
+            placeholder="999 999 999"
+            (blur)="validateTelefono()"
+            [class.invalid]="!validations.telefono.valid && registerData.telefono"
+            maxlength="9">
+          <span class="validation-message" *ngIf="!validations.telefono.valid && registerData.telefono">
+            {{ validations.telefono.message }}
+          </span>
+        </div>
+
+        <div class="form-navigation">
+          <button type="button" class="btn-back" (click)="prevStep()">
+            <i class="bi bi-arrow-left"></i>
+            Atrás
+          </button>
+          <button type="button" class="btn-next" (click)="nextStep()">
+            Continuar
+            <i class="bi bi-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Paso 3: Confirmación -->
+      <div class="form-step" *ngIf="currentStep === 3">
+        <div class="summary-card">
+          <h3>Resumen de tu cuenta</h3>
+          <div class="summary-item">
+            <i class="bi bi-person-circle"></i>
+            <div>
+              <span class="summary-label">Nombre</span>
+              <span class="summary-value">{{ registerData.nombre }}</span>
+            </div>
+          </div>
+          <div class="summary-item">
+            <i class="bi bi-envelope"></i>
+            <div>
+              <span class="summary-label">Correo</span>
+              <span class="summary-value">{{ registerData.correo }}</span>
+            </div>
+          </div>
+          <div class="summary-item" *ngIf="registerData.telefono">
+            <i class="bi bi-telephone"></i>
+            <div>
+              <span class="summary-label">Teléfono</span>
+              <span class="summary-value">{{ registerData.telefono }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="terms-checkbox">
+          <label class="checkbox-label">
+            <input
+              type="checkbox"
+              [(ngModel)]="registerData.aceptaTerminos"
+              name="aceptaTerminos"
+              required>
+            <span>Acepto los <a href="#">términos y condiciones</a> y la <a href="#">política de privacidad</a></span>
+          </label>
+        </div>
+
+        <div class="form-navigation">
+          <button type="button" class="btn-back" (click)="prevStep()" [disabled]="isLoading">
+            <i class="bi bi-arrow-left"></i>
+            Atrás
+          </button>
+          <button type="submit" class="btn-submit" [disabled]="isLoading || !registerData.aceptaTerminos">
+            <span *ngIf="!isLoading">
+              <i class="bi bi-check-circle-fill"></i>
+              Crear cuenta
+            </span>
+            <span *ngIf="isLoading" class="loading-spinner">
+              <i class="bi bi-arrow-clockwise spin"></i>
+              Creando cuenta...
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Link a login -->
+      <div class="login-prompt">
+        <p>¿Ya tienes una cuenta?</p>
+        <button type="button" class="btn-login-link" (click)="navigateToLogin()">
+          Iniciar sesión
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Imagen lateral -->
+  <div class="register-image">
+    <div class="image-overlay">
+      <h2>¿Por qué unirte?</h2>
+      <div class="benefits">
+        <div class="benefit-card">
+          <i class="bi bi-star-fill"></i>
+          <h3>Gana puntos</h3>
+          <p>Acumula puntos por cada actividad y canjéalos por recompensas</p>
+        </div>
+        <div class="benefit-card">
+          <i class="bi bi-award-fill"></i>
+          <h3>Certificados</h3>
+          <p>Obtén certificados digitales verificados para tu CV</p>
+        </div>
+        <div class="benefit-card">
+          <i class="bi bi-people-fill"></i>
+          <h3>Comunidad</h3>
+          <p>Conecta con miles de voluntarios como tú</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
