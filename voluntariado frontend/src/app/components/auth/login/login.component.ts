@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { AuthService, Usuario } from '../../../services/auth.service';
 
 interface LoginCredentials {
   correo: string;
@@ -38,7 +39,8 @@ export class LoginComponent {
 
   constructor(
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   onSubmit(): void {
@@ -50,36 +52,31 @@ export class LoginComponent {
     this.isLoading = true;
     this.errorMessage = '';
 
-    // Simulación de login - buscar usuario por correo y validar password
-    this.http.get<any[]>('http://localhost:8080/usuarios').subscribe({
-      next: (usuarios) => {
-        const usuario = usuarios.find(u =>
-          u.correo === this.credentials.correo &&
-          u.password === this.credentials.password
-        );
+    this.http.get<Usuario[]>('http://localhost:8080/usuarios').subscribe({
+          next: (usuarios) => {
+            const usuario = usuarios.find(u =>
+              u.correo === this.credentials.correo &&
+              u.password === this.credentials.password
+            );
 
-        if (usuario) {
-          // Login exitoso
-          localStorage.setItem('currentUser', JSON.stringify(usuario));
-
-          // Redirigir según el rol
-          if (usuario.rol.nombre === 'ADMIN' || usuario.rol.nombre === 'ORGANIZADOR') {
-            this.router.navigate(['/admin/dashboard']);
-          } else {
-            this.router.navigate(['/home']);
+            if (usuario) {
+              // ----- ¡LÓGICA ACTUALIZADA! -----
+              // En lugar de redirigir y guardar en localStorage...
+              // simplemente llama al servicio. ¡El servicio hace el resto!
+              this.authService.login(usuario);
+              // ---------------------------------
+            } else {
+              this.errorMessage = 'Correo o contraseña incorrectos';
+              this.isLoading = false;
+            }
+          },
+          error: (error) => {
+            console.error('Error en login:', error);
+            this.errorMessage = 'Error al iniciar sesión. Intenta nuevamente.';
+            this.isLoading = false;
           }
-        } else {
-          this.errorMessage = 'Correo o contraseña incorrectos';
-          this.isLoading = false;
-        }
-      },
-      error: (error) => {
-        console.error('Error en login:', error);
-        this.errorMessage = 'Error al iniciar sesión. Intenta nuevamente.';
-        this.isLoading = false;
+        });
       }
-    });
-  }
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
