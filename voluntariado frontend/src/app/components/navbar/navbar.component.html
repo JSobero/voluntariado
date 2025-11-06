@@ -20,16 +20,33 @@
 
       <ng-container *ngIf="authService.currentUser() as user">
 
-        <span class="nav-username">¡Hola, {{ user.nombre }}!</span>
+        <div class="user-menu-container">
 
-        <button
-          *ngIf="user.rol.nombre === 'ADMIN' || user.rol.nombre === 'ORGANIZADOR'"
-          class="btn-login"
-          (click)="navigateTo('/admin/dashboard')">
-          Dashboard
-        </button>
+          <div class="user-toggle" (click)="toggleMenu()">
+            <span class="nav-username">¡Hola, {{ user.nombre }}!</span>
+            <i class="bi bi-chevron-down"></i>
+          </div>
 
-        <button class="btn-register" (click)="onLogout()">Cerrar Sesión</button>
+          <div class="dropdown-menu" *ngIf="menuAbierto">
+            <button class="dropdown-item" (click)="navigateTo('/perfil'); cerrarMenu()">
+              <i class="bi bi-person"></i> Mi Perfil
+            </button>
+
+            <button
+              *ngIf="user.rol.nombre === 'ADMIN' || user.rol.nombre === 'ORGANIZADOR'"
+              class="dropdown-item"
+              (click)="navigateTo('/admin/dashboard'); cerrarMenu()">
+              <i class="bi bi-speedometer2"></i> Dashboard
+            </button>
+
+            <div class="dropdown-divider"></div>
+
+            <button class="dropdown-item danger" (click)="onLogout(); cerrarMenu()">
+              <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+            </button>
+          </div>
+
+        </div>
       </ng-container>
 
     </div>

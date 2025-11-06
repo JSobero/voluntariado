@@ -8,6 +8,10 @@ export interface Usuario {
   correo: string;
   rol: { nombre: string };
   password?: string;
+  telefono?: string;         // Opcional porque puede ser NULL en la BD
+    puntos: number;            // Obligatorio, tiene valor por defecto 0 en BD
+    horasAcumuladas: number;   // Obligatorio, tiene valor por defecto 0.00 en BD
+    creadoEn: string;
   // ... puedes añadir 'password', 'telefono', etc., si los necesitas en el frontend
 }
 

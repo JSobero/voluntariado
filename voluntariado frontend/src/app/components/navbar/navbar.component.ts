@@ -16,6 +16,11 @@ export class NavbarComponent {
   // Inyectamos el servicio de Auth y el Router
   authService = inject(AuthService);
   router = inject(Router);
+  menuAbierto = false;
+
+  toggleMenu(): void {
+      this.menuAbierto = !this.menuAbierto;
+    }
 
   // --- Métodos que tu HTML ya estaba usando ---
 
@@ -31,5 +36,9 @@ export class NavbarComponent {
 
   onLogout(): void {
     this.authService.logout();
+  }
+
+  cerrarMenu(): void {
+    this.menuAbierto = false;
   }
 }

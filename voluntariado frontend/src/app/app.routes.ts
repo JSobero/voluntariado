@@ -23,6 +23,10 @@ export const routes: Routes = [
     loadComponent: () => import('./components/home/home.component').then(m => m.HomeComponent)
   },
   {
+    path: 'perfil',
+    loadComponent: () => import('./components/perfil/perfil.component').then(m => m.PerfilComponent)
+  },
+  {
     path: 'admin',
     loadComponent: () =>
       import('./admin/layout/admin-layout.component').then(m => m.AdminLayoutComponent),
@@ -78,4 +82,5 @@ export const routes: Routes = [
     path: '**',
     redirectTo: ''
   }
+
 ];
