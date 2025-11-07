@@ -107,6 +107,7 @@
   padding: 0.5rem;
   border-radius: 8px;
   transition: background-color 0.2s;
+  padding-left: 0;
 }
 
 .user-toggle:hover {
@@ -184,4 +185,16 @@
   height: 1px;
   background-color: #e5e7eb;
   margin: 0.25rem 0;
+}
+.nav-puntos {
+  background: #fef3c7;
+  color: #92400e;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-right: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }

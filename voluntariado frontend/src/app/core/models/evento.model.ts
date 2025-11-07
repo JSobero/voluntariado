@@ -8,5 +8,6 @@ export interface Evento {
   lugar: string;
   cupoMaximo: number;
   organizador: Usuario;
+  imagenUrl?: string;
   creadoEn?: string;
 }

@@ -7,6 +7,7 @@
     <ul class="nav-menu">
       <li><a (click)="volverInicio()">Inicio</a></li>
       <li><a (click)="navigateTo('/eventos')">Eventos</a></li>
+      <li><a (click)="navigateTo('/recompensas')">Recompensas</a></li>
       <li><a (click)="navigateTo('/categorias')">Categorías</a></li>
       <li><a (click)="navigateTo('/testimonios')">Testimonios</a></li>
     </ul>
@@ -23,6 +24,7 @@
         <div class="user-menu-container">
 
           <div class="user-toggle" (click)="toggleMenu()">
+            <span class="nav-puntos" *ngIf="user.puntos !== undefined">⭐ {{ user.puntos }}</span>
             <span class="nav-username">¡Hola, {{ user.nombre }}!</span>
             <i class="bi bi-chevron-down"></i>
           </div>
@@ -30,6 +32,10 @@
           <div class="dropdown-menu" *ngIf="menuAbierto">
             <button class="dropdown-item" (click)="navigateTo('/perfil'); cerrarMenu()">
               <i class="bi bi-person"></i> Mi Perfil
+            </button>
+
+            <button class="dropdown-item" (click)="navigateTo('/recompensas'); cerrarMenu()">
+              <i class="bi bi-gift"></i> Canjear Puntos
             </button>
 
             <button

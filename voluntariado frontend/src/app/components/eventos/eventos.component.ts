@@ -13,6 +13,7 @@ interface Evento {
   lugar: string;
   cupoMaximo: number;
   organizador: any;
+  imagenUrl?: string;
   categoria?: string;
   imagen?: string;
   inscritos?: number;
@@ -123,10 +124,16 @@ export class EventosComponent implements OnInit {
   }
 
   asignarImagen(evento: Evento): string {
-    if (evento.imagen) return evento.imagen;
-    const categoria = this.asignarCategoria(evento.titulo, evento.descripcion);
-    return this.imagenesCategoria[categoria] || this.imagenesCategoria['default'];
-  }
+      // 1. Si el evento tiene una imagen real subida, úsala.
+      if (evento.imagenUrl && evento.imagenUrl.trim() !== '') {
+        return evento.imagenUrl;
+      }
+
+      // 2. Si no, usa la lógica de categorías que ya tenías.
+      if (evento.imagen) return evento.imagen;
+      const categoria = this.asignarCategoria(evento.titulo, evento.descripcion);
+      return this.imagenesCategoria[categoria] || this.imagenesCategoria['default'];
+    }
 
   calcularPuntos(evento: Evento): number {
 

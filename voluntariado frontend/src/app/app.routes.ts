@@ -19,6 +19,10 @@ export const routes: Routes = [
     loadComponent: () => import('./components/eventos/eventos.component').then(m => m.EventosComponent)
   },
   {
+   path: 'recompensas',
+   loadComponent: () => import('./components/canje-recompensas/canje-recompensas.component').then(m => m.CanjeRecompensasComponent)
+  },
+  {
     path: 'home',
     loadComponent: () => import('./components/home/home.component').then(m => m.HomeComponent)
   },

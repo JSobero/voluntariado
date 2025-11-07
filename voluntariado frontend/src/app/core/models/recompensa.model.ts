@@ -4,4 +4,5 @@ export interface Recompensa {
   descripcion: string;
   puntosNecesarios: number;
   stock: number;
+  imagenUrl?: string;
 }

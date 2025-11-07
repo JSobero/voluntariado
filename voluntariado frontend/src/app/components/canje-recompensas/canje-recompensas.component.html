@@ -1,0 +1,129 @@
+
+<div class="contenedor-canje">
+  <div class="marcador-puntos" *ngIf="authService.currentUser() as usuario">
+    <div class="info-usuario">
+      <span class="hola">Hola, {{ usuario.nombre.split(' ')[0] }}</span>
+      <span class="titulo-puntos">Tus Puntos Disponibles</span>
+    </div>
+    <div class="puntos-total">
+      <i class="bi bi-star-fill icono-estrella"></i>
+      <span class="numero-puntos">{{ usuario.puntos }}</span>
+    </div>
+  </div>
+
+  <header class="encabezado-pagina">
+    <h1>Catálogo de Recompensas</h1>
+    <p>Canjea tus puntos por increíbles premios y experiencias.</p>
+  </header>
+
+  <div *ngIf="cargando" class="loading-state">
+    <div class="spinner"></div>
+    <p>Cargando el catálogo...</p>
+  </div>
+
+  <div *ngIf="!cargando" class="grid-recompensas">
+    <article
+      *ngFor="let recompensa of recompensas"
+      class="tarjeta-recompensa"
+      [class.alcanzable]="(authService.currentUser()?.puntos || 0) >= recompensa.puntosNecesarios"
+      [class.agotado]="recompensa.stock === 0">
+
+      <div class="imagen-recompensa" [style.backgroundImage]="'url(' + (recompensa.imagenUrl || 'assets/images/gift-default.png') + ')'">
+        <div class="badge-costo">
+          {{ recompensa.puntosNecesarios }} pts
+        </div>
+        <div class="overlay-agotado" *ngIf="recompensa.stock === 0">
+          <span>AGOTADO</span>
+        </div>
+      </div>
+
+      <div class="cuerpo-tarjeta">
+        <h3>{{ recompensa.nombre }}</h3>
+        <p class="descripcion">{{ recompensa.descripcion }}</p>
+
+        <div class="progreso-contenedor" *ngIf="recompensa.stock > 0 && (authService.currentUser()?.puntos || 0) < recompensa.puntosNecesarios">
+          <div class="barra-fondo">
+            <div class="barra-relleno" [style.width.%]="calcularPorcentaje(recompensa.puntosNecesarios)"></div>
+          </div>
+          <small class="texto-progreso">
+            Te faltan <strong>{{ puntosFaltantes(recompensa.puntosNecesarios) }}</strong> puntos
+          </small>
+        </div>
+
+        <div class="info-stock-bajo" *ngIf="recompensa.stock > 0 && recompensa.stock < 5">
+          <i class="bi bi-exclamation-circle"></i> ¡Solo quedan {{ recompensa.stock }}!
+        </div>
+      </div>
+
+      <div class="pie-tarjeta">
+        <button
+          *ngIf="recompensa.stock > 0 && (authService.currentUser()?.puntos || 0) >= recompensa.puntosNecesarios"
+          class="btn-canjear"
+          (click)="iniciarCanje(recompensa)">
+          Canjear Ahora
+        </button>
+
+        <button
+          *ngIf="recompensa.stock > 0 && (authService.currentUser()?.puntos || 0) < recompensa.puntosNecesarios"
+          class="btn-insuficiente"
+          disabled>
+          Sigue acumulando puntos
+        </button>
+
+        <button *ngIf="recompensa.stock === 0" class="btn-agotado" disabled>
+          No disponible
+        </button>
+      </div>
+    </article>
+  </div>
+
+  <div class="modal-overlay" *ngIf="mostrarModal" (click)="estadoCanje === 'procesando' ? null : cerrarModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+
+      <div *ngIf="estadoCanje === 'confirmando'" class="modal-body confirmacion">
+        <div class="icono-modal"><i class="bi bi-gift"></i></div>
+        <h2>Confirmar Canje</h2>
+        <p>Estás a punto de canjear:</p>
+        <h3 class="nombre-premio">{{ recompensaSeleccionada?.nombre }}</h3>
+        <div class="resumen-puntos">
+          <div class="fila-resumen">
+            <span>Tus puntos actuales:</span>
+            <strong>{{ authService.currentUser()?.puntos }}</strong>
+          </div>
+          <div class="fila-resumen costo">
+            <span>Costo del canje:</span>
+            <strong>-{{ recompensaSeleccionada?.puntosNecesarios }}</strong>
+          </div>
+          <div class="fila-resumen total">
+            <span>Te quedarán:</span>
+            <strong>{{ (authService.currentUser()?.puntos || 0) - (recompensaSeleccionada?.puntosNecesarios || 0) }}</strong>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-cancelar" (click)="cerrarModal()">Cancelar</button>
+          <button class="btn-confirmar" (click)="confirmarCanje()">¡Sí, canjear!</button>
+        </div>
+      </div>
+
+      <div *ngIf="estadoCanje === 'procesando'" class="modal-body procesando">
+        <div class="spinner-grande"></div>
+        <p>Procesando tu canje...</p>
+      </div>
+
+      <div *ngIf="estadoCanje === 'exito'" class="modal-body exito">
+        <div class="icono-exito"><i class="bi bi-check-circle-fill"></i></div>
+        <h2>¡Canje Exitoso!</h2>
+        <p>Disfruta tu recompensa. Te hemos enviado un correo con los detalles.</p>
+      </div>
+
+      <div *ngIf="estadoCanje === 'error'" class="modal-body error">
+        <div class="icono-error"><i class="bi bi-x-circle-fill"></i></div>
+        <h2>Algo salió mal</h2>
+        <p>{{ mensajeError }}</p>
+        <button class="btn-cerrar" (click)="cerrarModal()">Cerrar</button>
+      </div>
+
+    </div>
+  </div>
+
+</div>

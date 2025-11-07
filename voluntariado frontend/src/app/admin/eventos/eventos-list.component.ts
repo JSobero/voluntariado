@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { EventoService } from '../../core/services/evento.service';
 import { UsuarioService } from '../../core/services/usuario.service';
+import { ImageService } from '../../core/services/image.service';
 import { Evento } from '../../core/models/evento.model';
 import { Usuario } from '../../core/models/usuario.model';
 
@@ -25,15 +26,23 @@ export class EventosListComponent implements OnInit {
   modoEdicion = false;
   eventoActual: Evento = this.obtenerEventoVacio();
 
+  // ✨ NUEVO: Variables para manejo de imágenes
+  imagenSeleccionada: File | null = null;
+  imagenPreview: string | null = null;
+  subiendoImagen = false;
+  errorImagen: string | null = null;
+
   constructor(
     private eventoService: EventoService,
     private usuarioService: UsuarioService,
+    private imageService: ImageService,
     private cdRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.cargarEventos();
     this.cargarOrganizadores();
+    setTimeout(() => this.cdRef.detectChanges(), 150);
   }
 
   cargarEventos() {
@@ -49,7 +58,6 @@ export class EventosListComponent implements OnInit {
             fechaFin: fechaFin || undefined
           };
         });
-
         this.eventosFiltrados = this.eventos;
         this.cargando = false;
         this.cdRef.detectChanges();
@@ -68,12 +76,10 @@ export class EventosListComponent implements OnInit {
     if (Array.isArray(fechaTexto)) {
       const [año, mes, día, hora = 0, minuto = 0] = fechaTexto;
       const fecha = new Date(año, mes - 1, día, hora, minuto);
-      // Devuelve formato compatible con <input type="datetime-local">
       return fecha.toISOString().slice(0, 16);
     }
 
     if (typeof fechaTexto === 'string') {
-      // Si ya es un string, solo asegúrate de que tenga el formato correcto
       return new Date(fechaTexto).toISOString().slice(0, 16);
     }
 
@@ -108,8 +114,45 @@ export class EventosListComponent implements OnInit {
     this.cdRef.detectChanges();
   }
 
+  // ✨ NUEVO: Manejo de selección de imagen
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+
+      // Validar la imagen
+      const validation = this.imageService.validateImage(file);
+      if (!validation.valid) {
+        this.errorImagen = validation.error || 'Imagen no válida';
+        this.imagenSeleccionada = null;
+        this.imagenPreview = null;
+        this.cdRef.detectChanges();
+        return;
+      }
+
+      this.errorImagen = null;
+      this.imagenSeleccionada = file;
+
+      // Generar preview
+      this.imageService.getBase64Preview(file).then(preview => {
+        this.imagenPreview = preview;
+        this.cdRef.detectChanges();
+      });
+    }
+  }
+
+  // ✨ NUEVO: Limpiar imagen seleccionada
+  limpiarImagen(): void {
+    this.imagenSeleccionada = null;
+    this.imagenPreview = null;
+    this.errorImagen = null;
+    this.cdRef.detectChanges();
+  }
+
   abrirModal(evento?: Evento) {
     this.mostrarModal = true;
+    this.limpiarImagen();
+
     if (evento) {
       this.modoEdicion = true;
       this.eventoActual = {
@@ -117,6 +160,10 @@ export class EventosListComponent implements OnInit {
         fechaInicio: this.formatearFechaParaInput(evento.fechaInicio),
         fechaFin: evento.fechaFin ? this.formatearFechaParaInput(evento.fechaFin) : undefined
       };
+      // Si ya tiene imagen, mostrarla como preview
+      if (evento.imagenUrl) {
+        this.imagenPreview = evento.imagenUrl;
+      }
     } else {
       this.modoEdicion = false;
       this.eventoActual = this.obtenerEventoVacio();
@@ -127,10 +174,11 @@ export class EventosListComponent implements OnInit {
   cerrarModal() {
     this.mostrarModal = false;
     this.eventoActual = this.obtenerEventoVacio();
+    this.limpiarImagen();
     this.cdRef.detectChanges();
   }
 
-  guardarEvento() {
+  async guardarEvento() {
     if (!this.eventoActual.titulo || !this.eventoActual.fechaInicio || !this.eventoActual.lugar) {
       alert('Por favor completa todos los campos requeridos');
       return;
@@ -144,6 +192,25 @@ export class EventosListComponent implements OnInit {
       return;
     }
 
+    // ✨ NUEVO: Subir imagen si hay una seleccionada
+    if (this.imagenSeleccionada) {
+      this.subiendoImagen = true;
+      this.cdRef.detectChanges();
+
+      try {
+        const response = await this.imageService.uploadImage(this.imagenSeleccionada, 'eventos').toPromise();
+        if (response && response.url) {
+          this.eventoActual.imagenUrl = response.url;
+        }
+      } catch (error) {
+        console.error('Error al subir imagen:', error);
+        alert('Error al subir la imagen. El evento se guardará sin imagen.');
+      } finally {
+        this.subiendoImagen = false;
+        this.cdRef.detectChanges();
+      }
+    }
+
     const eventoParaGuardar = {
       ...this.eventoActual,
       organizador: organizadorCompleto
@@ -151,12 +218,15 @@ export class EventosListComponent implements OnInit {
 
     if (this.modoEdicion && this.eventoActual.id) {
       this.eventoService.update(this.eventoActual.id, eventoParaGuardar).subscribe({
-        // ===== CÓDIGO CORREGIDO Y SIMPLIFICADO =====
-        next: () => {
-          this.cargarEventos(); // Recarga la lista completa para asegurar consistencia
+        next: (eventoActualizado) => {
+          const indice = this.eventos.findIndex(e => e.id === eventoActualizado.id);
+          if (indice !== -1) {
+            this.eventos[indice] = eventoActualizado;
+            this.eventosFiltrados = [...this.eventos];
+          }
           this.cerrarModal();
+          this.cdRef.detectChanges();
         },
-        // ===========================================
         error: (err) => {
           console.error('Error al actualizar:', err);
           alert('Error al actualizar el evento');
@@ -167,6 +237,7 @@ export class EventosListComponent implements OnInit {
         next: () => {
           this.cargarEventos();
           this.cerrarModal();
+          this.cdRef.detectChanges();
         },
         error: (err) => {
           console.error('Error al crear:', err);
@@ -200,30 +271,27 @@ export class EventosListComponent implements OnInit {
       fechaFin: undefined,
       lugar: '',
       cupoMaximo: 0,
-      organizador: {} as Usuario
+      organizador: {} as Usuario,
+      imagenUrl: ''
     };
   }
 
-  formatearFechaParaInput(fechaTexto: string | Date): string {
-    if (!fechaTexto) return '';
+  formatearFechaParaInput(fechaTexto: string): string {
     const fecha = new Date(fechaTexto);
-    // Valida si la fecha es correcta antes de convertirla
-    if (isNaN(fecha.getTime())) return '';
     return fecha.toISOString().slice(0, 16);
   }
 
-  esEventoPasado(fechaInicio: string | Date): boolean {
-    if (!fechaInicio) return false;
+  esEventoPasado(fechaInicio: string): boolean {
     return new Date(fechaInicio) < new Date();
   }
 
-  obtenerClaseEstadoEvento(fechaInicio: string | Date): string {
+  obtenerClaseEstadoEvento(fechaInicio: string): string {
     return this.esEventoPasado(fechaInicio)
       ? 'insignia-estado-gris'
       : 'insignia-estado-verde';
   }
 
-  obtenerEstadoEvento(fechaInicio: string | Date): string {
+  obtenerEstadoEvento(fechaInicio: string): string {
     return this.esEventoPasado(fechaInicio) ? 'Finalizado' : 'Próximo';
   }
 }

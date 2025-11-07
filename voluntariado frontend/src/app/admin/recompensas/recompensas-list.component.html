@@ -34,8 +34,10 @@
 
   <div *ngIf="!cargando" class="cuadricula-recompensas">
     <div *ngFor="let recompensa of recompensasFiltradas" class="tarjeta-recompensa">
-      <div class="seccion-encabezado-tarjeta">
-        <div class="contenedor-icono-recompensa">
+
+      <div class="seccion-encabezado-tarjeta" [style.backgroundImage]="recompensa.imagenUrl ? 'url(' + recompensa.imagenUrl + ')' : null" [class.con-imagen]="recompensa.imagenUrl">
+        <div class="overlay-gradiente" *ngIf="recompensa.imagenUrl"></div>
+        <div class="contenedor-icono-recompensa" *ngIf="!recompensa.imagenUrl">
           <i class="icono-recompensa bi bi-gift-fill"></i>
         </div>
         <div class="insignia-puntos">
@@ -90,6 +92,44 @@
       </div>
 
       <div class="cuerpo-modal">
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario">
+            <span class="texto-etiqueta">Imagen de la Recompensa</span>
+          </label>
+
+          <div class="contenedor-upload-imagen">
+            <div class="preview-imagen" *ngIf="imagenPreview">
+              <img [src]="imagenPreview" alt="Preview">
+              <button type="button" class="btn-eliminar-preview" (click)="limpiarImagen()">
+                <i class="bi bi-x-circle-fill"></i>
+              </button>
+            </div>
+
+            <div class="area-upload" *ngIf="!imagenPreview">
+              <input
+                type="file"
+                id="fileInputRecompensa"
+                accept="image/*"
+                (change)="onFileSelected($event)"
+                style="display: none">
+              <label for="fileInputRecompensa" class="label-upload">
+                <i class="bi bi-cloud-upload-fill icono-upload"></i>
+                <span class="texto-upload">Click para subir imagen</span>
+                <span class="texto-upload-small">JPG, PNG, GIF, WEBP (máx. 5MB)</span>
+              </label>
+            </div>
+
+            <div class="error-imagen" *ngIf="errorImagen">
+              <i class="bi bi-exclamation-triangle-fill"></i>
+              {{ errorImagen }}
+            </div>
+
+            <div class="loading-upload" *ngIf="subiendoImagen">
+              <div class="spinner-upload"></div>
+              <span>Subiendo imagen...</span>
+            </div>
+          </div>
+        </div>
         <div class="grupo-formulario">
           <label class="etiqueta-formulario">
             <span class="texto-etiqueta">Nombre de la Recompensa</span>
@@ -154,18 +194,21 @@
           <label class="etiqueta-formulario">
             <span class="texto-etiqueta">Vista Previa</span>
           </label>
-          <div class="tarjeta-vista-previa">
-            <div class="encabezado-vista-previa">
-              <i class="icono-vista-previa bi bi-gift"></i>
-              <span class="puntos-vista-previa">
-                <i class="icono-puntos bi bi-star-fill"></i>
-                {{ recompensaActual.puntosNecesarios || 0 }}
-              </span>
-            </div>
-            <h4 class="nombre-vista-previa">{{ recompensaActual.nombre || 'Nombre de la recompensa' }}</h4>
-            <p class="descripcion-vista-previa">{{ recompensaActual.descripcion || 'Descripción de la recompensa' }}</p>
-            <div class="stock-vista-previa">
-              Stock: {{ recompensaActual.stock || 0 }} unidades
+          <div class="tarjeta-vista-previa" [style.backgroundImage]="imagenPreview ? 'url(' + imagenPreview + ')' : null" [class.con-imagen-preview]="imagenPreview">
+            <div class="overlay-gradiente-preview" *ngIf="imagenPreview"></div>
+            <div class="contenido-vista-previa-relativo">
+              <div class="encabezado-vista-previa">
+                <i class="icono-vista-previa bi bi-gift" *ngIf="!imagenPreview"></i>
+                <span class="puntos-vista-previa">
+                    <i class="icono-puntos bi bi-star-fill"></i>
+                    {{ recompensaActual.puntosNecesarios || 0 }}
+                </span>
+              </div>
+              <h4 class="nombre-vista-previa">{{ recompensaActual.nombre || 'Nombre de la recompensa' }}</h4>
+              <p class="descripcion-vista-previa">{{ recompensaActual.descripcion || 'Descripción de la recompensa' }}</p>
+              <div class="stock-vista-previa">
+                Stock: {{ recompensaActual.stock || 0 }} unidades
+              </div>
             </div>
           </div>
         </div>
@@ -175,7 +218,7 @@
         <button class="btn btn-secundario" (click)="cerrarModal()">
           Cancelar
         </button>
-        <button class="btn btn-primario" (click)="guardarRecompensa()">
+        <button class="btn btn-primario" (click)="guardarRecompensa()" [disabled]="subiendoImagen">
           <i class="btn-icono" [ngClass]="modoEdicion ? 'bi bi-save-fill' : 'bi bi-plus-lg'"></i>
           {{ modoEdicion ? 'Actualizar' : 'Crear' }} Recompensa
         </button>
