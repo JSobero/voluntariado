@@ -160,7 +160,7 @@
 
         <!-- Events Grid -->
         <div *ngIf="!isLoading && !error && eventosFiltrados.length > 0" class="events-grid">
-          <article class="event-card" *ngFor="let evento of eventosFiltrados">
+          <article class="event-card" *ngFor="let evento of eventosFiltrados | paginate: { itemsPerPage: itemsPerPage, currentPage: p }">
             <div class="event-image" [style.backgroundImage]="'url(' + evento.imagen + ')'">
               <div class="event-badges">
                 <span class="badge badge-points">{{evento.puntos}} pts</span>
@@ -223,6 +223,16 @@
               </div>
             </div>
           </article>
+        </div>
+        <div class="controles-paginacion" *ngIf="!isLoading && eventosFiltrados.length > itemsPerPage">
+          <pagination-controls
+            (pageChange)="p = $event"
+            previousLabel="Anterior"
+            nextLabel="Siguiente"
+            screenReaderPaginationLabel="Paginación"
+            screenReaderPageLabel="página"
+            screenReaderCurrentLabel="Estás en la página">
+          </pagination-controls>
         </div>
       </main>
     </div>

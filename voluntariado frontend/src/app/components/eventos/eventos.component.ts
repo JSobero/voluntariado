@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 interface Evento {
   id: number;
@@ -23,7 +24,7 @@ interface Evento {
 @Component({
   selector: 'app-eventos',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgxPaginationModule],
   templateUrl: './eventos.component.html',
   styleUrls: ['./eventos.component.css']
 })
@@ -32,7 +33,6 @@ export class EventosComponent implements OnInit {
   private router = inject(Router);
   private readonly API_EVENTOS = 'http://localhost:8080/eventos';
 
-
   searchTerm = '';
   fechaInicio = '';
   fechaFin = '';
@@ -40,12 +40,12 @@ export class EventosComponent implements OnInit {
   categoriaSeleccionada = 'todas';
   ordenarPor = 'relevancia';
 
-
   eventos: Evento[] = [];
   eventosFiltrados: Evento[] = [];
   isLoading = true;
   error: string | null = null;
-
+  p: number = 1; // Página actual
+  itemsPerPage: number = 3; // 9 eventos por página (3x3)
 
   categorias = [
     { id: 'todas', nombre: 'Todas', icon: '🌟' },
@@ -57,7 +57,6 @@ export class EventosComponent implements OnInit {
     { id: 'arte-cultura', nombre: 'Arte y Cultura', icon: '🎨' },
     { id: 'construccion', nombre: 'Construcción', icon: '🏗️' }
   ];
-
 
   imagenesCategoria: { [key: string]: string } = {
     'medio-ambiente': 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=300&fit=crop',
@@ -80,7 +79,6 @@ export class EventosComponent implements OnInit {
 
     this.http.get<Evento[]>(this.API_EVENTOS).subscribe({
       next: (eventos) => {
-
         this.eventos = eventos.map(evento => ({
           ...evento,
           categoria: this.asignarCategoria(evento.titulo, evento.descripcion),
@@ -124,48 +122,40 @@ export class EventosComponent implements OnInit {
   }
 
   asignarImagen(evento: Evento): string {
-      // 1. Si el evento tiene una imagen real subida, úsala.
-      if (evento.imagenUrl && evento.imagenUrl.trim() !== '') {
-        return evento.imagenUrl;
-      }
-
-      // 2. Si no, usa la lógica de categorías que ya tenías.
-      if (evento.imagen) return evento.imagen;
-      const categoria = this.asignarCategoria(evento.titulo, evento.descripcion);
-      return this.imagenesCategoria[categoria] || this.imagenesCategoria['default'];
+    if (evento.imagenUrl && evento.imagenUrl.trim() !== '') {
+      return evento.imagenUrl;
     }
 
-  calcularPuntos(evento: Evento): number {
+    if (evento.imagen) return evento.imagen;
+    const categoria = this.asignarCategoria(evento.titulo, evento.descripcion);
+    return this.imagenesCategoria[categoria] || this.imagenesCategoria['default'];
+  }
 
+  calcularPuntos(evento: Evento): number {
     if (evento.fechaInicio && evento.fechaFin) {
       const inicio = new Date(evento.fechaInicio);
       const fin = new Date(evento.fechaFin);
       const horas = Math.abs(fin.getTime() - inicio.getTime()) / 36e5;
       return Math.round(horas * 10);
     }
-    return 50; // Puntos por defecto
+    return 50;
   }
 
   aplicarFiltros(): void {
     this.eventosFiltrados = this.eventos.filter(evento => {
-
       const matchSearch = !this.searchTerm ||
         evento.titulo.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
         evento.descripcion.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
         evento.lugar.toLowerCase().includes(this.searchTerm.toLowerCase());
 
-
       const matchCategoria = this.categoriaSeleccionada === 'todas' ||
         evento.categoria === this.categoriaSeleccionada;
-
 
       const matchLugar = !this.lugarFilter ||
         evento.lugar.toLowerCase().includes(this.lugarFilter.toLowerCase());
 
-
       const matchFechaInicio = !this.fechaInicio ||
         new Date(evento.fechaInicio) >= new Date(this.fechaInicio);
-
 
       const matchFechaFin = !this.fechaFin ||
         new Date(evento.fechaInicio) <= new Date(this.fechaFin);
@@ -173,6 +163,8 @@ export class EventosComponent implements OnInit {
       return matchSearch && matchCategoria && matchLugar && matchFechaInicio && matchFechaFin;
     });
 
+    // IMPORTANTE: Resetear la página a 1 cuando se aplican filtros
+    this.p = 1;
     this.aplicarOrden();
   }
 
@@ -210,6 +202,7 @@ export class EventosComponent implements OnInit {
     this.lugarFilter = '';
     this.categoriaSeleccionada = 'todas';
     this.ordenarPor = 'relevancia';
+    this.p = 1; // Resetear a página 1
     this.aplicarFiltros();
   }
 
@@ -234,7 +227,6 @@ export class EventosComponent implements OnInit {
 
   inscribirseEvento(eventoId: number): void {
     console.log('Inscribirse al evento:', eventoId);
-
     alert('Funcionalidad de inscripción próximamente');
   }
 

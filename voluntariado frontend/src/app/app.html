@@ -1,4 +1,4 @@
-<app-navbar *ngIf="!isAdminRoute"></app-navbar>
+<app-navbar *ngIf="showNavbar"></app-navbar>
 
 <div class="app-container">
   <router-outlet (activate)="onActivate($event)"></router-outlet>

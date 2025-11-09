@@ -178,7 +178,7 @@
 }
 
 .filters-container {
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 0 2rem;
 }
@@ -230,7 +230,7 @@
 
 /* Main Content */
 .main-content {
-  max-width: 1400px;
+  max-width:2000px;
   margin: 0 auto;
   padding: 2rem;
 }
@@ -466,8 +466,77 @@
 /* Events Grid */
 .events-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  grid-template-columns: repeat(3, 1fr); /* Exactamente 3 columnas */
   gap: 2rem;
+  width: 100%;
+}
+@media (max-width: 1024px) {
+  .events-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 columnas en tablets */
+  }
+}
+
+/* Responsive: 1 columna en móviles */
+@media (max-width: 768px) {
+  .events-grid {
+    grid-template-columns: 1fr; /* 1 columna en móviles */
+    gap: 1.5rem;
+  }
+}
+
+/* Mejorar controles de paginación */
+.controles-paginacion {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+  margin-bottom: 2rem;
+}
+
+/* Estilos de paginación más destacados */
+::ng-deep .ngx-pagination {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+::ng-deep .ngx-pagination li {
+  list-style: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+::ng-deep .ngx-pagination a,
+::ng-deep .ngx-pagination span {
+  display: block;
+  padding: 0.75rem 1.1rem;
+  color: #5A2986;
+  text-decoration: none;
+  border-radius: 8px;
+}
+
+::ng-deep .ngx-pagination li.current {
+  background: #6366f1;
+  color: white;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+::ng-deep .ngx-pagination li.current span {
+  color: white;
+}
+
+::ng-deep .ngx-pagination li:hover:not(.current):not(.disabled) {
+  background: #f3f4f6;
+  transform: translateY(-2px);
+}
+
+::ng-deep .ngx-pagination .disabled {
+  opacity: 0.4;
+  pointer-events: none;
 }
 
 .event-card {
@@ -781,3 +850,5 @@
   outline: 2px solid #6366f1;
   outline-offset: 2px;
 }
+
+
