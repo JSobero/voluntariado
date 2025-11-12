@@ -1,0 +1,245 @@
+/* voluntariado frontend/src/app/admin/configuracion/configuracion.component.css */
+
+/* Añadimos transiciones para un cambio de tema suave */
+.encabezado-pagina,
+.tarjeta-seccion,
+.entrada-formulario,
+.selector-formulario,
+.check-item,
+.btn-secundario {
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.contenedor-pagina {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header */
+.encabezado-pagina {
+  background: var(--color-tarjeta); /* MODIFICADO */
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); /* Sombra se mantiene */
+}
+
+.encabezado-izquierda {
+  flex: 1;
+}
+
+.titulo-pagina {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--color-texto-principal); /* MODIFICADO */
+  margin: 0 0 0.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.icono-titulo {
+  font-size: 2.25rem;
+  color: var(--color-acento); /* MODIFICADO */
+}
+
+.subtitulo-pagina {
+  font-size: 1rem;
+  color: var(--color-texto-secundario); /* MODIFICADO */
+  margin: 0;
+}
+
+/* Alerta de éxito (usando tus variables de --success) */
+.alerta-exito {
+  background: #d1fae5; /* Esto viene de .badge-success en styles.css */
+  border: 2px solid var(--success);
+  color: #065f46;     /* Esto viene de .badge-success en styles.css */
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  animation: slideIn 0.3s ease-out;
+}
+/* ... (tu @keyframes slideIn no cambia) ... */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.alerta-exito i {
+  font-size: 1.25rem;
+}
+
+/* Tarjetas de sección */
+.tarjeta-seccion {
+  background: var(--color-tarjeta); /* MODIFICADO */
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.titulo-seccion {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-texto-principal); /* MODIFICADO */
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--color-borde-divisor); /* MODIFICADO */
+}
+
+/* Formularios */
+.grilla-formulario {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+}
+
+.grilla-formulario.grilla-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grupo-formulario {
+  display: flex;
+  flex-direction: column;
+}
+
+.etiqueta-formulario {
+  display: block;
+  font-weight: 600;
+  color: var(--color-texto-etiqueta); /* MODIFICADO */
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.entrada-formulario,
+.selector-formulario {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--color-borde); /* MODIFICADO */
+  background: var(--color-fondo); /* MODIFICADO (para que combine con el fondo) */
+  color: var(--color-texto-principal); /* MODIFICADO */
+  border-radius: 10px;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.entrada-formulario:focus,
+.selector-formulario:focus {
+  outline: none;
+  border-color: var(--color-acento); /* MODIFICADO */
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); /* Puedes mantenerlo o ajustarlo */
+}
+
+/* Checkboxes */
+.contenedor-checks {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--color-fondo-input); /* MODIFICADO */
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.check-item:hover {
+  background: var(--color-fondo-hover); /* MODIFICADO */
+}
+
+.check-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: var(--color-acento); /* MODIFICADO */
+}
+
+.check-contenido {
+  flex: 1;
+}
+
+.check-titulo {
+  font-weight: 600;
+  color: var(--color-texto-principal); /* MODIFICADO */
+  margin-bottom: 0.25rem;
+}
+
+.check-descripcion {
+  font-size: 0.875rem;
+  color: var(--color-texto-secundario); /* MODIFICADO */
+}
+
+/* Botones */
+/* Tu styles.css ya define .btn y .btn-primary.
+   Es mejor usar esos.
+   Solo traduciré tu .btn-secundario que es específico de aquí. */
+.acciones-formulario {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  padding-top: 1rem;
+}
+
+/* Hereda .btn de styles.css, solo definimos los colores */
+.btn-primario {
+  /* Usando las variables de tu styles.css global */
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.btn-primario:hover:not(:disabled) {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+
+.btn-primario:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secundario {
+  background: var(--color-fondo-hover); /* MODIFICADO */
+  color: var(--color-texto-etiqueta); /* MODIFICADO */
+}
+
+.btn-secundario:hover {
+  background: var(--color-borde); /* Un poco más oscuro */
+}
+
+/* ... (tu sección @media responsive no necesita cambios) ... */
+@media (max-width: 768px) {
+  .contenedor-pagina {
+    padding: 1rem;
+  }
+
+  .grilla-formulario,
+  .grilla-formulario.grilla-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .acciones-formulario {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

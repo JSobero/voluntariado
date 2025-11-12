@@ -1,4 +1,20 @@
 /* ============================================
+   TRANSICIONES (PARA MODO OSCURO)
+   ============================================ */
+.dashboard-header,
+.user-info,
+.stat-card,
+.stat-trend-up,
+.events-section,
+.spinner,
+.events-table thead,
+.events-table tbody tr,
+.table-container,
+.capacity-badge {
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+/* ============================================
    CONTENEDOR PRINCIPAL
    ============================================ */
 .dashboard-container {
@@ -11,7 +27,7 @@
    HEADER
    ============================================ */
 .dashboard-header {
-  background: white;
+  background: var(--color-tarjeta); /* MODIFICADO */
   border-radius: 16px;
   padding: 2rem;
   margin-bottom: 2rem;
@@ -32,8 +48,8 @@
 .dashboard-title {
   font-size: 2rem;
   font-weight: 800;
-  color: #1e293b;
   margin: 0 0 0.5rem 0;
+  /* El degradado se mantiene, no necesita modo oscuro */
   background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -42,7 +58,7 @@
 
 .dashboard-subtitle {
   font-size: 1rem;
-  color: #64748b;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   margin: 0;
 }
 
@@ -57,7 +73,7 @@
   align-items: center;
   gap: 1rem;
   padding: 0.75rem 1rem;
-  background: #f8fafc;
+  background: var(--color-fondo-input); /* MODIFICADO */
   border-radius: 12px;
 }
 
@@ -67,7 +83,7 @@
 
 .user-role {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   margin: 0 0 0.25rem 0;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -77,10 +93,11 @@
 .user-email {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--color-texto-principal); /* MODIFICADO */
   margin: 0;
 }
 
+/* El avatar se mantiene, sus colores primarios están bien */
 .user-avatar {
   width: 48px;
   height: 48px;
@@ -106,7 +123,7 @@
 }
 
 .stat-card {
-  background: white;
+  background: var(--color-tarjeta); /* MODIFICADO */
   border-radius: 16px;
   padding: 1.75rem;
   position: relative;
@@ -120,6 +137,7 @@
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
 }
 
+/* El borde de color y los iconos se mantienen, están perfectos */
 .stat-card::before {
   content: '';
   position: absolute;
@@ -129,22 +147,19 @@
   height: 4px;
   background: linear-gradient(90deg, var(--card-color-start), var(--card-color-end));
 }
-
+/* ... (clases de color sin cambios) ... */
 .stat-card-blue {
   --card-color-start: #3b82f6;
   --card-color-end: #2563eb;
 }
-
 .stat-card-green {
   --card-color-start: #10b981;
   --card-color-end: #059669;
 }
-
 .stat-card-purple {
   --card-color-start: #8b5cf6;
   --card-color-end: #7c3aed;
 }
-
 .stat-card-orange {
   --card-color-start: #f97316;
   --card-color-end: #ea580c;
@@ -153,7 +168,6 @@
 .stat-icon-wrapper {
   margin-bottom: 1.25rem;
 }
-
 .stat-icon {
   width: 56px;
   height: 56px;
@@ -165,7 +179,6 @@
   background: linear-gradient(135deg, var(--card-color-start), var(--card-color-end));
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
 }
-
 .stat-content {
   margin-bottom: 1rem;
 }
@@ -173,14 +186,14 @@
 .stat-value {
   font-size: 2.5rem;
   font-weight: 800;
-  color: #1e293b;
+  color: var(--color-texto-principal); /* MODIFICADO */
   margin: 0 0 0.5rem 0;
   line-height: 1;
 }
 
 .stat-label {
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   font-weight: 600;
   margin: 0;
   text-transform: uppercase;
@@ -199,8 +212,8 @@
 }
 
 .stat-trend-up {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--color-success-sutil); /* MODIFICADO */
+  color: var(--color-success-sutil-texto); /* MODIFICADO */
 }
 
 .trend-icon {
@@ -215,7 +228,7 @@
    EVENTS SECTION
    ============================================ */
 .events-section {
-  background: white;
+  background: var(--color-tarjeta); /* MODIFICADO */
   border-radius: 16px;
   padding: 2rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -227,7 +240,7 @@
   align-items: center;
   margin-bottom: 1.5rem;
   padding-bottom: 1.5rem;
-  border-bottom: 2px solid #f1f5f9;
+  border-bottom: 2px solid var(--color-borde-divisor); /* MODIFICADO */
 }
 
 .section-title-wrapper {
@@ -237,16 +250,17 @@
 .section-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--color-texto-principal); /* MODIFICADO */
   margin: 0 0 0.375rem 0;
 }
 
 .section-subtitle {
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   margin: 0;
 }
 
+/* Botón Ver Todos se mantiene, sus colores primarios están bien */
 .btn-view-all {
   display: flex;
   align-items: center;
@@ -262,17 +276,14 @@
   transition: all 0.2s;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
-
 .btn-view-all:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
 }
-
 .arrow {
   font-size: 1rem;
   transition: transform 0.2s;
 }
-
 .btn-view-all:hover .arrow {
   transform: translateX(4px);
 }
@@ -289,8 +300,8 @@
 .spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid #e2e8f0;
-  border-top-color: #3b82f6;
+  border: 4px solid var(--color-borde); /* MODIFICADO */
+  border-top-color: var(--color-acento); /* MODIFICADO */
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin: 0 auto 1rem;
@@ -301,7 +312,7 @@
 }
 
 .loading-state p {
-  color: #64748b;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   font-size: 0.875rem;
   margin: 0;
 }
@@ -315,12 +326,12 @@
 .empty-state h3 {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--color-texto-principal); /* MODIFICADO */
   margin: 0 0 0.5rem 0;
 }
 
 .empty-state p {
-  color: #64748b;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   font-size: 0.875rem;
   margin: 0;
 }
@@ -331,7 +342,7 @@
 .table-container {
   overflow-x: auto;
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-borde); /* MODIFICADO */
 }
 
 .events-table {
@@ -340,7 +351,7 @@
 }
 
 .events-table thead {
-  background: #f8fafc;
+  background: var(--color-fondo-input); /* MODIFICADO */
 }
 
 .events-table th {
@@ -348,19 +359,18 @@
   text-align: left;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #64748b;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid var(--color-borde); /* MODIFICADO */
 }
 
 .events-table tbody tr {
-  border-bottom: 1px solid #f1f5f9;
-  transition: background-color 0.2s;
+  border-bottom: 1px solid var(--color-borde-divisor); /* MODIFICADO */
 }
 
 .events-table tbody tr:hover {
-  background: #f8fafc;
+  background: var(--color-fondo-hover); /* MODIFICADO */
 }
 
 .events-table td {
@@ -370,7 +380,7 @@
 
 .event-title {
   font-weight: 600;
-  color: #1e293b;
+  color: var(--color-texto-principal); /* MODIFICADO */
 }
 
 .title-with-icon {
@@ -379,6 +389,7 @@
   gap: 0.75rem;
 }
 
+/* El punto de evento se mantiene (es un acento) */
 .event-dot {
   width: 8px;
   height: 8px;
@@ -393,7 +404,7 @@
 
 .event-date > div,
 .event-location > div {
-  color: #64748b;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -408,8 +419,8 @@
   display: inline-flex;
   align-items: center;
   padding: 0.375rem 0.875rem;
-  background: #dbeafe;
-  color: #1e40af;
+  background: var(--color-acento-sutil); /* MODIFICADO */
+  color: var(--color-acento-sutil-texto); /* MODIFICADO */
   border-radius: 8px;
   font-size: 0.75rem;
   font-weight: 600;
@@ -421,6 +432,7 @@
   gap: 0.75rem;
 }
 
+/* El avatar de organizador se mantiene (es un acento) */
 .organizer-avatar {
   width: 32px;
   height: 32px;
@@ -436,13 +448,15 @@
 }
 
 .event-organizer {
-  color: #475569;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   font-weight: 500;
 }
 
 /* ============================================
    RESPONSIVE
    ============================================ */
+/* Tu código responsive no necesita cambios */
+
 @media (max-width: 1024px) {
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -453,45 +467,36 @@
   .dashboard-container {
     padding: 1rem;
   }
-
   .dashboard-header {
     padding: 1.5rem;
   }
-
   .header-content {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
-
   .dashboard-title {
     font-size: 1.5rem;
   }
-
   .user-info {
     width: 100%;
     justify-content: space-between;
   }
-
   .stats-grid {
     grid-template-columns: 1fr;
   }
-
   .section-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
-
   .btn-view-all {
     width: 100%;
     justify-content: center;
   }
-
   .table-container {
     overflow-x: scroll;
   }
-
   .events-table {
     min-width: 800px;
   }
@@ -501,25 +506,20 @@
   .stat-card {
     padding: 1.25rem;
   }
-
   .stat-icon {
     width: 48px;
     height: 48px;
     font-size: 1.5rem;
   }
-
   .stat-value {
     font-size: 2rem;
   }
-
   .events-section {
     padding: 1rem;
   }
-
   .section-title {
     font-size: 1.25rem;
   }
-
   .events-table th,
   .events-table td {
     padding: 0.75rem;

@@ -1,4 +1,32 @@
-
+/* ============================================
+   TRANSICIONES (PARA MODO OSCURO)
+   ============================================ */
+.tarjeta-estadistica-mini,
+.icono-estadistica-mini,
+.selector-estado,
+.contenedor-puntos,
+.entrada-puntos,
+.entrada-puntos:disabled,
+.encabezado-pagina,
+.seccion-filtros,
+.contenedor-busqueda,
+.contenedor-busqueda:focus-within,
+.entrada-busqueda,
+.selector-filtro,
+.boton-limpiar-filtros,
+.boton-limpiar-filtros:hover,
+.contenedor-carga,
+.giratorio,
+.tarjeta-tabla,
+.tabla-datos thead,
+.tabla-datos tbody tr,
+.insignia-id,
+.boton-accion,
+.boton-eliminar:hover,
+.boton-secundario,
+.boton-secundario:hover {
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
 
 /* ============================================
    ESTILOS ESPECÍFICOS DE ASISTENCIAS
@@ -6,40 +34,40 @@
 
 /* Estadísticas */
 .estadistica-confirmada {
-  border-left-color: #10b981;
+  border-left-color: var(--success); /* MODIFICADO */
 }
-
 .estadistica-confirmada .icono-estadistica-mini {
-  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  background: var(--color-success-sutil); /* MODIFICADO */
+  color: var(--color-success-sutil-texto); /* MODIFICADO */
 }
 
 .estadistica-no-asistio {
-  border-left-color: #ef4444;
+  border-left-color: var(--danger); /* MODIFICADO */
 }
-
 .estadistica-no-asistio .icono-estadistica-mini {
-  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  background: var(--color-danger-sutil); /* MODIFICADO */
+  color: var(--color-danger-sutil-texto); /* MODIFICADO */
 }
 
 .estadistica-total {
-  border-left-color: #f59e0b;
+  border-left-color: var(--warning); /* MODIFICADO */
 }
-
 .estadistica-total .icono-estadistica-mini {
-  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  background: var(--color-warning-sutil); /* MODIFICADO */
+  color: var(--color-warning-sutil-texto); /* MODIFICADO */
 }
 
 /* Estados de asistencia */
 .estado-confirmada {
-  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-  color: #065f46;
-  border-color: #10b981;
+  background: var(--color-success-sutil); /* MODIFICADO */
+  color: var(--color-success-sutil-texto); /* MODIFICADO */
+  border-color: var(--success); /* MODIFICADO */
 }
 
 .estado-no-asistio {
-  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-  color: #991b1b;
-  border-color: #ef4444;
+  background: var(--color-danger-sutil); /* MODIFICADO */
+  color: var(--color-danger-sutil-texto); /* MODIFICADO */
+  border-color: var(--danger); /* MODIFICADO */
 }
 
 /* Contenedor de puntos */
@@ -52,46 +80,50 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem;
-  background: #f8fafc;
+  background: var(--color-fondo-input); /* MODIFICADO */
   border-radius: 8px;
 }
 
 .icono-puntos {
   font-size: 1.125rem;
-  color: #f59e0b;
+  color: var(--warning); /* Se mantiene color acento */
 }
 
 .entrada-puntos {
   width: 70px;
   padding: 0.375rem 0.5rem;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-borde); /* MODIFICADO */
   border-radius: 6px;
   text-align: center;
   font-weight: 600;
   font-size: 0.875rem;
-  color: #1e293b;
-  transition: all 0.2s;
+  color: var(--color-texto-principal); /* MODIFICADO */
+  background-color: var(--color-fondo); /* MODIFICADO */
 }
 
 .entrada-puntos:focus {
   outline: none;
-  border-color: #f59e0b;
+  border-color: var(--warning); /* MODIFICADO (acento) */
   box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+  background-color: var(--color-tarjeta); /* MODIFICADO */
 }
 
 .entrada-puntos:disabled {
-  background: #f1f5f9;
-  color: #94a3b8;
+  background: var(--color-fondo-hover); /* MODIFICADO */
+  color: var(--color-texto-secundario); /* MODIFICADO */
   cursor: not-allowed;
 }
 
 .sin-confirmar {
-  color: #94a3b8;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   font-style: italic;
   font-size: 0.8125rem;
+  opacity: 0.7; /* MODIFICADO */
 }
 
-/* Copiar estilos base comunes */
+/* ============================================
+   Copiar estilos base comunes
+   ============================================ */
 .contenedor-pagina {
   padding: 2rem;
   max-width: 1400px;
@@ -99,7 +131,7 @@
 }
 
 .encabezado-pagina {
-  background: white;
+  background: var(--color-tarjeta); /* MODIFICADO */
   border-radius: 16px;
   padding: 2rem;
   margin-bottom: 1.5rem;
@@ -117,7 +149,7 @@
 .titulo-pagina {
   font-size: 2rem;
   font-weight: 800;
-  color: #1e293b;
+  color: var(--color-texto-principal); /* MODIFICADO */
   margin: 0 0 0.5rem 0;
   display: flex;
   align-items: center;
@@ -126,11 +158,12 @@
 
 .icono-titulo {
   font-size: 2.25rem;
+  color: var(--color-texto-principal); /* MODIFICADO */
 }
 
 .subtitulo-pagina {
   font-size: 1rem;
-  color: #64748b;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   margin: 0;
 }
 
@@ -142,14 +175,13 @@
 }
 
 .tarjeta-estadistica-mini {
-  background: white;
+  background: var(--color-tarjeta); /* MODIFICADO */
   border-radius: 12px;
   padding: 1.25rem;
   display: flex;
   align-items: center;
   gap: 1rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-  transition: all 0.2s;
   border-left: 4px solid;
 }
 
@@ -176,14 +208,14 @@
 .valor-estadistica-mini {
   font-size: 1.75rem;
   font-weight: 800;
-  color: #1e293b;
+  color: var(--color-texto-principal); /* MODIFICADO */
   margin: 0 0 0.25rem 0;
   line-height: 1;
 }
 
 .etiqueta-estadistica-mini {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -191,7 +223,7 @@
 }
 
 .seccion-filtros {
-  background: white;
+  background: var(--color-tarjeta); /* MODIFICADO */
   border-radius: 16px;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
@@ -209,22 +241,21 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background: #f8fafc;
+  background: var(--color-fondo-input); /* MODIFICADO */
   padding: 0.875rem 1.25rem;
   border-radius: 12px;
   border: 2px solid transparent;
-  transition: all 0.2s;
 }
 
 .contenedor-busqueda:focus-within {
-  background: white;
-  border-color: #3b82f6;
+  background: var(--color-tarjeta); /* MODIFICADO */
+  border-color: var(--color-acento); /* MODIFICADO */
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .icono-busqueda {
   font-size: 1.25rem;
-  color: #94a3b8;
+  color: var(--color-texto-secundario); /* MODIFICADO */
 }
 
 .entrada-busqueda {
@@ -233,11 +264,11 @@
   outline: none;
   font-size: 0.875rem;
   width: 100%;
-  color: #1e293b;
+  color: var(--color-texto-principal); /* MODIFICADO */
 }
 
 .entrada-busqueda::placeholder {
-  color: #94a3b8;
+  color: var(--color-texto-secundario); /* MODIFICADO */
 }
 
 .grupo-filtros {
@@ -248,44 +279,42 @@
 
 .selector-filtro {
   padding: 0.75rem 1rem;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-borde); /* MODIFICADO */
   border-radius: 10px;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #1e293b;
-  background: white;
+  color: var(--color-texto-principal); /* MODIFICADO */
+  background: var(--color-tarjeta); /* MODIFICADO */
   cursor: pointer;
-  transition: all 0.2s;
   min-width: 180px;
 }
 
 .selector-filtro:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--color-acento); /* MODIFICADO */
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .boton-limpiar-filtros {
   padding: 0.75rem 1rem;
-  background: #f1f5f9;
+  background: var(--color-fondo-hover); /* MODIFICADO */
   border: none;
   border-radius: 10px;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   cursor: pointer;
-  transition: all 0.2s;
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
 .boton-limpiar-filtros:hover {
-  background: #e2e8f0;
+  background: var(--color-borde); /* MODIFICADO */
 }
 
 .contenedor-carga {
-  background: white;
+  background: var(--color-tarjeta); /* MODIFICADO */
   border-radius: 16px;
   padding: 4rem 2rem;
   text-align: center;
@@ -295,8 +324,8 @@
 .giratorio {
   width: 48px;
   height: 48px;
-  border: 4px solid #e2e8f0;
-  border-top-color: #3b82f6;
+  border: 4px solid var(--color-borde); /* MODIFICADO */
+  border-top-color: var(--color-acento); /* MODIFICADO */
   border-radius: 50%;
   animation: girar 0.8s linear infinite;
   margin: 0 auto 1rem;
@@ -307,13 +336,13 @@
 }
 
 .contenedor-carga p {
-  color: #64748b;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   font-size: 0.875rem;
   margin: 0;
 }
 
 .tarjeta-tabla {
-  background: white;
+  background: var(--color-tarjeta); /* MODIFICADO */
   border-radius: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -329,8 +358,8 @@
 }
 
 .tabla-datos thead {
-  background: #f8fafc;
-  border-bottom: 2px solid #e2e8f0;
+  background: var(--color-fondo-input); /* MODIFICADO */
+  border-bottom: 2px solid var(--color-borde); /* MODIFICADO */
 }
 
 .tabla-datos th {
@@ -338,18 +367,17 @@
   text-align: left;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #64748b;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .tabla-datos tbody tr {
-  border-bottom: 1px solid #f1f5f9;
-  transition: background-color 0.2s;
+  border-bottom: 1px solid var(--color-borde-divisor); /* MODIFICADO */
 }
 
 .tabla-datos tbody tr:hover {
-  background: #f8fafc;
+  background: var(--color-fondo-hover); /* MODIFICADO */
 }
 
 .tabla-datos td {
@@ -366,8 +394,8 @@
   align-items: center;
   justify-content: center;
   padding: 0.25rem 0.75rem;
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--color-fondo-hover); /* MODIFICADO */
+  color: var(--color-texto-secundario); /* MODIFICADO */
   border-radius: 6px;
   font-weight: 600;
   font-size: 0.75rem;
@@ -376,13 +404,13 @@
 .celda-voluntario {
   min-width: 250px;
 }
-
 .info-voluntario {
   display: flex;
   align-items: center;
   gap: 0.875rem;
 }
 
+/* Avatar se mantiene (color de acento) */
 .avatar-voluntario {
   width: 40px;
   height: 40px;
@@ -405,7 +433,7 @@
 
 .nombre-voluntario {
   font-weight: 600;
-  color: #1e293b;
+  color: var(--color-texto-principal); /* MODIFICADO */
   font-size: 0.9375rem;
   margin-bottom: 0.25rem;
   white-space: nowrap;
@@ -415,7 +443,7 @@
 
 .correo-voluntario {
   font-size: 0.8125rem;
-  color: #64748b;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -424,7 +452,6 @@
 .celda-evento {
   min-width: 220px;
 }
-
 .info-evento-compacta {
   display: flex;
   align-items: center;
@@ -433,11 +460,12 @@
 
 .icono-evento-pequeno {
   font-size: 1.25rem;
+  color: var(--color-texto-secundario); /* MODIFICADO */
 }
 
 .titulo-evento-pequeno {
   font-weight: 500;
-  color: #475569;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   font-size: 0.875rem;
 }
 
@@ -453,7 +481,6 @@
   font-size: 0.8125rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
   text-transform: uppercase;
 }
 
@@ -465,7 +492,6 @@
 .celda-fecha {
   min-width: 160px;
 }
-
 .info-fecha {
   display: flex;
   flex-direction: column;
@@ -476,7 +502,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #475569;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   font-size: 0.875rem;
   font-weight: 500;
 }
@@ -487,7 +513,8 @@
 
 .fecha-relativa {
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--color-texto-secundario); /* MODIFICADO */
+  opacity: 0.7; /* MODIFICADO */
   font-style: italic;
 }
 
@@ -503,15 +530,15 @@
   cursor: pointer;
   font-size: 1.125rem;
   border-radius: 6px;
-  transition: all 0.2s;
+  color: var(--color-texto-secundario); /* MODIFICADO */
 }
-
 .boton-accion:hover {
   transform: scale(1.1);
 }
 
 .boton-eliminar:hover {
-  background: #fee2e2;
+  background: var(--color-danger-sutil); /* MODIFICADO */
+  color: var(--color-danger-sutil-texto); /* MODIFICADO */
 }
 
 .estado-vacio {
@@ -523,17 +550,18 @@
   font-size: 4rem;
   margin-bottom: 1rem;
   opacity: 0.5;
+  color: var(--color-texto-secundario); /* MODIFICADO */
 }
 
 .estado-vacio h3 {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--color-texto-principal); /* MODIFICADO */
   margin: 0 0 0.5rem 0;
 }
 
 .estado-vacio p {
-  color: #64748b;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   font-size: 0.875rem;
   margin: 0 0 1.5rem 0;
 }
@@ -544,7 +572,6 @@
   font-weight: 600;
   font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.2s;
   border: none;
   display: inline-flex;
   align-items: center;
@@ -552,52 +579,45 @@
 }
 
 .boton-secundario {
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--color-fondo-hover); /* MODIFICADO */
+  color: var(--color-texto-secundario); /* MODIFICADO */
 }
 
 .boton-secundario:hover {
-  background: #e2e8f0;
+  background: var(--color-borde); /* MODIFICADO */
 }
 
 /* ============================================
    RESPONSIVE
    ============================================ */
+/* ... (tu código responsive se mantiene igual) ... */
 @media (max-width: 768px) {
   .contenedor-pagina {
     padding: 1rem;
   }
-
   .encabezado-pagina {
     flex-direction: column;
     align-items: flex-start;
   }
-
   .titulo-pagina {
     font-size: 1.5rem;
   }
-
   .grilla-estadisticas-mini {
     grid-template-columns: 1fr;
   }
-
   .fila-filtros {
     flex-direction: column;
   }
-
   .grupo-filtros {
     width: 100%;
     flex-direction: column;
   }
-
   .selector-filtro {
     width: 100%;
   }
-
   .tabla-responsiva {
     overflow-x: scroll;
   }
-
   .tabla-datos {
     min-width: 1000px;
   }

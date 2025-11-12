@@ -75,6 +75,11 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./admin/certificados/certificados-list.component').then(m => m.CertificadosListComponent)
       },
+    {
+          path: 'configuracion',
+          loadComponent: () =>
+            import('./admin/configuracion/configuracion.component').then(m => m.ConfiguracionComponent)
+        },
       {
         path: '',
         redirectTo: 'dashboard',

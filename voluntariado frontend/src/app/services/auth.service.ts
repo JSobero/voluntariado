@@ -73,4 +73,21 @@ export class AuthService {
     // Envía al usuario a la página principal
     this.router.navigate(['/']);
   }
+
+  logoutConConfirmacion(): void {
+    const confirmar = confirm('¿Estás seguro de que deseas cerrar sesión?');
+
+    if (confirmar) {
+      // Limpia el localStorage
+      localStorage.removeItem('currentUser');
+
+      // Actualiza el signal a 'null'
+      this.currentUser.set(null);
+
+      // Envía al usuario a la página principal
+      this.router.navigate(['/']);
+
+      console.log('Sesión cerrada exitosamente');
+    }
+}
 }

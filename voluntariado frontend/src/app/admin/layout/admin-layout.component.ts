@@ -1,8 +1,11 @@
-import { Component } from '@angular/core';
+// voluntariado frontend/src/app/admin/layout/admin-layout.component.ts
+import { Component, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import { RouterModule, Router, ActivatedRoute, NavigationEnd } from '@angular/router';
+import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
+import { AuthService, Usuario } from '../../services/auth.service';
+import { TemaService} from '../../services/tema.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-admin-layout',
@@ -11,14 +14,14 @@ import { filter, map } from 'rxjs/operators';
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.css']
 })
-export class AdminLayoutComponent {
+export class AdminLayoutComponent implements OnInit {
   sidebarOpen = true;
-
   userMenuOpen = false;
-
-
   pageTitle = 'Dashboard';
   breadcrumb = 'Dashboard';
+  public isDarkMode$: Observable<boolean>;
+  // ✅ Usa el signal de tu AuthService existente
+  usuarioActual = computed(() => this.authService.currentUser());
 
   menuItems = [
     { route: '/admin/dashboard', label: 'Dashboard', icon: 'bi bi-speedometer2', title: 'Dashboard' },
@@ -31,14 +34,18 @@ export class AdminLayoutComponent {
     { route: '/admin/certificados', label: 'Certificados', icon: 'bi bi-patch-plus-fill', title: 'Gestión de Certificados' }
   ];
 
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private themeService: TemaService
+  ) {
 
-  constructor(private router: Router, private activatedRoute: ActivatedRoute) {
-    // Este código escucha los cambios de ruta para actualizar el título
+    this.isDarkMode$ = this.themeService.isDark$;
+    // Actualizar título según la ruta
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
       map(() => {
         const currentRoute = this.router.url;
-
         const activeItem = this.menuItems.find(item => item.route === currentRoute);
         return activeItem ? activeItem.title : 'Dashboard';
       })
@@ -48,7 +55,27 @@ export class AdminLayoutComponent {
     });
   }
 
-  toggleSidebar() {
+  ngOnInit(): void {
+    // El usuario ya está en el signal, no necesitas hacer nada más aquí
+    // Si no hay usuario, el guard debería redirigir al login
+  }
+
+  toggleSidebar(): void {
     this.sidebarOpen = !this.sidebarOpen;
+  }
+
+  // ✅ Usa el nuevo método con confirmación
+  cerrarSesion(): void {
+    this.authService.logoutConConfirmacion();
+  }
+
+  irAConfiguracion(): void {
+    this.userMenuOpen = false;
+    this.router.navigate(['/admin/configuracion']);
+  }
+
+  irAPerfil(): void {
+    this.userMenuOpen = false;
+    this.router.navigate(['/admin/perfil']);
   }
 }

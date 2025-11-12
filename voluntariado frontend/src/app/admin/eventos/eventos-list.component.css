@@ -1,4 +1,44 @@
 /* ============================================
+   TRANSICIONES (PARA MODO OSCURO)
+   ============================================ */
+.encabezado-pagina,
+.boton-secundario,
+.boton-secundario:hover,
+.seccion-filtros,
+.contenedor-busqueda,
+.contenedor-busqueda:focus-within,
+.entrada-busqueda,
+.contenedor-carga,
+.giratorio,
+.tarjeta-tabla,
+.tabla-datos thead,
+.tabla-datos tbody tr,
+.insignia-id,
+.insignia-capacidad,
+.insignia-estado,
+.boton-accion,
+.boton-editar:hover,
+.boton-eliminar:hover,
+.estado-vacio,
+.contenedor-modal,
+.encabezado-modal,
+.cerrar-modal,
+.cerrar-modal:hover,
+.entrada-formulario,
+.area-texto-formulario,
+.selector-formulario,
+.entrada-formulario:focus,
+.area-texto-formulario:focus,
+.selector-formulario:focus,
+.pie-modal,
+.area-upload,
+.area-upload:hover,
+.error-imagen,
+.loading-upload {
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+/* ============================================
    CONTENEDOR DE PÁGINA
    ============================================ */
 .contenedor-pagina {
@@ -11,7 +51,7 @@
    ENCABEZADO DE PÁGINA
    ============================================ */
 .encabezado-pagina {
-  background: white;
+  background: var(--color-tarjeta); /* MODIFICADO */
   border-radius: 16px;
   padding: 2rem;
   margin-bottom: 1.5rem;
@@ -29,7 +69,7 @@
 .titulo-pagina {
   font-size: 2rem;
   font-weight: 800;
-  color: #1e293b;
+  color: var(--color-texto-principal); /* MODIFICADO */
   margin: 0 0 0.5rem 0;
   display: flex;
   align-items: center;
@@ -38,11 +78,12 @@
 
 .icono-titulo {
   font-size: 2.25rem;
+  color: var(--color-texto-principal); /* MODIFICADO */
 }
 
 .subtitulo-pagina {
   font-size: 1rem;
-  color: #64748b;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   margin: 0;
 }
 
@@ -60,31 +101,30 @@
   font-weight: 600;
   font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.2s;
   border: none;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
 }
 
+/* Botón primario se mantiene, es un color de acento */
 .boton-primario {
   background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: white;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
-
 .boton-primario:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
 }
 
 .boton-secundario {
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--color-fondo-hover); /* MODIFICADO */
+  color: var(--color-texto-secundario); /* MODIFICADO */
 }
 
 .boton-secundario:hover {
-  background: #e2e8f0;
+  background: var(--color-borde); /* MODIFICADO */
 }
 
 .icono-boton {
@@ -95,7 +135,7 @@
    FILTROS Y BÚSQUEDA
    ============================================ */
 .seccion-filtros {
-  background: white;
+  background: var(--color-tarjeta); /* MODIFICADO */
   border-radius: 16px;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
@@ -106,22 +146,21 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background: #f8fafc;
+  background: var(--color-fondo-input); /* MODIFICADO */
   padding: 0.875rem 1.25rem;
   border-radius: 12px;
   border: 2px solid transparent;
-  transition: all 0.2s;
 }
 
 .contenedor-busqueda:focus-within {
-  background: white;
-  border-color: #3b82f6;
+  background: var(--color-tarjeta); /* MODIFICADO */
+  border-color: var(--color-acento); /* MODIFICADO */
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .icono-busqueda {
   font-size: 1.25rem;
-  color: #94a3b8;
+  color: var(--color-texto-secundario); /* MODIFICADO */
 }
 
 .entrada-busqueda {
@@ -130,18 +169,18 @@
   outline: none;
   font-size: 0.875rem;
   width: 100%;
-  color: #1e293b;
+  color: var(--color-texto-principal); /* MODIFICADO */
 }
 
 .entrada-busqueda::placeholder {
-  color: #94a3b8;
+  color: var(--color-texto-secundario); /* MODIFICADO */
 }
 
 /* ============================================
    ESTADO DE CARGA
    ============================================ */
 .contenedor-carga {
-  background: white;
+  background: var(--color-tarjeta); /* MODIFICADO */
   border-radius: 16px;
   padding: 4rem 2rem;
   text-align: center;
@@ -151,8 +190,8 @@
 .giratorio {
   width: 48px;
   height: 48px;
-  border: 4px solid #e2e8f0;
-  border-top-color: #3b82f6;
+  border: 4px solid var(--color-borde); /* MODIFICADO */
+  border-top-color: var(--color-acento); /* MODIFICADO */
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin: 0 auto 1rem;
@@ -163,7 +202,7 @@
 }
 
 .contenedor-carga p {
-  color: #64748b;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   font-size: 0.875rem;
   margin: 0;
 }
@@ -172,7 +211,7 @@
    TABLA
    ============================================ */
 .tarjeta-tabla {
-  background: white;
+  background: var(--color-tarjeta); /* MODIFICADO */
   border-radius: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -188,8 +227,8 @@
 }
 
 .tabla-datos thead {
-  background: #f8fafc;
-  border-bottom: 2px solid #e2e8f0;
+  background: var(--color-fondo-input); /* MODIFICADO */
+  border-bottom: 2px solid var(--color-borde); /* MODIFICADO */
 }
 
 .tabla-datos th {
@@ -197,18 +236,17 @@
   text-align: left;
   font-size: 0.75rem;
   font-weight: 700;
-  color: #64748b;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .tabla-datos tbody tr {
-  border-bottom: 1px solid #f1f5f9;
-  transition: background-color 0.2s;
+  border-bottom: 1px solid var(--color-borde-divisor); /* MODIFICADO */
 }
 
 .tabla-datos tbody tr:hover {
-  background: #f8fafc;
+  background: var(--color-fondo-hover); /* MODIFICADO */
 }
 
 .tabla-datos td {
@@ -226,8 +264,8 @@
   align-items: center;
   justify-content: center;
   padding: 0.25rem 0.75rem;
-  background: #f1f5f9;
-  color: #475569;
+  background: var(--color-fondo-hover); /* MODIFICADO */
+  color: var(--color-texto-secundario); /* MODIFICADO */
   border-radius: 6px;
   font-weight: 600;
   font-size: 0.75rem;
@@ -246,17 +284,18 @@
 .icono-evento {
   font-size: 1.5rem;
   flex-shrink: 0;
+  color: var(--color-acento); /* MODIFICADO */
 }
 
 .titulo-evento {
   font-weight: 600;
-  color: #1e293b;
+  color: var(--color-texto-principal); /* MODIFICADO */
   margin-bottom: 0.25rem;
 }
 
 .descripcion-evento {
   font-size: 0.8125rem;
-  color: #64748b;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -272,7 +311,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #475569;
+  color: var(--color-texto-secundario); /* MODIFICADO */
 }
 
 .envoltorio-fecha {
@@ -292,7 +331,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #475569;
+  color: var(--color-texto-secundario); /* MODIFICADO */
 }
 
 .icono-ubicacion {
@@ -308,8 +347,8 @@
   display: inline-flex;
   align-items: center;
   padding: 0.5rem 1rem;
-  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-  color: #1e40af;
+  background: var(--color-acento-sutil); /* MODIFICADO */
+  color: var(--color-acento-sutil-texto); /* MODIFICADO */
   border-radius: 8px;
   font-weight: 600;
   font-size: 0.8125rem;
@@ -330,31 +369,30 @@
   letter-spacing: 0.025em;
 }
 
+/* MODIFICADO (usa variables semánticas) */
 .insignia-estado.bg-green-100 {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--color-success-sutil);
+  color: var(--color-success-sutil-texto);
 }
-
 .insignia-estado.bg-blue-100 {
-  background: #dbeafe;
-  color: #1e40af;
+  background: var(--color-acento-sutil);
+  color: var(--color-acento-sutil-texto);
 }
-
 .insignia-estado.bg-gray-100 {
-  background: #f3f4f6;
-  color: #374151;
+  background: var(--color-fondo-hover);
+  color: var(--color-texto-etiqueta);
 }
 
 .celda-organizador {
   min-width: 180px;
 }
-
 .info-organizador {
   display: flex;
   align-items: center;
   gap: 0.75rem;
 }
 
+/* Avatar de organizador se mantiene (color de acento) */
 .avatar-organizador {
   width: 36px;
   height: 36px;
@@ -381,8 +419,8 @@
   cursor: pointer;
   font-size: 1.125rem;
   border-radius: 6px;
-  transition: all 0.2s;
   margin: 0 0.25rem;
+  color: var(--color-texto-secundario); /* MODIFICADO */
 }
 
 .boton-accion:hover {
@@ -390,11 +428,13 @@
 }
 
 .boton-editar:hover {
-  background: #dbeafe;
+  background: var(--color-acento-sutil); /* MODIFICADO */
+  color: var(--color-acento-sutil-texto); /* MODIFICADO */
 }
 
 .boton-eliminar:hover {
-  background: #fee2e2;
+  background: var(--color-danger-sutil); /* MODIFICADO */
+  color: var(--color-danger-sutil-texto); /* MODIFICADO */
 }
 
 /* ============================================
@@ -409,17 +449,18 @@
   font-size: 4rem;
   margin-bottom: 1rem;
   opacity: 0.5;
+  color: var(--color-texto-secundario); /* MODIFICADO */
 }
 
 .estado-vacio h3 {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--color-texto-principal); /* MODIFICADO */
   margin: 0 0 0.5rem 0;
 }
 
 .estado-vacio p {
-  color: #64748b;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   font-size: 0.875rem;
   margin: 0;
 }
@@ -430,7 +471,7 @@
 .superposicion-modal {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.5); /* Se mantiene */
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -441,7 +482,7 @@
 }
 
 .contenedor-modal {
-  background: white;
+  background: var(--color-tarjeta); /* MODIFICADO */
   border-radius: 20px;
   width: 100%;
   max-width: 700px;
@@ -465,7 +506,7 @@
 
 .encabezado-modal {
   padding: 1.5rem 2rem;
-  border-bottom: 2px solid #f1f5f9;
+  border-bottom: 2px solid var(--color-borde-divisor); /* MODIFICADO */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -474,7 +515,7 @@
 .titulo-modal {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1e293b;
+  color: var(--color-texto-principal); /* MODIFICADO */
   margin: 0;
   display: flex;
   align-items: center;
@@ -483,17 +524,18 @@
 
 .icono-modal {
   font-size: 1.75rem;
+  color: var(--color-acento); /* MODIFICADO */
 }
 
 .cerrar-modal {
   width: 36px;
   height: 36px;
   border-radius: 8px;
-  background: #f1f5f9;
+  background: var(--color-fondo-hover); /* MODIFICADO */
   border: none;
   cursor: pointer;
   font-size: 1.25rem;
-  color: #64748b;
+  color: var(--color-texto-secundario); /* MODIFICADO */
   transition: all 0.2s;
   display: flex;
   align-items: center;
@@ -501,8 +543,8 @@
 }
 
 .cerrar-modal:hover {
-  background: #e2e8f0;
-  color: #1e293b;
+  background: var(--color-borde); /* MODIFICADO */
+  color: var(--color-texto-principal); /* MODIFICADO */
   transform: scale(1.05);
 }
 
@@ -528,12 +570,12 @@
   gap: 0.25rem;
   margin-bottom: 0.5rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--color-texto-etiqueta); /* MODIFICADO */
   font-size: 0.875rem;
 }
 
 .etiqueta-requerido {
-  color: #ef4444;
+  color: var(--danger); /* MODIFICADO */
 }
 
 .entrada-formulario,
@@ -541,19 +583,21 @@
 .selector-formulario {
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-borde); /* MODIFICADO */
   border-radius: 10px;
   font-size: 0.875rem;
-  transition: all 0.2s;
   font-family: inherit;
+  background-color: var(--color-fondo); /* MODIFICADO */
+  color: var(--color-texto-principal); /* MODIFICADO */
 }
 
 .entrada-formulario:focus,
 .area-texto-formulario:focus,
 .selector-formulario:focus {
   outline: none;
-  border-color: #3b82f6;
+  border-color: var(--color-acento); /* MODIFICADO */
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background-color: var(--color-tarjeta); /* MODIFICADO */
 }
 
 .area-texto-formulario {
@@ -563,7 +607,7 @@
 
 .pie-modal {
   padding: 1.5rem 2rem;
-  border-top: 2px solid #f1f5f9;
+  border-top: 2px solid var(--color-borde-divisor); /* MODIFICADO */
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
@@ -593,6 +637,7 @@
   display: block;
 }
 
+/* Botón de eliminar se mantiene (color de peligro) */
 .btn-eliminar-preview {
   position: absolute;
   top: 0.5rem;
@@ -611,24 +656,22 @@
   transition: all 0.2s;
   backdrop-filter: blur(4px);
 }
-
 .btn-eliminar-preview:hover {
   background: rgba(220, 38, 38, 0.95);
   transform: scale(1.1);
 }
 
 .area-upload {
-  border: 2px dashed #d1d5db;
+  border: 2px dashed var(--color-borde); /* MODIFICADO */
   border-radius: 12px;
   padding: 3rem 2rem;
   text-align: center;
-  background: #f9fafb;
-  transition: all 0.3s;
+  background: var(--color-fondo-input); /* MODIFICADO */
 }
 
 .area-upload:hover {
-  border-color: #3b82f6;
-  background: #eff6ff;
+  border-color: var(--color-acento); /* MODIFICADO */
+  background: var(--color-acento-sutil); /* MODIFICADO */
 }
 
 .label-upload {
@@ -641,25 +684,25 @@
 
 .icono-upload {
   font-size: 3rem;
-  color: #3b82f6;
+  color: var(--color-acento); /* MODIFICADO */
 }
 
 .texto-upload {
   font-size: 1rem;
   font-weight: 600;
-  color: #1f2937;
+  color: var(--color-texto-principal); /* MODIFICADO */
 }
 
 .texto-upload-small {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--color-texto-secundario); /* MODIFICADO */
 }
 
 .error-imagen {
   margin-top: 0.75rem;
   padding: 0.75rem;
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--color-danger-sutil); /* MODIFICADO */
+  color: var(--color-danger-sutil-texto); /* MODIFICADO */
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -670,63 +713,55 @@
 .loading-upload {
   margin-top: 1rem;
   padding: 1rem;
-  background: #eff6ff;
+  background: var(--color-acento-sutil); /* MODIFICADO */
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
   font-size: 0.875rem;
-  color: #1e40af;
+  color: var(--color-acento-sutil-texto); /* MODIFICADO */
   font-weight: 500;
 }
 
 .spinner-upload {
   width: 20px;
   height: 20px;
-  border: 3px solid #bfdbfe;
-  border-top-color: #3b82f6;
+  border: 3px solid var(--color-acento-sutil); /* MODIFICADO */
+  border-top-color: var(--color-acento); /* MODIFICADO */
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+/* ... (keyframes se mantienen) ... */
 
 /* ============================================
    RESPONSIVE
    ============================================ */
+/* ... (tu código responsive se mantiene igual) ... */
 @media (max-width: 768px) {
   .contenedor-pagina {
     padding: 1rem;
   }
-
   .encabezado-pagina {
     flex-direction: column;
     align-items: flex-start;
   }
-
   .titulo-pagina {
     font-size: 1.5rem;
   }
-
   .tabla-responsiva {
     overflow-x: scroll;
   }
-
   .tabla-datos {
     min-width: 1000px;
   }
-
   .fila-formulario {
     grid-template-columns: 1fr;
   }
-
   .contenedor-modal {
     max-height: 95vh;
   }
-
   .cuerpo-modal {
     padding: 1.5rem;
   }
