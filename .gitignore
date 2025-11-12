@@ -1,1 +1,30 @@
+# === Node / Angular ===
+node_modules/
+dist/
+.angular/
+.env
+.env.local
+package-lock.json
+
+# === Java / Spring Boot ===
+target/
+*.log
+*.jar
+*.war
+*.iml
+.gradle/
+build/
+out/
+!gradle/wrapper/gradle-wrapper.jar
+
+# === Sistema operativo ===
+.DS_Store
+Thumbs.db
+
+# === IDEs ===
+.vscode/
 .idea/
+*.swp
+
+# === Otros ===
+/bd/
