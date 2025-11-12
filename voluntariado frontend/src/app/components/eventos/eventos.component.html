@@ -164,7 +164,7 @@
             <div class="event-image" [style.backgroundImage]="'url(' + evento.imagen + ')'">
               <div class="event-badges">
                 <span class="badge badge-points">{{evento.puntos}} pts</span>
-                <span class="badge badge-category">{{evento.categoria}}</span>
+                <span class="badge badge-category">{{ obtenerNombreCategoria(evento.categoria) }}</span>
               </div>
             </div>
 

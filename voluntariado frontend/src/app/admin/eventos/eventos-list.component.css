@@ -732,6 +732,85 @@
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }
+/* ============================================
+   FILTRO DE CATEGORÍAS
+   ============================================ */
+.fila-filtros {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.selector-categoria-filtro {
+  padding: 0.875rem 1.25rem;
+  border: 2px solid var(--color-borde);
+  border-radius: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-texto-principal);
+  background: var(--color-tarjeta);
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 200px;
+}
+
+.selector-categoria-filtro:focus {
+  outline: none;
+  border-color: var(--color-acento);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* ============================================
+   CATEGORÍA EN TABLA
+   ============================================ */
+.celda-categoria {
+  min-width: 160px;
+}
+
+.insignia-categoria {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  border: 1.5px solid;
+  transition: all 0.2s;
+}
+
+.insignia-categoria:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.icono-categoria {
+  font-size: 1.125rem;
+  line-height: 1;
+}
+
+/* ============================================
+   VISTA PREVIA DE CATEGORÍA EN MODAL
+   ============================================ */
+.vista-previa-categoria {
+  margin-top: 0.75rem;
+  padding: 1rem;
+  background: var(--color-fondo-input);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.insignia-categoria-preview {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  border: 2px solid;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
 
 /* ... (keyframes se mantienen) ... */
 
@@ -750,6 +829,15 @@
   .titulo-pagina {
     font-size: 1.5rem;
   }
+
+  /* ✅ AÑADIR ESTAS LÍNEAS */
+  .fila-filtros {
+    flex-direction: column;
+  }
+  .selector-categoria-filtro {
+    width: 100%;
+  }
+
   .tabla-responsiva {
     overflow-x: scroll;
   }

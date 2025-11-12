@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { EventoService } from '../../core/services/evento.service';
 import { UsuarioService } from '../../core/services/usuario.service';
 import { ImageService } from '../../core/services/image.service';
-import { Evento } from '../../core/models/evento.model';
+import { Evento, CATEGORIAS_EVENTO} from '../../core/models/evento.model';
 import { Usuario } from '../../core/models/usuario.model';
 
 @Component({
@@ -21,7 +21,8 @@ export class EventosListComponent implements OnInit {
   organizadores: Usuario[] = [];
   cargando = false;
   terminoBusqueda = '';
-
+  categoriaFiltro = '';
+  categorias = CATEGORIAS_EVENTO;
   mostrarModal = false;
   modoEdicion = false;
   eventoActual: Evento = this.obtenerEventoVacio();
@@ -99,18 +100,25 @@ export class EventosListComponent implements OnInit {
   }
 
   filtrarEventos() {
-    if (!this.terminoBusqueda) {
+    if (!this.terminoBusqueda && !this.categoriaFiltro) { // ✅ MODIFICAR
       this.eventosFiltrados = this.eventos;
       this.cdRef.detectChanges();
       return;
     }
 
     const termino = this.terminoBusqueda.toLowerCase();
-    this.eventosFiltrados = this.eventos.filter(e =>
-      e.titulo.toLowerCase().includes(termino) ||
-      e.descripcion?.toLowerCase().includes(termino) ||
-      e.lugar.toLowerCase().includes(termino)
-    );
+    this.eventosFiltrados = this.eventos.filter(e => {
+      // ✅ AÑADIR ESTE BLOQUE
+      const matchTexto = !this.terminoBusqueda ||
+        e.titulo.toLowerCase().includes(termino) ||
+        e.descripcion?.toLowerCase().includes(termino) ||
+        e.lugar.toLowerCase().includes(termino);
+
+      const matchCategoria = !this.categoriaFiltro ||
+        e.categoria === this.categoriaFiltro;
+
+      return matchTexto && matchCategoria;
+    });
     this.cdRef.detectChanges();
   }
 
@@ -212,40 +220,61 @@ export class EventosListComponent implements OnInit {
     }
 
     const eventoParaGuardar = {
-      ...this.eventoActual,
-      organizador: organizadorCompleto
-    };
+          ...this.eventoActual,
+          organizador: organizadorCompleto
+        };
 
-    if (this.modoEdicion && this.eventoActual.id) {
-      this.eventoService.update(this.eventoActual.id, eventoParaGuardar).subscribe({
-        next: (eventoActualizado) => {
-          const indice = this.eventos.findIndex(e => e.id === eventoActualizado.id);
-          if (indice !== -1) {
-            this.eventos[indice] = eventoActualizado;
-            this.eventosFiltrados = [...this.eventos];
-          }
-          this.cerrarModal();
-          this.cdRef.detectChanges();
-        },
-        error: (err) => {
-          console.error('Error al actualizar:', err);
-          alert('Error al actualizar el evento');
+        if (this.modoEdicion && this.eventoActual.id) {
+
+          // MIRA AQUÍ:
+          this.eventoService.update(this.eventoActual.id, eventoParaGuardar).subscribe({
+
+            // El problema está en este bloque 'next'
+            next: (eventoActualizado) => {
+
+              // --- INICIO DE LA CORRECCIÓN ---
+              // Debemos convertir las fechas del evento que acaba de llegar,
+              // igual que hicimos en cargarEventos()
+              const eventoConvertido = {
+                ...eventoActualizado,
+                fechaInicio: this.convertirFecha(eventoActualizado.fechaInicio) || '',
+                fechaFin: eventoActualizado.fechaFin ? this.convertirFecha(eventoActualizado.fechaFin) : undefined
+              };
+              // --- FIN DE LA CORRECCIÓN ---
+
+
+              // Ahora buscamos el índice
+              const indice = this.eventos.findIndex(e => e.id === eventoConvertido.id);
+
+              if (indice !== -1) {
+                // Y guardamos el evento YA CONVERTIDO
+                this.eventos[indice] = eventoConvertido;
+                this.eventosFiltrados = [...this.eventos];
+              }
+              this.cerrarModal();
+              this.cdRef.detectChanges();
+            },
+            error: (err) => {
+              console.error('Error al actualizar:', err);
+              alert('Error al actualizar el evento');
+            }
+          });
+        } else {
+          // El bloque 'create' está bien porque llama a cargarEventos(),
+          // que ya hace la conversión.
+          this.eventoService.create(eventoParaGuardar).subscribe({
+            next: () => {
+              this.cargarEventos();
+              this.cerrarModal();
+              this.cdRef.detectChanges();
+            },
+            error: (err) => {
+              console.error('Error al crear:', err);
+              alert('Error al crear el evento');
+            }
+          });
         }
-      });
-    } else {
-      this.eventoService.create(eventoParaGuardar).subscribe({
-        next: () => {
-          this.cargarEventos();
-          this.cerrarModal();
-          this.cdRef.detectChanges();
-        },
-        error: (err) => {
-          console.error('Error al crear:', err);
-          alert('Error al crear el evento');
-        }
-      });
-    }
-  }
+      }
 
   eliminarEvento(id: number) {
     if (confirm('¿Está seguro de eliminar este evento? Esta acción no se puede deshacer.')) {
@@ -267,6 +296,7 @@ export class EventosListComponent implements OnInit {
     return {
       titulo: '',
       descripcion: '',
+      categoria: 'otras',
       fechaInicio: '',
       fechaFin: undefined,
       lugar: '',
@@ -293,5 +323,21 @@ export class EventosListComponent implements OnInit {
 
   obtenerEstadoEvento(fechaInicio: string): string {
     return this.esEventoPasado(fechaInicio) ? 'Finalizado' : 'Próximo';
+  }
+
+// ✅ AÑADIR ESTOS MÉTODOS
+  obtenerNombreCategoria(categoriaId: string): string {
+  const categoria = this.categorias.find(c => c.id === categoriaId);
+  return categoria ? categoria.nombre : 'Sin categoría';
+  }
+
+  obtenerIconoCategoria(categoriaId: string): string {
+  const categoria = this.categorias.find(c => c.id === categoriaId);
+  return categoria ? categoria.icon : '📋';
+  }
+
+  obtenerColorCategoria(categoriaId: string): string {
+  const categoria = this.categorias.find(c => c.id === categoriaId);
+  return categoria ? categoria.color : '#64748b';
   }
 }

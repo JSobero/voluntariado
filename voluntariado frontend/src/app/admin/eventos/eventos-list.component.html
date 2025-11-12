@@ -16,14 +16,26 @@
   </div>
 
   <div class="seccion-filtros">
-    <div class="contenedor-busqueda">
-      <i class="icono-busqueda bi bi-search"></i>
-      <input
-        type="text"
-        class="entrada-busqueda"
-        placeholder="Buscar eventos por título, descripción o lugar..."
-        [(ngModel)]="terminoBusqueda"
-        (ngModelChange)="filtrarEventos()">
+    <div class="fila-filtros">
+      <div class="contenedor-busqueda">
+        <i class="icono-busqueda bi bi-search"></i>
+        <input
+          type="text"
+          class="entrada-busqueda"
+          placeholder="Buscar eventos por título, descripción o lugar..."
+          [(ngModel)]="terminoBusqueda"
+          (ngModelChange)="filtrarEventos()">
+      </div>
+
+      <select
+        class="selector-categoria-filtro"
+        [(ngModel)]="categoriaFiltro"
+        (change)="filtrarEventos()">
+        <option value="">Todas las categorías</option>
+        <option *ngFor="let cat of categorias" [value]="cat.id">
+          {{cat.icon}} {{cat.nombre}}
+        </option>
+      </select>
     </div>
   </div>
 
@@ -39,6 +51,7 @@
         <tr>
           <th>ID</th>
           <th>Evento</th>
+          <th>Categoría</th>
           <th>Fecha Inicio</th>
           <th>Lugar</th>
           <th>Cupo</th>
@@ -60,6 +73,15 @@
                 <div class="descripcion-evento">{{ evento.descripcion }}</div>
               </div>
             </div>
+          </td>
+          <td class="celda-categoria">
+            <span class="insignia-categoria"
+                [style.background-color]="obtenerColorCategoria(evento.categoria) + '20'"
+                [style.color]="obtenerColorCategoria(evento.categoria)"
+                [style.border-color]="obtenerColorCategoria(evento.categoria)">
+              <span class="icono-categoria">{{obtenerIconoCategoria(evento.categoria)}}</span>
+              {{obtenerNombreCategoria(evento.categoria)}}
+            </span>
           </td>
           <td class="celda-fecha">
             <div class="envoltorio-fecha">
@@ -161,6 +183,32 @@
             <div class="loading-upload" *ngIf="subiendoImagen">
               <div class="spinner-upload"></div>
               <span>Subiendo imagen...</span>
+            </div>
+          </div>
+          <div class="grupo-formulario">
+            <label class="etiqueta-formulario">
+              <span class="texto-etiqueta">Categoría</span>
+              <span class="etiqueta-requerido">*</span>
+            </label>
+            <select
+              class="entrada-formulario"
+              [(ngModel)]="eventoActual.categoria"
+              required>
+              <option value="">Seleccionar categoría...</option>
+              <option *ngFor="let cat of categorias" [value]="cat.id">
+                {{cat.icon}} {{cat.nombre}}
+              </option>
+            </select>
+
+            <!-- Vista previa de la categoría seleccionada -->
+            <div class="vista-previa-categoria" *ngIf="eventoActual.categoria">
+    <span class="insignia-categoria-preview"
+          [style.background-color]="obtenerColorCategoria(eventoActual.categoria) + '20'"
+          [style.color]="obtenerColorCategoria(eventoActual.categoria)"
+          [style.border-color]="obtenerColorCategoria(eventoActual.categoria)">
+      <span class="icono-categoria">{{obtenerIconoCategoria(eventoActual.categoria)}}</span>
+      {{obtenerNombreCategoria(eventoActual.categoria)}}
+    </span>
             </div>
           </div>
         </div>

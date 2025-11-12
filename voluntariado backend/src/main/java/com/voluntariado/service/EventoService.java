@@ -20,6 +20,11 @@ public class EventoService {
         return eventoRepository.findAll();
     }
 
+    // ✅ NUEVO: Método para listar por categoría
+    public List<Evento> listarPorCategoria(String categoria) {
+        return eventoRepository.findByCategoria(categoria);
+    }
+
     public Optional<Evento> obtenerPorId(Long id) {
         return eventoRepository.findById(id);
     }
@@ -32,6 +37,7 @@ public class EventoService {
         return eventoRepository.findById(id).map(e -> {
             e.setTitulo(evento.getTitulo());
             e.setDescripcion(evento.getDescripcion());
+            e.setCategoria(evento.getCategoria()); // ✅ AÑADIDO
             e.setLugar(evento.getLugar());
             e.setFechaInicio(evento.getFechaInicio());
             e.setFechaFin(evento.getFechaFin());

@@ -55,7 +55,8 @@ export class EventosComponent implements OnInit {
     { id: 'animales', nombre: 'Animales', icon: '🐕' },
     { id: 'adultos-mayores', nombre: 'Adultos Mayores', icon: '👵' },
     { id: 'arte-cultura', nombre: 'Arte y Cultura', icon: '🎨' },
-    { id: 'construccion', nombre: 'Construcción', icon: '🏗️' }
+    { id: 'construccion', nombre: 'Construcción', icon: '🏗️' },
+    { id: 'otras', nombre: 'Otras', icon: '🧩' }
   ];
 
   imagenesCategoria: { [key: string]: string } = {
@@ -74,24 +75,33 @@ export class EventosComponent implements OnInit {
   }
 
   cargarEventos(): void {
-    this.isLoading = true;
-    this.error = null;
+      this.isLoading = true;
+      this.error = null;
 
-    this.http.get<Evento[]>(this.API_EVENTOS).subscribe({
-      next: (eventos) => {
-        this.eventos = eventos.map(evento => ({
-          ...evento,
-          categoria: this.asignarCategoria(evento.titulo, evento.descripcion),
-          imagen: this.asignarImagen(evento),
-          inscritos: Math.floor(Math.random() * (evento.cupoMaximo * 0.8)),
-          puntos: this.calcularPuntos(evento)
-        }));
+      this.http.get<Evento[]>(this.API_EVENTOS).subscribe({
+        next: (eventos) => {
+          this.eventos = eventos.map(evento => {
 
-        this.eventosFiltrados = [...this.eventos];
-        this.aplicarOrden();
-        this.isLoading = false;
-      },
-      error: (error) => {
+            const categoriaReal = evento.categoria ? evento.categoria : 'otras';
+
+            return {
+              ...evento,
+
+              categoria: categoriaReal,
+
+              imagen: this.asignarImagen(evento, categoriaReal),
+
+              inscritos: Math.floor(Math.random() * (evento.cupoMaximo * 0.8)),
+              puntos: this.calcularPuntos(evento)
+            };
+
+          });
+
+          this.eventosFiltrados = [...this.eventos];
+          this.aplicarOrden();
+          this.isLoading = false;
+        },
+        error: (error) => {
         console.error('Error al cargar eventos:', error);
         this.error = 'No se pudieron cargar los eventos. Intenta nuevamente.';
         this.isLoading = false;
@@ -99,37 +109,18 @@ export class EventosComponent implements OnInit {
     });
   }
 
-  asignarCategoria(titulo: string, descripcion: string): string {
-    const texto = (titulo + ' ' + descripcion).toLowerCase();
 
-    if (texto.includes('playa') || texto.includes('limpieza') || texto.includes('reforest') || texto.includes('ambient')) {
-      return 'medio-ambiente';
-    } else if (texto.includes('educac') || texto.includes('taller') || texto.includes('lectura') || texto.includes('enseñ')) {
-      return 'educacion';
-    } else if (texto.includes('salud') || texto.includes('médic') || texto.includes('hospital')) {
-      return 'salud';
-    } else if (texto.includes('animal') || texto.includes('mascota') || texto.includes('perro') || texto.includes('gato')) {
-      return 'animales';
-    } else if (texto.includes('adulto') || texto.includes('anciano') || texto.includes('mayor')) {
-      return 'adultos-mayores';
-    } else if (texto.includes('arte') || texto.includes('cultura') || texto.includes('música') || texto.includes('pintura')) {
-      return 'arte-cultura';
-    } else if (texto.includes('construc') || texto.includes('obra') || texto.includes('edificar')) {
-      return 'construccion';
+
+  asignarImagen(evento: Evento, categoriaReal: string): string {
+
+      if (evento.imagenUrl && evento.imagenUrl.trim() !== '') {
+        return evento.imagenUrl;
+      }
+
+      if (evento.imagen) return evento.imagen;
+
+      return this.imagenesCategoria[categoriaReal] || this.imagenesCategoria['default'];
     }
-
-    return 'otras';
-  }
-
-  asignarImagen(evento: Evento): string {
-    if (evento.imagenUrl && evento.imagenUrl.trim() !== '') {
-      return evento.imagenUrl;
-    }
-
-    if (evento.imagen) return evento.imagen;
-    const categoria = this.asignarCategoria(evento.titulo, evento.descripcion);
-    return this.imagenesCategoria[categoria] || this.imagenesCategoria['default'];
-  }
 
   calcularPuntos(evento: Evento): number {
     if (evento.fechaInicio && evento.fechaFin) {
@@ -248,5 +239,10 @@ export class EventosComponent implements OnInit {
 
   navigateTo(path: string): void {
     this.router.navigate([path]);
+  }
+  obtenerNombreCategoria(id: string | undefined): string {
+    if (!id) return 'Otras'; // Fallback
+    const categoria = this.categorias.find(c => c.id === id);
+    return categoria ? categoria.nombre : 'Otras';
   }
 }

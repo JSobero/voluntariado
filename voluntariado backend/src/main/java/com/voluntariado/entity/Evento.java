@@ -23,6 +23,10 @@ public class Evento {
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
+    // ✅ CAMPO NUEVO: Categoría del evento
+    @Column(length = 50)
+    private String categoria = "otras";
+
     @Column(name = "fecha_inicio", nullable = false)
     private LocalDateTime fechaInicio;
 
