@@ -10,4 +10,6 @@ import java.util.List;
 public interface InscripcionRepository extends JpaRepository<Inscripcion, Long> {
     List<Inscripcion> findByUsuarioId(Long usuarioId);
     List<Inscripcion> findByEventoId(Long eventoId);
+    long countByEventoId(Long eventoId);
+    boolean existsByUsuarioIdAndEventoId(Long usuarioId, Long eventoId);
 }

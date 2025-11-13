@@ -46,6 +46,9 @@ public class Evento {
     @Column(name = "imagen_url")
     private String imagenUrl;
 
+    @Transient
+    private long inscritos;
+
     @Column(name = "creado_en", updatable = false, insertable = false)
     private LocalDateTime creadoEn;
 }

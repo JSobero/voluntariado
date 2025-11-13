@@ -1,0 +1,131 @@
+/* En: mis-inscripciones.component.css */
+
+.contenedor-pagina-usuario {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+
+.encabezado-usuario {
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.encabezado-usuario h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.encabezado-usuario p {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+.lista-inscripciones {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 2rem; /* <--- ¡AÑADE ESTA LÍNEA! */
+}
+
+.tarjeta-inscripcion {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  gap: 1rem;
+}
+
+.info-evento {
+  flex: 3; /* Ocupa más espacio */
+  min-width: 300px;
+}
+
+.info-evento .titulo-evento {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.info-evento .meta-evento {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: #555;
+}
+
+.meta-evento span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.info-estado {
+  flex: 1; /* Ocupa menos espacio */
+  text-align: right;
+  min-width: 150px;
+}
+
+.insignia-estado {
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  text-transform: capitalize; /* Pone PENDIENTE en Pendiente */
+}
+
+.fecha-solicitud {
+  font-size: 0.85rem;
+  color: #777;
+  margin: 0;
+}
+
+/* ¡COPIA ESTAS CLASES DE TU inscripciones-list.component.css!
+*/
+.estado-pendiente {
+  background-color: #fffbeb;
+  color: #b45309;
+}
+.estado-aceptada {
+  background-color: #f0fdf4;
+  color: #16a34a;
+}
+.estado-rechazada {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
+/* (Estilos para los estados de carga, error y vacío) */
+.contenedor-carga-simple,
+.contenedor-error-simple,
+.contenedor-vacio-simple {
+  text-align: center;
+  padding: 4rem 1rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  margin-top: 2rem;
+}
+.contenedor-vacio-simple i { font-size: 3rem; color: #999; }
+.contenedor-vacio-simple h2 { margin: 1rem 0 0.5rem 0; }
+.contenedor-vacio-simple p { color: #666; }
+
+.boton-explorar {
+  /* (Añade tu estilo de botón primario aquí) */
+  background-color: #007bff;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 1rem;
+}

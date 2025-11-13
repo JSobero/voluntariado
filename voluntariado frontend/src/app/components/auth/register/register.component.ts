@@ -55,6 +55,33 @@ export class RegisterComponent implements OnInit {
   ngOnInit(): void {
     // Inicializar validaciones si es necesario
   }
+getPasswordStrength(): string {
+    // 1. Obtenemos la contraseña del objeto registerData
+    const password = this.registerData.password;
+
+    // 2. Si no hay contraseña, no mostramos texto
+    if (!password) {
+      return '';
+    }
+
+    // 3. Definimos los criterios de fortaleza
+    const hasLetters = /[a-zA-Z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSymbols = /[^a-zA-Z0-9]/.test(password); // Caracteres no alfanuméricos
+    const length = password.length;
+
+    // 4. Devolvemos el texto basado en los criterios
+    if (length < 6) {
+      // Esta validación ya la tienes en validatePassword()
+      return 'Muy Débil';
+    } else if (length >= 8 && hasLetters && hasNumbers && hasSymbols) {
+      return 'Fuerte';
+    } else if (length >= 6 && (hasLetters && hasNumbers)) {
+      return 'Media';
+    } else {
+      return 'Débil';
+    }
+  }
 
   // Validación de nombre
   validateNombre(): void {

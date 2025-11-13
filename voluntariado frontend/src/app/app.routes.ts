@@ -31,6 +31,12 @@ export const routes: Routes = [
     loadComponent: () => import('./components/perfil/perfil.component').then(m => m.PerfilComponent)
   },
   {
+      path: 'mis-inscripciones',
+      loadComponent: () =>
+        import('./components/mis-inscripciones/mis-inscripciones.component')
+        .then(m => m.MisInscripcionesComponent)
+    },
+  {
     path: 'admin',
     loadComponent: () =>
       import('./admin/layout/admin-layout.component').then(m => m.AdminLayoutComponent),

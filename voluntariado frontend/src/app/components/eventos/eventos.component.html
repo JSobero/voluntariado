@@ -209,7 +209,7 @@
                   <div class="cupos-bar">
                     <div class="cupos-fill" [style.width.%]="obtenerPorcentajeInscritos(evento)"></div>
                   </div>
-                  <span class="cupos-text">Cupos disponibles: {{evento.cupoMaximo - (evento.inscritos || 0)}}</span>
+                  <span class="cupos-text">Cupo máximo: {{evento.cupoMaximo || 'Abierto'}}</span>
                 </div>
 
                 <div class="event-actions">

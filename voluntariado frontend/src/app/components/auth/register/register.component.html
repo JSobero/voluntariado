@@ -7,7 +7,7 @@
         <span class="logo-text">NEXO V</span>
       </div>
       <h1>Crea tu cuenta</h1>
-      <p>Únete a nuestra comunidad de voluntarios</p>
+      <p>Únete a nuestra comunidad y comienza tu impacto social</p>
     </div>
 
     <!-- Indicador de progreso -->
@@ -17,7 +17,7 @@
           <span *ngIf="currentStep <= 1">1</span>
           <i *ngIf="currentStep > 1" class="bi bi-check-lg"></i>
         </div>
-        <span class="step-label">Datos básicos</span>
+        <span class="step-label">Información básica</span>
       </div>
       <div class="progress-line" [class.completed]="currentStep > 1"></div>
       <div class="progress-step" [class.active]="currentStep >= 2" [class.completed]="currentStep > 2">
@@ -25,12 +25,12 @@
           <span *ngIf="currentStep <= 2">2</span>
           <i *ngIf="currentStep > 2" class="bi bi-check-lg"></i>
         </div>
-        <span class="step-label">Seguridad</span>
+        <span class="step-label">Contraseña</span>
       </div>
       <div class="progress-line" [class.completed]="currentStep > 2"></div>
       <div class="progress-step" [class.active]="currentStep >= 3">
         <div class="step-circle">3</div>
-        <span class="step-label">Confirmación</span>
+        <span class="step-label">Verificación</span>
       </div>
     </div>
 
@@ -38,7 +38,7 @@
     <form class="register-form" (ngSubmit)="onSubmit()">
       <!-- Mensajes -->
       <div class="error-message" *ngIf="errorMessage">
-        <i class="bi bi-exclamation-circle"></i>
+        <i class="bi bi-exclamation-triangle-fill"></i>
         <span>{{ errorMessage }}</span>
       </div>
 
@@ -49,6 +49,14 @@
 
       <!-- Paso 1: Datos básicos -->
       <div class="form-step" *ngIf="currentStep === 1">
+        <div class="step-header">
+          <i class="bi bi-person-badge"></i>
+          <div>
+            <h3>Cuéntanos sobre ti</h3>
+            <p>Necesitamos algunos datos para crear tu perfil</p>
+          </div>
+        </div>
+
         <div class="form-group">
           <label class="form-label">
             <i class="bi bi-person-fill"></i>
@@ -59,11 +67,12 @@
             class="form-input"
             [(ngModel)]="registerData.nombre"
             name="nombre"
-            placeholder="Juan Pérez"
+            placeholder="Ej: María García López"
             (blur)="validateNombre()"
             [class.invalid]="!validations.nombre.valid && registerData.nombre"
             required>
           <span class="validation-message" *ngIf="!validations.nombre.valid && registerData.nombre">
+            <i class="bi bi-exclamation-circle"></i>
             {{ validations.nombre.message }}
           </span>
         </div>
@@ -78,23 +87,38 @@
             class="form-input"
             [(ngModel)]="registerData.correo"
             name="correo"
-            placeholder="tu@correo.com"
+            placeholder="nombre@ejemplo.com"
             (blur)="validateCorreo()"
             [class.invalid]="!validations.correo.valid && registerData.correo"
             required>
           <span class="validation-message" *ngIf="!validations.correo.valid && registerData.correo">
+            <i class="bi bi-exclamation-circle"></i>
             {{ validations.correo.message }}
+          </span>
+          <span class="input-hint" *ngIf="validations.correo.valid && registerData.correo">
+            <i class="bi bi-check-circle-fill"></i>
+            Correo válido
           </span>
         </div>
 
-        <button type="button" class="btn-next" (click)="nextStep()">
-          Continuar
-          <i class="bi bi-arrow-right"></i>
-        </button>
+        <div class="button-container">
+          <button type="button" class="btn-next" (click)="nextStep()">
+            <span>Continuar</span>
+            <i class="bi bi-arrow-right"></i>
+          </button>
+        </div>
       </div>
 
       <!-- Paso 2: Seguridad -->
       <div class="form-step" *ngIf="currentStep === 2">
+        <div class="step-header">
+          <i class="bi bi-shield-lock"></i>
+          <div>
+            <h3>Protege tu cuenta</h3>
+            <p>Crea una contraseña segura para mantener tu información a salvo</p>
+          </div>
+        </div>
+
         <div class="form-group">
           <label class="form-label">
             <i class="bi bi-lock-fill"></i>
@@ -108,16 +132,28 @@
               name="password"
               placeholder="Mínimo 6 caracteres"
               (blur)="validatePassword()"
+              (input)="validatePassword()"
               [class.invalid]="!validations.password.valid && registerData.password"
               required>
             <button
               type="button"
               class="password-toggle"
-              (click)="togglePasswordVisibility('password')">
+              (click)="togglePasswordVisibility('password')"
+              aria-label="Mostrar contraseña">
               <i [class]="showPassword ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'"></i>
             </button>
           </div>
+          <div class="password-strength" *ngIf="registerData.password">
+            <div class="strength-bars">
+              <div class="strength-bar" [class.active]="registerData.password.length >= 2"></div>
+              <div class="strength-bar" [class.active]="registerData.password.length >= 4"></div>
+              <div class="strength-bar" [class.active]="registerData.password.length >= 6"></div>
+              <div class="strength-bar" [class.active]="registerData.password.length >= 8"></div>
+            </div>
+            <span class="strength-label">Seguridad: {{ getPasswordStrength() }}</span>
+          </div>
           <span class="validation-message" *ngIf="!validations.password.valid && registerData.password">
+            <i class="bi bi-exclamation-circle"></i>
             {{ validations.password.message }}
           </span>
         </div>
@@ -140,19 +176,26 @@
             <button
               type="button"
               class="password-toggle"
-              (click)="togglePasswordVisibility('confirmPassword')">
+              (click)="togglePasswordVisibility('confirmPassword')"
+              aria-label="Mostrar contraseña">
               <i [class]="showConfirmPassword ? 'bi bi-eye-slash-fill' : 'bi bi-eye-fill'"></i>
             </button>
           </div>
           <span class="validation-message" *ngIf="!validations.confirmPassword.valid && registerData.confirmPassword">
+            <i class="bi bi-exclamation-circle"></i>
             {{ validations.confirmPassword.message }}
+          </span>
+          <span class="input-hint" *ngIf="validations.confirmPassword.valid && registerData.confirmPassword">
+            <i class="bi bi-check-circle-fill"></i>
+            Las contraseñas coinciden
           </span>
         </div>
 
         <div class="form-group">
           <label class="form-label">
             <i class="bi bi-telephone-fill"></i>
-            Teléfono (opcional)
+            Teléfono
+            <span class="optional-badge">Opcional</span>
           </label>
           <input
             type="tel"
@@ -164,6 +207,7 @@
             [class.invalid]="!validations.telefono.valid && registerData.telefono"
             maxlength="9">
           <span class="validation-message" *ngIf="!validations.telefono.valid && registerData.telefono">
+            <i class="bi bi-exclamation-circle"></i>
             {{ validations.telefono.message }}
           </span>
         </div>
@@ -171,10 +215,10 @@
         <div class="form-navigation">
           <button type="button" class="btn-back" (click)="prevStep()">
             <i class="bi bi-arrow-left"></i>
-            Atrás
+            <span>Atrás</span>
           </button>
           <button type="button" class="btn-next" (click)="nextStep()">
-            Continuar
+            <span>Continuar</span>
             <i class="bi bi-arrow-right"></i>
           </button>
         </div>
@@ -182,51 +226,83 @@
 
       <!-- Paso 3: Confirmación -->
       <div class="form-step" *ngIf="currentStep === 3">
-        <div class="summary-card">
-          <h3>Resumen de tu cuenta</h3>
-          <div class="summary-item">
-            <i class="bi bi-person-circle"></i>
-            <div>
-              <span class="summary-label">Nombre</span>
-              <span class="summary-value">{{ registerData.nombre }}</span>
-            </div>
-          </div>
-          <div class="summary-item">
-            <i class="bi bi-envelope"></i>
-            <div>
-              <span class="summary-label">Correo</span>
-              <span class="summary-value">{{ registerData.correo }}</span>
-            </div>
-          </div>
-          <div class="summary-item" *ngIf="registerData.telefono">
-            <i class="bi bi-telephone"></i>
-            <div>
-              <span class="summary-label">Teléfono</span>
-              <span class="summary-value">{{ registerData.telefono }}</span>
-            </div>
+        <div class="step-header">
+          <i class="bi bi-clipboard-check"></i>
+          <div>
+            <h3>Revisa tu información</h3>
+            <p>Confirma que todos los datos sean correctos</p>
           </div>
         </div>
 
-        <div class="terms-checkbox">
-          <label class="checkbox-label">
+        <div class="summary-card">
+          <div class="summary-header">
+            <i class="bi bi-person-circle"></i>
+            <h3>Resumen de tu cuenta</h3>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-icon">
+              <i class="bi bi-person-fill"></i>
+            </div>
+            <div class="summary-content">
+              <span class="summary-label">Nombre completo</span>
+              <span class="summary-value">{{ registerData.nombre }}</span>
+            </div>
+            <button type="button" class="edit-btn" (click)="currentStep = 1">
+              <i class="bi bi-pencil"></i>
+            </button>
+          </div>
+
+          <div class="summary-item">
+            <div class="summary-icon">
+              <i class="bi bi-envelope-fill"></i>
+            </div>
+            <div class="summary-content">
+              <span class="summary-label">Correo electrónico</span>
+              <span class="summary-value">{{ registerData.correo }}</span>
+            </div>
+            <button type="button" class="edit-btn" (click)="currentStep = 1">
+              <i class="bi bi-pencil"></i>
+            </button>
+          </div>
+
+          <div class="summary-item" *ngIf="registerData.telefono">
+            <div class="summary-icon">
+              <i class="bi bi-telephone-fill"></i>
+            </div>
+            <div class="summary-content">
+              <span class="summary-label">Teléfono</span>
+              <span class="summary-value">{{ registerData.telefono }}</span>
+            </div>
+            <button type="button" class="edit-btn" (click)="currentStep = 2">
+              <i class="bi bi-pencil"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="terms-section">
+          <label class="terms-checkbox">
             <input
               type="checkbox"
               [(ngModel)]="registerData.aceptaTerminos"
               name="aceptaTerminos"
               required>
-            <span>Acepto los <a href="#">términos y condiciones</a> y la <a href="#">política de privacidad</a></span>
+            <span>
+              He leído y acepto los <a href="#" (click)="$event.preventDefault()">términos y condiciones</a>
+              y la <a href="#" (click)="$event.preventDefault()">política de privacidad</a>
+            </span>
           </label>
         </div>
 
         <div class="form-navigation">
           <button type="button" class="btn-back" (click)="prevStep()" [disabled]="isLoading">
             <i class="bi bi-arrow-left"></i>
-            Atrás
+            <span>Atrás</span>
           </button>
           <button type="submit" class="btn-submit" [disabled]="isLoading || !registerData.aceptaTerminos">
             <span *ngIf="!isLoading">
               <i class="bi bi-check-circle-fill"></i>
-              Crear cuenta
+              Crear mi cuenta
             </span>
             <span *ngIf="isLoading" class="loading-spinner">
               <i class="bi bi-arrow-clockwise spin"></i>
@@ -238,10 +314,7 @@
 
       <!-- Link a login -->
       <div class="login-prompt">
-        <p>¿Ya tienes una cuenta?</p>
-        <button type="button" class="btn-login-link" (click)="navigateToLogin()">
-          Iniciar sesión
-        </button>
+        <p>¿Ya tienes una cuenta? <a href="/login" class="login-link" (click)="navigateToLogin()">Inicia sesión aquí</a></p>
       </div>
     </form>
   </div>
@@ -249,22 +322,58 @@
   <!-- Imagen lateral -->
   <div class="register-image">
     <div class="image-overlay">
-      <h2>¿Por qué unirte?</h2>
-      <div class="benefits">
-        <div class="benefit-card">
-          <i class="bi bi-star-fill"></i>
-          <h3>Gana puntos</h3>
-          <p>Acumula puntos por cada actividad y canjéalos por recompensas</p>
+      <div class="overlay-content">
+        <div class="benefits-header">
+          <i class="bi bi-stars"></i>
+          <h2>Beneficios exclusivos</h2>
+          <p>Descubre todo lo que puedes lograr como parte de nuestra comunidad</p>
         </div>
-        <div class="benefit-card">
-          <i class="bi bi-award-fill"></i>
-          <h3>Certificados</h3>
-          <p>Obtén certificados digitales verificados para tu CV</p>
+
+        <div class="benefits">
+          <div class="benefit-card">
+            <div class="benefit-icon">
+              <i class="bi bi-trophy-fill"></i>
+            </div>
+            <div class="benefit-content">
+              <h3>Sistema de puntos</h3>
+              <p>Acumula puntos por cada hora de voluntariado y canjéalos por recompensas exclusivas</p>
+              <div class="benefit-badge">+500 pts por registro</div>
+            </div>
+          </div>
+
+          <div class="benefit-card">
+            <div class="benefit-icon">
+              <i class="bi bi-patch-check-fill"></i>
+            </div>
+            <div class="benefit-content">
+              <h3>Certificados digitales</h3>
+              <p>Obtén certificados verificados por cada actividad completada para tu portafolio profesional</p>
+              <div class="benefit-badge">100% verificables</div>
+            </div>
+          </div>
+
+          <div class="benefit-card">
+            <div class="benefit-icon">
+              <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="benefit-content">
+              <h3>Comunidad activa</h3>
+              <p>Conecta con más de 5,000 voluntarios comprometidos con el cambio social</p>
+              <div class="benefit-badge">5,000+ miembros</div>
+            </div>
+          </div>
         </div>
-        <div class="benefit-card">
-          <i class="bi bi-people-fill"></i>
-          <h3>Comunidad</h3>
-          <p>Conecta con miles de voluntarios como tú</p>
+
+        <div class="trust-indicators">
+          <div class="trust-item">
+            <i class="bi bi-shield-check"></i>
+            <span>Datos 100% seguros</span>
+          </div>
+          <div class="trust-divider"></div>
+          <div class="trust-item">
+            <i class="bi bi-clock-history"></i>
+            <span>Registro en 2 minutos</span>
+          </div>
         </div>
       </div>
     </div>

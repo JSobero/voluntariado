@@ -1,0 +1,59 @@
+<div class="contenedor-pagina-usuario">
+
+  <header class="encabezado-usuario">
+    <br>
+    <h1>Mis Inscripciones</h1>
+    <p>Aquí puedes ver el estado de todos los eventos a los que te has unido.</p>
+  </header>
+
+  <div *ngIf="cargando" class="contenedor-carga-simple">
+    <div class="giratorio"></div>
+    <p>Cargando tus inscripciones...</p>
+  </div>
+
+  <div *ngIf="error && !cargando" class="contenedor-error-simple">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    <p>{{ error }}</p>
+    <button (click)="cargarMisInscripciones()" class="boton-recargar">Reintentar</button>
+  </div>
+
+  <div *ngIf="!cargando && !error && misInscripciones.length === 0" class="contenedor-vacio-simple">
+    <i class="bi bi-journal-x"></i>
+    <h2>Aún no tienes inscripciones</h2>
+    <p>¡Explora los eventos y únete a una causa!</p>
+    <button (click)="irAEventos()" class="boton-explorar">Buscar Eventos</button>
+  </div>
+
+  <div *ngIf="!cargando && !error && misInscripciones.length > 0" class="lista-inscripciones">
+
+    <div *ngFor="let inscripcion of misInscripciones" class="tarjeta-inscripcion">
+
+      <div class="info-evento">
+        <h3 class="titulo-evento">{{ inscripcion.evento.titulo }}</h3>
+        <div class="meta-evento">
+          <span>
+            <i class="bi bi-calendar-event"></i>
+            {{ inscripcion.evento.fechaInicio | date:'dd \'de\' MMMM, yyyy' }}
+          </span>
+          <span>
+            <i class="bi bi-geo-alt-fill"></i>
+            {{ inscripcion.evento.lugar }}
+          </span>
+        </div>
+      </div>
+
+      <div class="info-estado">
+        <span [ngClass]="obtenerClaseEstado(inscripcion.estado)" class="insignia-estado">
+          {{ obtenerIconoEstado(inscripcion.estado) }}
+          {{ inscripcion.estado }}
+        </span>
+        <p class="fecha-solicitud">
+          Solicitado: {{ inscripcion.solicitadoEn | date:'dd/MM/yy \'a las\' HH:mm' }}
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

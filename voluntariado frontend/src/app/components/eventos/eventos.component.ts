@@ -4,6 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { AuthService } from '../../services/auth.service'; // Ajusta la ruta a tu auth.service.ts
+import { InscripcionService } from '../../core/services/inscripcion.service';
+import { Inscripcion } from '../../core/models/inscripcion.model';
 
 interface Evento {
   id: number;
@@ -31,6 +34,8 @@ interface Evento {
 export class EventosComponent implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
+  private authService = inject(AuthService);
+  private inscripcionService = inject(InscripcionService);
   private readonly API_EVENTOS = 'http://localhost:8080/eventos';
 
   searchTerm = '';
@@ -73,41 +78,85 @@ export class EventosComponent implements OnInit {
   ngOnInit(): void {
     this.cargarEventos();
   }
+convertirFecha(fechaTexto: any): string {
+    // Si no hay fecha, devuelve un string vacío
+    if (!fechaTexto) return '';
+
+    // Si es el array del backend (mínimo 3 partes: año, mes, día)
+    if (Array.isArray(fechaTexto) && fechaTexto.length >= 3) {
+      // Usamos 'desestructuración' para tomar los valores
+      const [año, mes, día, hora = 0, minuto = 0] = fechaTexto;
+
+      // Creamos la fecha.
+      // ¡IMPORTANTE! JavaScript cuenta los meses desde 0 (Enero=0)
+      // Por eso restamos 1 al mes que viene del backend.
+      const fecha = new Date(año, mes - 1, día, hora, minuto);
+
+      // Devolvemos un string estándar (ej: "2025-09-23T17:00:00.000Z")
+      // new Date() SÍ puede leer esto.
+      return fecha.toISOString();
+    }
+
+    // Si ya es un string (porque ya fue convertido), solo lo devolvemos
+    if (typeof fechaTexto === 'string') {
+      return fechaTexto;
+    }
+
+    // Si es cualquier otra cosa, devuelve vacío para evitar errores
+    return '';
+  }
 
   cargarEventos(): void {
-      this.isLoading = true;
-      this.error = null;
+        this.isLoading = true;
+        this.error = null;
 
-      this.http.get<Evento[]>(this.API_EVENTOS).subscribe({
-        next: (eventos) => {
-          this.eventos = eventos.map(evento => {
+        this.http.get<Evento[]>(this.API_EVENTOS).subscribe({
+          next: (eventos) => {
+            this.eventos = eventos.map(evento => {
 
-            const categoriaReal = evento.categoria ? evento.categoria : 'otras';
+              // --- INICIO DE LA CORRECCIÓN ---
 
-            return {
-              ...evento,
+              // 1. CONVERTIMOS LAS FECHAS PRIMERO
+              const fechaInicioISO = this.convertirFecha(evento.fechaInicio);
+              const fechaFinISO = evento.fechaFin ? this.convertirFecha(evento.fechaFin) : '';
 
-              categoria: categoriaReal,
+              // 2. OBTENEMOS INSCRITOS REALES (o 0 si el backend no los envía)
+              // ¡Dejamos de usar Math.random()!
+              const inscritosReales = evento.inscritos || 0;
 
-              imagen: this.asignarImagen(evento, categoriaReal),
+              // 3. CALCULAMOS PUNTOS (pasando las fechas ya convertidas)
+              // Creamos un objeto temporal solo para esta función
+              const puntos = this.calcularPuntos({
+                ...evento, // Copia el evento original
+                fechaInicio: fechaInicioISO, // Sobrescribe con la fecha buena
+                fechaFin: fechaFinISO      // Sobrescribe con la fecha buena
+              });
 
-              inscritos: Math.floor(Math.random() * (evento.cupoMaximo * 0.8)),
-              puntos: this.calcularPuntos(evento)
-            };
+              // 4. ENSAMBLAMOS EL OBJETO FINAL QUE USARÁ LA VISTA
+              return {
+                ...evento,
+                fechaInicio: fechaInicioISO,  // Fecha convertida
+                fechaFin: fechaFinISO,      // Fecha convertida
+                categoria: evento.categoria || 'otras',
+                imagen: this.asignarImagen(evento, evento.categoria || 'otras'),
+                inscritos: inscritosReales, // <-- Usamos el valor real (0)
+                puntos: puntos              // <-- Usamos los puntos bien calculados
+              };
 
-          });
+              // --- FIN DE LA CORRECCIÓN ---
+            });
 
-          this.eventosFiltrados = [...this.eventos];
-          this.aplicarOrden();
-          this.isLoading = false;
-        },
-        error: (error) => {
-        console.error('Error al cargar eventos:', error);
-        this.error = 'No se pudieron cargar los eventos. Intenta nuevamente.';
-        this.isLoading = false;
-      }
-    });
-  }
+            this.eventosFiltrados = [...this.eventos];
+            this.aplicarOrden();
+            this.isLoading = false;
+          },
+          error: (error) => {
+            console.error('Error al cargar eventos:', error);
+            this.error = 'No se pudieron cargar los eventos. Intenta nuevamente.';
+            this.isLoading = false;
+          }
+      });
+    }
 
 
 
@@ -123,14 +172,27 @@ export class EventosComponent implements OnInit {
     }
 
   calcularPuntos(evento: Evento): number {
-    if (evento.fechaInicio && evento.fechaFin) {
-      const inicio = new Date(evento.fechaInicio);
-      const fin = new Date(evento.fechaFin);
-      const horas = Math.abs(fin.getTime() - inicio.getTime()) / 36e5;
-      return Math.round(horas * 10);
+      if (evento.fechaInicio && evento.fechaFin) {
+
+        // Ahora 'evento.fechaInicio' es un string ISO (ej: "2025-09-23T17:00:00.000Z")
+        // y new Date() SÍ puede leerlo.
+        const inicio = new Date(evento.fechaInicio);
+        const fin = new Date(evento.fechaFin);
+
+        // --- MEJORA DE SEGURIDAD ---
+        // Si por alguna razón la fecha sigue siendo inválida,
+        // devolvemos 50 para evitar el 'NaN'
+        if (isNaN(inicio.getTime()) || isNaN(fin.getTime())) {
+          console.warn('Cálculo de puntos falló para evento:', evento.titulo);
+          return 50; // Devolver valor por defecto
+        }
+        // --- FIN MEJORA ---
+
+        const horas = Math.abs(fin.getTime() - inicio.getTime()) / 36e5;
+        return Math.round(horas * 10);
+      }
+      return 50; // Puntos por defecto
     }
-    return 50;
-  }
 
   aplicarFiltros(): void {
     this.eventosFiltrados = this.eventos.filter(evento => {
@@ -216,10 +278,41 @@ export class EventosComponent implements OnInit {
     return Math.round((evento.inscritos / evento.cupoMaximo) * 100);
   }
 
-  inscribirseEvento(eventoId: number): void {
-    console.log('Inscribirse al evento:', eventoId);
-    alert('Funcionalidad de inscripción próximamente');
-  }
+ inscribirseEvento(eventoId: number): void {
+
+     // Obtenemos el usuario actual del signal de tu AuthService
+     const usuarioActual = this.authService.currentUser();
+
+     // 1. Comprobar si el usuario ha iniciado sesión
+     if (!usuarioActual) {
+       alert('Por favor, inicia sesión para poder inscribirte a un evento.');
+       this.router.navigate(['/login']); // Asegúrate de que '/login' sea tu ruta
+       return;
+     }
+
+     // 2. Si el usuario existe, obtenemos su ID
+     const usuarioId = usuarioActual.id;
+
+     console.log(`Intentando inscribir usuario ${usuarioId} al evento ${eventoId}`);
+
+     // 3. Llamar al NUEVO método 'inscribir' de tu servicio
+     this.inscripcionService.inscribir(usuarioId, eventoId).subscribe({
+       next: (respuesta) => {
+         // ¡Éxito!
+         console.log('Inscripción exitosa:', respuesta);
+         alert('¡Te has inscrito al evento con éxito! Tu inscripción está pendiente de aprobación.');
+
+         // Recargamos los eventos para que el contador de "inscritos"
+         // se actualice de 0 a 1.
+         this.cargarEventos();
+       },
+       error: (error) => {
+         // Error (ej: ya inscrito, no hay cupo)
+         console.error('Error al inscribir:', error);
+         alert('Error al inscribirte. Es posible que ya estés inscrito o que no haya cupo disponible.');
+       }
+     });
+   }
 
   compartirEvento(evento: Evento): void {
     if (navigator.share) {
