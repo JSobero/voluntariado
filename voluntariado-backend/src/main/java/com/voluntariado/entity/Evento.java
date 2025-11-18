@@ -42,6 +42,13 @@ public class Evento {
     @Column(name = "imagen_url")
     private String imagenUrl;
 
+    @Column(name = "puntos_otorga", nullable = false)
+    private Integer puntosOtorga = 0;
+
+    @ManyToOne
+    @JoinColumn(name = "categoria_id")
+    private Categoria categoria;
+
     @Column(name = "creado_en", updatable = false, insertable = false)
     private LocalDateTime creadoEn;
 }
