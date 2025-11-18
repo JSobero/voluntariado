@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AuthService, Usuario } from '../../services/auth.service';
+import { Canje } from '../../core/models/canje.model';
 
 interface Inscripcion {
   id: number;
@@ -36,12 +37,13 @@ export class PerfilComponent implements OnInit {
   usuarioActual: Usuario | null = null;
   inscripciones: Inscripcion[] = [];
   certificados: Certificado[] = [];
+  canjes: Canje[] = [];
 
   isLoading = true;
   error: string | null = null;
   editMode = false;
   usuarioEditado: Partial<Usuario> = {};
-  tabActiva: 'resumen' | 'eventos' | 'certificados' | 'configuracion' = 'resumen';
+  tabActiva: 'resumen' | 'eventos' | 'certificados' | 'configuracion' | 'canjes' = 'resumen';
 
   ngOnInit(): void {
     this.cargarDatosPerfil();
@@ -56,6 +58,7 @@ export class PerfilComponent implements OnInit {
         this.usuarioActual = usuarioLogueado;
         this.cargarInscripciones();
         this.cargarCertificados();
+        this.cargarCanjes();
         this.isLoading = false;
     } else {
         this.router.navigate(['/login']);
@@ -88,7 +91,20 @@ export class PerfilComponent implements OnInit {
     });
   }
 
-  cambiarTab(tab: 'resumen' | 'eventos' | 'certificados' | 'configuracion'): void {
+  cargarCanjes(): void {
+    if (!this.usuarioActual) return;
+
+    this.http.get<Canje[]>(
+      `${this.API_BASE}/canjes/usuario/${this.usuarioActual.id}`
+    ).subscribe({
+      next: (data) => {
+        this.canjes = data.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
+      },
+      error: (err) => console.error('Error al cargar canjes:', err)
+    });
+  }
+  
+  cambiarTab(tab: 'resumen' | 'eventos' | 'certificados' | 'configuracion' | 'canjes'): void {
     this.tabActiva = tab;
   }
 
@@ -179,7 +195,19 @@ export class PerfilComponent implements OnInit {
     }
   }
 
+  obtenerClaseEstadoCanje(estado: string): string {
+    switch(estado) {
+      case 'ENTREGADO': return 'estado-aceptada';
+      case 'PENDIENTE': return 'estado-pendiente';
+      case 'CANCELADO': return 'estado-rechazada';
+      default: return '';
+    }
+  }
+
   navegarEventos(): void {
     this.router.navigate(['/eventos']);
+  }
+  navegarRecompensas(): void {
+    this.router.navigate(['/recompensas']);
   }
 }

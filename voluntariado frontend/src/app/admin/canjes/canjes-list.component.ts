@@ -72,7 +72,7 @@ export class CanjesListComponent implements OnInit {
       const termino = this.terminoBusqueda.toLowerCase();
       filtrados = filtrados.filter(c =>
         c.usuario.nombre.toLowerCase().includes(termino) ||
-        c.recompensa.nombre.toLowerCase().includes(termino)
+        c.recompensa && c.recompensa.nombre.toLowerCase().includes(termino)
       );
     }
 

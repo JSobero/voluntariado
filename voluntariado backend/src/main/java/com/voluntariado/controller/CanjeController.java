@@ -29,6 +29,11 @@ public class CanjeController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/usuario/{usuarioId}")
+    public List<Canje> listarCanjesPorUsuario(@PathVariable Long usuarioId) {
+        return canjeService.listarCanjesPorUsuario(usuarioId);
+    }
+
     @PostMapping
     public Canje crearCanje(@RequestBody Canje canje) {
         return canjeService.guardarCanje(canje);

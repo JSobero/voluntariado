@@ -82,33 +82,37 @@ export class CanjeRecompensasComponent implements OnInit {
     if (!usuario || !this.recompensaSeleccionada) return;
 
     this.estadoCanje = 'procesando';
-    const nuevoCanje: any = {
+
+    const nuevoCanjeRequest: any = {
         usuario: { id: usuario.id },
-        recompensa: { id: this.recompensaSeleccionada.id },
-        fechaCanje: new Date().toISOString(),
-        estado: 'PENDIENTE'
+        recompensa: { id: this.recompensaSeleccionada.id }
     };
 
-    this.canjeService.create(nuevoCanje).subscribe({
-      next: (canjeRealizado) => {
+
+    this.canjeService.create(nuevoCanjeRequest).subscribe({
+      next: (canjeRealizado: Canje) => {
+
         this.estadoCanje = 'exito';
-        const usuarioActualizado = { ...usuario, puntos: usuario.puntos - this.recompensaSeleccionada!.puntosNecesarios };
+
+        const puntosUsados = canjeRealizado.puntosUsados || this.recompensaSeleccionada!.puntosNecesarios;
+        const usuarioActualizado = { ...usuario, puntos: usuario.puntos - puntosUsados };
 
         this.authService.currentUser.set(usuarioActualizado as any);
         localStorage.setItem('currentUser', JSON.stringify(usuarioActualizado));
 
-        if (this.recompensaSeleccionada) {
-            this.recompensaSeleccionada.stock--;
-        }
+ 
+        this.cargarRecompensas();
 
         setTimeout(() => {
             this.cerrarModal();
         }, 2000);
       },
       error: (err) => {
+
         console.error('Error al canjear', err);
         this.estadoCanje = 'error';
-        this.mensajeError = 'Hubo un problema al procesar tu canje. Intenta de nuevo.';
+
+        this.mensajeError = err.error?.message || err.message || 'Hubo un problema al procesar tu canje. Intenta de nuevo.';
       }
     });
   }
