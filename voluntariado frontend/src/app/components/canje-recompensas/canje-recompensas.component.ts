@@ -8,7 +8,6 @@ import { AuthService } from '../../services/auth.service';
 import { Recompensa } from '../../core/models/recompensa.model';
 import { Canje } from '../../core/models/canje.model';
 
-// Definimos estados para la UI
 type EstadoCanje = 'idle' | 'confirmando' | 'procesando' | 'exito' | 'error';
 
 @Component({
@@ -19,26 +18,23 @@ type EstadoCanje = 'idle' | 'confirmando' | 'procesando' | 'exito' | 'error';
   styleUrls: ['./canje-recompensas.component.css']
 })
 export class CanjeRecompensasComponent implements OnInit {
-  // Inyecciones de dependencias
+
   private recompensaService = inject(RecompensaService);
   private canjeService = inject(CanjeService);
-  public authService = inject(AuthService); // Público para usar en el template
+  public authService = inject(AuthService);
   private router = inject(Router);
 
-  // Estado del componente
   recompensas: Recompensa[] = [];
   cargando = true;
   filtroCategoria = 'todas';
 
-  // Estado del modal de confirmación
   mostrarModal = false;
   recompensaSeleccionada: Recompensa | null = null;
   estadoCanje: EstadoCanje = 'idle';
   mensajeError = '';
 
-  // Signal computado para filtrar recompensas (opcional, por ahora básico)
   recompensasFiltradas = computed(() => {
-    return this.recompensas; // Aquí podrías añadir lógica de filtrado si tuvieras categorías
+    return this.recompensas;
   });
 
   ngOnInit() {
@@ -48,7 +44,7 @@ export class CanjeRecompensasComponent implements OnInit {
 
   verificarUsuario() {
     if (!this.authService.currentUser()) {
-      // Si no hay usuario logueado, redirigir al login
+
       this.router.navigate(['/login']);
     }
   }
@@ -57,7 +53,6 @@ export class CanjeRecompensasComponent implements OnInit {
     this.cargando = true;
     this.recompensaService.getAll().subscribe({
       next: (data) => {
-        // Solo mostramos recompensas con stock > 0 o las marcamos visualmente
         this.recompensas = data;
         this.cargando = false;
       },
@@ -68,7 +63,6 @@ export class CanjeRecompensasComponent implements OnInit {
     });
   }
 
-  // Iniciar proceso de canje (abre el modal)
   iniciarCanje(recompensa: Recompensa) {
     const usuario = this.authService.currentUser();
     if (!usuario) return;
@@ -83,40 +77,33 @@ export class CanjeRecompensasComponent implements OnInit {
     this.mostrarModal = true;
   }
 
-  // Confirmar canje (llama al servicio)
   confirmarCanje() {
     const usuario = this.authService.currentUser();
     if (!usuario || !this.recompensaSeleccionada) return;
 
     this.estadoCanje = 'procesando';
-
-    // Creamos el objeto Canje según tu modelo (ajusta si tu backend espera algo diferente)
-    const nuevoCanje: any = { // Usamos 'any' temporalmente por si tu modelo Canje es estricto con IDs
-        usuario: { id: usuario.id },       // Enviamos solo el ID del usuario
-        recompensa: { id: this.recompensaSeleccionada.id }, // Enviamos solo el ID de la recompensa
-        fechaCanje: new Date().toISOString(), // O deja que el backend ponga la fecha
-        estado: 'PENDIENTE' // O el estado inicial que use tu backend
+    const nuevoCanje: any = {
+        usuario: { id: usuario.id },
+        recompensa: { id: this.recompensaSeleccionada.id },
+        fechaCanje: new Date().toISOString(),
+        estado: 'PENDIENTE'
     };
 
     this.canjeService.create(nuevoCanje).subscribe({
       next: (canjeRealizado) => {
         this.estadoCanje = 'exito';
-        // ACTUALIZAR PUNTOS DEL USUARIO EN EL FRONTEND
-        // Restamos los puntos localmente para que la UI se actualice al instante
         const usuarioActualizado = { ...usuario, puntos: usuario.puntos - this.recompensaSeleccionada!.puntosNecesarios };
 
-        // Actualizamos el Auth Service y el LocalStorage
         this.authService.currentUser.set(usuarioActualizado as any);
         localStorage.setItem('currentUser', JSON.stringify(usuarioActualizado));
 
-        // Actualizar stock localmente también
         if (this.recompensaSeleccionada) {
             this.recompensaSeleccionada.stock--;
         }
 
         setTimeout(() => {
             this.cerrarModal();
-        }, 2000); // Cerrar modal después de 2s de éxito
+        }, 2000);
       },
       error: (err) => {
         console.error('Error al canjear', err);
@@ -132,7 +119,6 @@ export class CanjeRecompensasComponent implements OnInit {
     this.estadoCanje = 'idle';
   }
 
-  // Helpers para la UI
   calcularPorcentaje(puntosNecesarios: number): number {
     const puntosUsuario = this.authService.currentUser()?.puntos || 0;
     if (puntosUsuario >= puntosNecesarios) return 100;

@@ -23,7 +23,7 @@ export class CertificadosListComponent implements OnInit {
   cargando = false;
   mostrarModal = false;
   modoEdicion = false;
-  certificadoActual: any = this.obtenerCertificadoVacio(); // Usamos 'any' para flexibilidad en el form
+  certificadoActual: any = this.obtenerCertificadoVacio();
 
 
   constructor(

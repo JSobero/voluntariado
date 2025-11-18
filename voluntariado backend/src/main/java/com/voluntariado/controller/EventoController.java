@@ -22,10 +22,10 @@ public class EventoController {
         return eventoService.listarEventos();
     }
 
-    // ✅ NUEVO: Endpoint para filtrar por categoría
-    @GetMapping("/categoria/{categoria}")
-    public List<Evento> listarPorCategoria(@PathVariable String categoria) {
-        return eventoService.listarPorCategoria(categoria);
+
+    @GetMapping("/categoria/{id}")
+    public List<Evento> listarPorCategoria(@PathVariable Long id) {
+        return eventoService.listarPorCategoria(id);
     }
 
     @GetMapping("/{id}")

@@ -8,7 +8,5 @@ import java.util.List;
 
 @Repository
 public interface EventoRepository extends JpaRepository<Evento, Long> {
-
-
-    List<Evento> findByCategoria(String categoria);
+    List<Evento> findByCategoriaId(Long categoriaId);
 }

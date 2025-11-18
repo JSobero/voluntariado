@@ -16,22 +16,18 @@ public class RolService {
         this.rolRepository = rolRepository;
     }
 
-    // Listar todos los roles
     public List<Rol> listarRoles() {
         return rolRepository.findAll();
     }
 
-    // Obtener rol por ID
     public Optional<Rol> obtenerPorId(Long id) {
         return rolRepository.findById(id);
     }
 
-    // Guardar un nuevo rol
     public Rol guardarRol(Rol rol) {
         return rolRepository.save(rol);
     }
 
-    // Actualizar rol existente
     public Rol actualizarRol(Long id, Rol rol) {
         return rolRepository.findById(id).map(r -> {
             r.setNombre(rol.getNombre());
@@ -39,7 +35,6 @@ public class RolService {
         }).orElseThrow(() -> new RuntimeException("Rol no encontrado"));
     }
 
-    // Eliminar rol por ID
     public void eliminarRol(Long id) {
         rolRepository.deleteById(id);
     }

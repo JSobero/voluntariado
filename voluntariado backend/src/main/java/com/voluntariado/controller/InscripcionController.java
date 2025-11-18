@@ -18,20 +18,16 @@ public class InscripcionController {
         this.inscripcionService = inscripcionService;
     }
 
-    // --- 👇 MÉTODO POST MODIFICADO 👇 ---
     @PostMapping
     public ResponseEntity<Inscripcion> crear(@RequestBody InscripcionRequestDTO request) {
         try {
-            // Ahora llamamos al método "inteligente"
             Inscripcion nuevaInscripcion = inscripcionService.guardarInscripcion(request);
             return ResponseEntity.ok(nuevaInscripcion);
         } catch (RuntimeException e) {
-            // Capturamos los errores (ya inscrito, sin cupo)
             return ResponseEntity.badRequest().body(null);
         }
     }
 
-    // --- TUS OTROS MÉTODOS (SIN CAMBIOS) ---
 
     @GetMapping
     public List<Inscripcion> listarInscripciones() {

@@ -1,4 +1,4 @@
-/* Navbar */
+
 .navbar {
   position: fixed;
   top: 0;
@@ -29,9 +29,9 @@
 }
 
 .logo-icon {
-  width: 60px;  /* Ajusta el tamaño */
+  width: 60px;
   height: 60px;
-  object-fit: contain; /* Mantiene proporciones */
+  object-fit: contain;
 }
 
 .nav-menu {
@@ -55,7 +55,7 @@
 .nav-actions {
   display: flex;
   gap: 1rem;
-  align-items: center; /* Alinea verticalmente los items */
+  align-items: center;
 }
 
 .btn-login {
@@ -88,15 +88,13 @@
   background: #4f46e5;
 }
 
-/* Estilo para el nombre de usuario */
 .nav-username {
   font-weight: 600;
   color: #374151;
   margin-right: 0.5rem;
 }
-/* --- Menú de Usuario Desplegable --- */
 .user-menu-container {
-  position: relative; /* Para que el menú absoluto se posicione respecto a esto */
+  position: relative;
 }
 
 .user-toggle {
@@ -119,19 +117,18 @@
   color: #6b7280;
 }
 
-/* El menú flotante */
 .dropdown-menu {
   position: absolute;
-  top: 100%;       /* Justo debajo del nombre */
-  right: 0;        /* Alineado a la derecha */
+  top: 100%;
+  right: 0;
   margin-top: 0.5rem;
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.15);
   border: 1px solid #e5e7eb;
   min-width: 200px;
-  overflow: hidden; /* Para que los bordes redondeados funcionen en los hijos */
-  z-index: 1001;    /* Por encima de todo */
+  overflow: hidden;
+  z-index: 1001;
   animation: slideDown 0.2s ease-out;
 }
 
@@ -157,7 +154,7 @@
 
 .dropdown-item:hover {
   background-color: #f9fafb;
-  color: #5A2986; /* Tu color morado */
+  color: #5A2986;
 }
 
 .dropdown-item i {

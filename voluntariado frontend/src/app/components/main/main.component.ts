@@ -123,7 +123,6 @@ export class LandingComponent implements OnInit, OnDestroy {
     }
   }
 
-  // --- Métodos del Carrusel ---
   startCarousel(): void {
     this.carouselInterval = setInterval(() => {
       this.nextSlide();

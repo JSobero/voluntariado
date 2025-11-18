@@ -1,6 +1,5 @@
 <div class="login-page">
   <div class="login-container">
-    <!-- Logo y título -->
     <div class="login-header">
       <div class="logo" (click)="navigateToHome()">
         <img src="/logo.png" alt="Logo Nexo V" class="logo-icon">
@@ -10,15 +9,11 @@
       <p>Inicia sesión para continuar tu impacto social</p>
     </div>
 
-    <!-- Formulario de login -->
     <form class="login-form" (ngSubmit)="onSubmit()">
-      <!-- Mensaje de error -->
       <div class="error-message" *ngIf="errorMessage">
         <i class="bi bi-exclamation-triangle-fill"></i>
         <span>{{ errorMessage }}</span>
       </div>
-
-      <!-- Campo de correo -->
       <div class="form-group">
         <label class="form-label">
           <i class="bi bi-envelope-fill"></i>
@@ -33,8 +28,6 @@
           required
           [disabled]="isLoading">
       </div>
-
-      <!-- Campo de contraseña -->
       <div class="form-group">
         <label class="form-label">
           <i class="bi bi-shield-lock-fill"></i>
@@ -59,8 +52,6 @@
           </button>
         </div>
       </div>
-
-      <!-- Recordarme y olvidé contraseña -->
       <div class="form-options">
         <label class="checkbox-label">
           <input type="checkbox" id="remember">
@@ -69,7 +60,6 @@
         <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
       </div>
 
-      <!-- Botón de login -->
       <button type="submit" class="btn-login" [disabled]="isLoading">
         <span *ngIf="!isLoading">
           <i class="bi bi-box-arrow-in-right"></i>
@@ -80,13 +70,10 @@
           Verificando credenciales...
         </span>
       </button>
-
-      <!-- Divider -->
       <div class="divider">
         <span>o continúa con</span>
       </div>
 
-      <!-- Botón de Google -->
       <button type="button" class="btn-google">
         <svg class="google-icon" viewBox="0 0 24 24">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -97,19 +84,16 @@
         Iniciar sesión con Google
       </button>
 
-      <!-- Registro -->
       <div class="register-prompt">
         <p>¿No tienes una cuenta? <a  href="/register" class="register-link" (click)="navigateToRegister()">Regístrate aquí</a></p>
       </div>
     </form>
 
-    <!-- Footer -->
     <div class="login-footer">
       <p>Al iniciar sesión, aceptas nuestros <a href="#">Términos</a> y <a href="#">Política de privacidad</a></p>
     </div>
   </div>
 
-  <!-- Imagen lateral -->
   <div class="login-image">
     <div class="image-overlay">
       <div class="overlay-content">

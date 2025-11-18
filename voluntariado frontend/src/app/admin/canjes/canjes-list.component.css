@@ -1,6 +1,4 @@
-/* ============================================
-   TRANSICIONES (PARA MODO OSCURO)
-   ============================================ */
+
 .encabezado-pagina,
 .tarjeta-estadistica-mini,
 .icono-estadistica-mini,
@@ -27,9 +25,6 @@
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
 }
 
-/* ============================================
-   ESTILOS BASE
-   ============================================ */
 .contenedor-pagina {
   padding: 2rem;
   max-width: 1400px;
@@ -37,7 +32,7 @@
 }
 
 .encabezado-pagina {
-  background: var(--color-tarjeta); /* MODIFICADO */
+  background: var(--color-tarjeta);
   border-radius: 16px;
   padding: 2rem;
   margin-bottom: 1.5rem;
@@ -55,7 +50,7 @@
 .titulo-pagina {
   font-size: 2rem;
   font-weight: 800;
-  color: var(--color-texto-principal); /* MODIFICADO */
+  color: var(--color-texto-principal);
   margin: 0 0 0.5rem 0;
   display: flex;
   align-items: center;
@@ -64,18 +59,15 @@
 
 .icono-titulo {
   font-size: 2.25rem;
-  color: var(--color-texto-principal); /* MODIFICADO */
+  color: var(--color-texto-principal);
 }
 
 .subtitulo-pagina {
   font-size: 1rem;
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
   margin: 0;
 }
 
-/* ============================================
-   TARJETAS DE ESTADÍSTICAS
-   ============================================ */
 .grilla-estadisticas-mini {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -84,7 +76,7 @@
 }
 
 .tarjeta-estadistica-mini {
-  background: var(--color-tarjeta); /* MODIFICADO */
+  background: var(--color-tarjeta);
   border-radius: 12px;
   padding: 1.25rem;
   display: flex;
@@ -93,13 +85,11 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   border-left: 4px solid;
 }
-/* ... (hover se mantiene) ... */
 .tarjeta-estadistica-mini:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* MODIFICADO (usa variables de estado) */
 .estadistica-pendiente {
   border-left-color: var(--warning);
 }
@@ -124,7 +114,6 @@
   flex-shrink: 0;
 }
 
-/* MODIFICADO (usa variables sutiles de estado) */
 .estadistica-pendiente .icono-estadistica-mini {
   background: var(--color-warning-sutil);
   color: var(--color-warning-sutil-texto);
@@ -149,25 +138,22 @@
 .valor-estadistica-mini {
   font-size: 1.75rem;
   font-weight: 800;
-  color: var(--color-texto-principal); /* MODIFICADO */
+  color: var(--color-texto-principal);
   margin: 0 0 0.25rem 0;
   line-height: 1;
 }
 
 .etiqueta-estadistica-mini {
   font-size: 0.75rem;
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin: 0;
 }
 
-/* ============================================
-   SECCIÓN DE FILTROS
-   ============================================ */
 .seccion-filtros {
-  background: var(--color-tarjeta); /* MODIFICADO */
+  background: var(--color-tarjeta);
   border-radius: 16px;
   padding: 1.5rem;
   margin-bottom: 1.5rem;
@@ -185,21 +171,21 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background: var(--color-fondo-input); /* MODIFICADO */
+  background: var(--color-fondo-input);
   padding: 0.875rem 1.25rem;
   border-radius: 12px;
   border: 2px solid transparent;
 }
 
 .contenedor-busqueda:focus-within {
-  background: var(--color-tarjeta); /* MODIFICADO */
-  border-color: var(--primary); /* MODIFICADO (acento primario/azul) */
+  background: var(--color-tarjeta);
+  border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .icono-busqueda {
   font-size: 1.25rem;
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
 }
 
 .entrada-busqueda {
@@ -208,11 +194,11 @@
   outline: none;
   font-size: 0.875rem;
   width: 100%;
-  color: var(--color-texto-principal); /* MODIFICADO */
+  color: var(--color-texto-principal);
 }
 
 .entrada-busqueda::placeholder {
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
 }
 
 .grupo-filtros {
@@ -223,30 +209,30 @@
 
 .selector-filtro {
   padding: 0.75rem 1rem;
-  border: 2px solid var(--color-borde); /* MODIFICADO */
+  border: 2px solid var(--color-borde);
   border-radius: 10px;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--color-texto-principal); /* MODIFICADO */
-  background: var(--color-tarjeta); /* MODIFICADO */
+  color: var(--color-texto-principal);
+  background: var(--color-tarjeta);
   cursor: pointer;
   min-width: 180px;
 }
 
 .selector-filtro:focus {
   outline: none;
-  border-color: var(--primary); /* MODIFICADO (acento primario/azul) */
+  border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .boton-limpiar-filtros {
   padding: 0.75rem 1rem;
-  background: var(--color-fondo-hover); /* MODIFICADO */
+  background: var(--color-fondo-hover);
   border: none;
   border-radius: 10px;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -254,14 +240,11 @@
 }
 
 .boton-limpiar-filtros:hover {
-  background: var(--color-borde); /* MODIFICADO */
+  background: var(--color-borde);
 }
 
-/* ============================================
-   TABLA
-   ============================================ */
 .contenedor-carga {
-  background: var(--color-tarjeta); /* MODIFICADO */
+  background: var(--color-tarjeta);
   border-radius: 16px;
   padding: 4rem 2rem;
   text-align: center;
@@ -271,25 +254,24 @@
 .giratorio {
   width: 48px;
   height: 48px;
-  border: 4px solid var(--color-borde); /* MODIFICADO */
-  border-top-color: var(--primary); /* MODIFICADO (acento primario/azul) */
+  border: 4px solid var(--color-borde);
+  border-top-color: var(--primary);
   border-radius: 50%;
   animation: girar 0.8s linear infinite;
   margin: 0 auto 1rem;
 }
-/* ... (keyframes se mantienen) ... */
 @keyframes girar {
   to { transform: rotate(360deg); }
 }
 
 .contenedor-carga p {
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
   font-size: 0.875rem;
   margin: 0;
 }
 
 .tarjeta-tabla {
-  background: var(--color-tarjeta); /* MODIFICADO */
+  background: var(--color-tarjeta);
   border-radius: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -305,8 +287,8 @@
 }
 
 .tabla-datos thead {
-  background: var(--color-fondo-input); /* MODIFICADO */
-  border-bottom: 2px solid var(--color-borde); /* MODIFICADO */
+  background: var(--color-fondo-input);
+  border-bottom: 2px solid var(--color-borde);
 }
 
 .tabla-datos th {
@@ -314,17 +296,17 @@
   text-align: left;
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .tabla-datos tbody tr {
-  border-bottom: 1px solid var(--color-borde-divisor); /* MODIFICADO */
+  border-bottom: 1px solid var(--color-borde-divisor);
 }
 
 .tabla-datos tbody tr:hover {
-  background: var(--color-fondo-hover); /* MODIFICADO */
+  background: var(--color-fondo-hover);
 }
 
 .tabla-datos td {
@@ -332,7 +314,6 @@
   font-size: 0.875rem;
 }
 
-/* Celdas específicas */
 .celda-id {
   width: 80px;
 }
@@ -342,8 +323,8 @@
   align-items: center;
   justify-content: center;
   padding: 0.25rem 0.75rem;
-  background: var(--color-fondo-hover); /* MODIFICADO */
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  background: var(--color-fondo-hover);
+  color: var(--color-texto-secundario);
   border-radius: 6px;
   font-weight: 600;
   font-size: 0.75rem;
@@ -357,7 +338,6 @@
   align-items: center;
   gap: 0.875rem;
 }
-/* Avatar se mantiene (color primario) */
 .avatar-usuario {
   width: 40px;
   height: 40px;
@@ -380,7 +360,7 @@
 
 .nombre-usuario {
   font-weight: 600;
-  color: var(--color-texto-principal); /* MODIFICADO */
+  color: var(--color-texto-principal);
   font-size: 0.9375rem;
   margin-bottom: 0.25rem;
   white-space: nowrap;
@@ -390,7 +370,7 @@
 
 .correo-usuario {
   font-size: 0.8125rem;
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -407,12 +387,12 @@
 
 .icono-recompensa {
   font-size: 1.5rem;
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
 }
 
 .nombre-recompensa {
   font-weight: 500;
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
   font-size: 0.875rem;
 }
 
@@ -425,9 +405,9 @@
   align-items: center;
   gap: 0.375rem;
   padding: 0.5rem 1rem;
-  background: var(--color-secondary-sutil); /* MODIFICADO */
-  border: 1.5px solid var(--color-secondary-borde-sutil); /* MODIFICADO */
-  color: var(--color-secondary-sutil-texto); /* MODIFICADO */
+  background: var(--color-secondary-sutil);
+  border: 1.5px solid var(--color-secondary-borde-sutil);
+  color: var(--color-secondary-sutil-texto);
   border-radius: 10px;
   font-weight: 700;
 }
@@ -456,7 +436,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
   font-size: 0.875rem;
   font-weight: 500;
 }
@@ -467,9 +447,9 @@
 
 .fecha-relativa {
   font-size: 0.75rem;
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
   font-style: italic;
-  opacity: 0.7; /* MODIFICADO */
+  opacity: 0.7;
 }
 
 .celda-estado {
@@ -491,7 +471,6 @@
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
 }
 
-/* MODIFICADO (usa variables de estado) */
 .estado-pendiente {
   background: var(--color-warning-sutil);
   color: var(--color-warning-sutil-texto);
@@ -525,20 +504,16 @@
   cursor: pointer;
   font-size: 1.125rem;
   border-radius: 6px;
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
 }
 .boton-accion:hover {
   transform: scale(1.1);
 }
 
 .boton-eliminar:hover {
-  background: var(--color-danger-sutil); /* MODIFICADO */
-  color: var(--color-danger-sutil-texto); /* MODIFICADO */
-}
+  background: var(--color-danger-sutil);
+  color: var(--color-danger-sutil-texto);
 
-/* ============================================
-   ESTADO VACÍO
-   ============================================ */
 .estado-vacio {
   text-align: center;
   padding: 4rem 2rem;
@@ -548,18 +523,18 @@
   font-size: 4rem;
   margin-bottom: 1rem;
   opacity: 0.5;
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
 }
 
 .estado-vacio h3 {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--color-texto-principal); /* MODIFICADO */
+  color: var(--color-texto-principal);
   margin: 0 0 0.5rem 0;
 }
 
 .estado-vacio p {
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
   font-size: 0.875rem;
   margin: 0 0 1.5rem 0;
 }
@@ -577,18 +552,14 @@
 }
 
 .boton-secundario {
-  background: var(--color-fondo-hover); /* MODIFICADO */
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  background: var(--color-fondo-hover);
+  color: var(--color-texto-secundario);
 }
 
 .boton-secundario:hover {
-  background: var(--color-borde); /* MODIFICADO */
+  background: var(--color-borde);
 }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-/* ... (tu código responsive se mantiene igual) ... */
 @media (max-width: 768px) {
   .contenedor-pagina {
     padding: 1rem;
@@ -619,4 +590,5 @@
   .tabla-datos {
     min-width: 1000px;
   }
+}
 }

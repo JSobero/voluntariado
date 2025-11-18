@@ -6,10 +6,8 @@
   min-height: 100vh;
 }
 
-/* --- MARCADOR DE PUNTOS (STICKY) --- */
 .marcador-puntos {
   position: sticky;
-    /* Aumenta este valor. Si tu navbar mide 60px, pon 80px aquí */
     top: 80px;
     z-index: 90;
   background: linear-gradient(135deg, #6366f1, #8b5cf6);
@@ -21,7 +19,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 4rem;
-  backdrop-filter: blur(10px); /* Efecto moderno si el fondo fuera semi-transparente */
+  backdrop-filter: blur(10px);
 }
 
 .info-usuario {
@@ -49,7 +47,7 @@
 }
 
 .icono-estrella {
-    color: #fbbf24; /* Amarillo dorado */
+    color: #fbbf24;
     font-size: 1.5rem;
 }
 
@@ -59,7 +57,6 @@
     line-height: 1;
 }
 
-/* --- ENCABEZADO --- */
 .encabezado-pagina {
     text-align: center;
     margin-bottom: 3rem;
@@ -77,7 +74,6 @@
     font-size: 1.1rem;
 }
 
-/* --- GRID DE RECOMPENSAS --- */
 .grid-recompensas {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -99,9 +95,8 @@
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
-/* Estilo especial para recompensas alcanzables */
 .tarjeta-recompensa.alcanzable {
-    border: 2px solid #8b5cf6; /* Borde morado para destacar */
+    border: 2px solid #8b5cf6;
 }
 
 .imagen-recompensa {
@@ -145,7 +140,7 @@
 
 .cuerpo-tarjeta {
     padding: 1.5rem;
-    flex-grow: 1; /* Para que todas las tarjetas tengan la misma altura */
+    flex-grow: 1;
 }
 
 .cuerpo-tarjeta h3 {
@@ -164,7 +159,6 @@
     overflow: hidden;
 }
 
-/* Barra de Progreso */
 .progreso-contenedor {
     margin-top: 1.5rem;
 }
@@ -203,7 +197,6 @@
     gap: 0.5rem;
 }
 
-/* Pie de Tarjeta y Botones */
 .pie-tarjeta {
     padding: 1.5rem;
     background: #f8fafc;
@@ -243,7 +236,6 @@
     cursor: not-allowed;
 }
 
-/* --- MODAL --- */
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -324,7 +316,6 @@
 .btn-cancelar { background: #f1f5f9; color: #64748b; }
 .btn-confirmar { background: #8b5cf6; color: white; }
 
-/* Spinner para el modal */
 .spinner-grande {
     width: 50px;
     height: 50px;

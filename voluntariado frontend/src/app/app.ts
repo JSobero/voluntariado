@@ -16,17 +16,14 @@ export class App {
  public showNavbar: boolean = true; // Inicia como verdadero
 
      onActivate(component: object): void {
-
-       // ✨ 3. ACTUALIZA LA LÓGICA
-       // Comprueba si el componente cargado es Admin, Login o Register
        if (
          component instanceof AdminLayoutComponent ||
          component instanceof LoginComponent ||
          component instanceof RegisterComponent
        ) {
-         this.showNavbar = false; // Si es uno de esos, oculta el navbar
+         this.showNavbar = false;
        } else {
-         this.showNavbar = true; // Para todo lo demás, muéstralo
+         this.showNavbar = true;
        }
      }
    }

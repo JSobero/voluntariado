@@ -1,19 +1,17 @@
 import { Component, inject } from '@angular/core';
-import { Router, RouterModule } from '@angular/router'; // RouterModule para routerLink
-import { CommonModule } from '@angular/common'; // CommonModule para *ngIf
-import { AuthService } from '../../services/auth.service'; // Ajusta esta ruta si es necesario
+import { Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  // ¡Importante! Añadir CommonModule y RouterModule
   imports: [CommonModule, RouterModule],
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent {
 
-  // Inyectamos el servicio de Auth y el Router
   authService = inject(AuthService);
   router = inject(Router);
   menuAbierto = false;
@@ -22,7 +20,6 @@ export class NavbarComponent {
       this.menuAbierto = !this.menuAbierto;
     }
 
-  // --- Métodos que tu HTML ya estaba usando ---
 
   volverInicio(): void {
     this.router.navigate(['/']);
@@ -32,7 +29,6 @@ export class NavbarComponent {
     this.router.navigate([path]);
   }
 
-  // --- Nuevo método para cerrar sesión ---
 
   onLogout(): void {
     this.authService.logout();

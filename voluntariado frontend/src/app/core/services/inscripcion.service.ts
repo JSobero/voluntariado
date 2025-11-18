@@ -40,12 +40,11 @@ export class InscripcionService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
   inscribir(usuarioId: number, eventoId: number): Observable<Inscripcion> {
-    // Este 'body' coincide con el DTO que espera tu backend
+
     const body = {
       usuarioId: usuarioId,
       eventoId: eventoId
     };
-    // Llamamos al mismo endpoint POST, pero con el 'body' correcto.
     return this.http.post<Inscripcion>(this.apiUrl, body);
   }
 }

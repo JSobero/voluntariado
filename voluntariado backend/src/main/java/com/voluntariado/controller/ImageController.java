@@ -25,20 +25,17 @@ public class ImageController {
             @RequestParam(value = "folder", defaultValue = "general") String folder) {
 
         try {
-            // Validar que el archivo no esté vacío
             if (file.isEmpty()) {
                 return ResponseEntity.badRequest()
                         .body(Map.of("error", "El archivo está vacío"));
             }
 
-            // Validar tipo de archivo
             String contentType = file.getContentType();
             if (contentType == null || !contentType.startsWith("image/")) {
                 return ResponseEntity.badRequest()
                         .body(Map.of("error", "El archivo debe ser una imagen"));
             }
 
-            // Guardar la imagen
             String imageUrl = imageService.saveImage(file, folder);
 
             Map<String, String> response = new HashMap<>();

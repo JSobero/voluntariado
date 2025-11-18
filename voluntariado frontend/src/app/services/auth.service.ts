@@ -1,76 +1,49 @@
 import { Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-
-// Define la interfaz para el usuario (puedes moverla a un archivo de 'interfaces')
 export interface Usuario {
   id: number;
   nombre: string;
   correo: string;
   rol: { nombre: string };
   password?: string;
-  telefono?: string;         // Opcional porque puede ser NULL en la BD
-    puntos: number;            // Obligatorio, tiene valor por defecto 0 en BD
-    horasAcumuladas: number;   // Obligatorio, tiene valor por defecto 0.00 en BD
-    creadoEn: string;
-  // ... puedes añadir 'password', 'telefono', etc., si los necesitas en el frontend
+  telefono?: string;
+  puntos: number;
+  horasAcumuladas: number;
+  creadoEn: string;
+
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-
-  // 1. EL ESTADO CENTRAL
-  // Usamos un 'signal' para guardar el usuario actual.
-  // Cuando esto cambie, cualquier componente que lo "escuche" se actualizará.
   currentUser = signal<Usuario | null>(null);
 
   constructor(private router: Router) {
-    // 2. REVISAR AL INICIAR
-    // Cuando la app carga, revisa si ya hay un usuario en localStorage.
     this.cargarUsuarioDesdeStorage();
   }
 
   private cargarUsuarioDesdeStorage(): void {
-    // Verificamos que 'localStorage' esté disponible (importante para Angular Universal/SSR)
     if (typeof localStorage !== 'undefined') {
       const usuarioData = localStorage.getItem('currentUser');
       if (usuarioData) {
-        // Si encontramos un usuario, actualizamos el signal
         this.currentUser.set(JSON.parse(usuarioData));
       }
     }
   }
 
-  // 3. MÉTODO DE LOGIN
-  // Tu LoginComponent llamará a esto.
   login(usuario: Usuario): void {
-    // Guarda en localStorage para persistir la sesión si recarga la página
     localStorage.setItem('currentUser', JSON.stringify(usuario));
-
-    // ¡LA PARTE CLAVE! Actualiza el signal.
-    // Esto avisará al Navbar (y a cualquier otro componente) que el usuario cambió.
     this.currentUser.set(usuario);
-
-    // Mueve la lógica de redirección aquí
     if (usuario.rol.nombre === 'ADMIN' || usuario.rol.nombre === 'ORGANIZADOR') {
       this.router.navigate(['/admin/dashboard']);
     } else {
-      // Usamos la ruta raíz '/' como acordamos
       this.router.navigate(['/']);
     }
   }
-
-  // 4. MÉTODO DE LOGOUT
-  // Tu Navbar llamará a esto.
   logout(): void {
-    // Limpia el localStorage
     localStorage.removeItem('currentUser');
-
-    // Actualiza el signal a 'null'
     this.currentUser.set(null);
-
-    // Envía al usuario a la página principal
     this.router.navigate(['/']);
   }
 
@@ -78,15 +51,9 @@ export class AuthService {
     const confirmar = confirm('¿Estás seguro de que deseas cerrar sesión?');
 
     if (confirmar) {
-      // Limpia el localStorage
       localStorage.removeItem('currentUser');
-
-      // Actualiza el signal a 'null'
       this.currentUser.set(null);
-
-      // Envía al usuario a la página principal
       this.router.navigate(['/']);
-
       console.log('Sesión cerrada exitosamente');
     }
 }

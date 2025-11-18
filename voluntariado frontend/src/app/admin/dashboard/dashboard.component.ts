@@ -75,19 +75,16 @@ export class DashboardComponent implements OnInit {
  convertirFecha(valor: any): Date | null {
    if (!valor) return null;
 
-   // ✅ Si es un array como [2025, 9, 20, 14, 0]
    if (Array.isArray(valor) && valor.length >= 3) {
      const [anio, mes, dia, hora = 0, minuto = 0, segundo = 0] = valor;
      return new Date(anio, mes - 1, dia, hora, minuto, segundo);
    }
 
-   // ✅ Si es un string como "2025-09-20T14:00:00"
    if (typeof valor === 'string') {
      const fecha = new Date(valor);
      return isNaN(fecha.getTime()) ? null : fecha;
    }
 
-   // ✅ Si ya es un objeto Date
    if (valor instanceof Date) {
      return isNaN(valor.getTime()) ? null : valor;
    }

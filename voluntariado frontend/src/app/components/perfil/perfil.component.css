@@ -1,6 +1,4 @@
-/* ============================================
-   PERFIL PAGE
-   ============================================ */
+
 * {
   margin: 0;
   padding: 0;
@@ -13,9 +11,6 @@
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 }
 
-/* ============================================
-   LOADING & ERROR STATES
-   ============================================ */
 .loading-container,
 .error-container {
   display: flex;
@@ -79,9 +74,6 @@
   background: #4f46e5;
 }
 
-/* ============================================
-   HERO SECTION
-   ============================================ */
 .perfil-container {
   margin-top: 70px;
   padding-bottom: 3rem;
@@ -177,9 +169,6 @@
   opacity: 0.9;
 }
 
-/* ============================================
-   TABS
-   ============================================ */
 .tabs-container {
   max-width: 1400px;
   margin: -40px auto 0;
@@ -224,18 +213,12 @@
   color: white;
 }
 
-/* ============================================
-   TAB CONTENT
-   ============================================ */
 .tab-content {
   max-width: 1400px;
   margin: 2rem auto 0;
   padding: 0 2rem;
 }
 
-/* ============================================
-   TAB: RESUMEN
-   ============================================ */
 .grid-resumen {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -433,10 +416,6 @@
   color: #6b7280;
   margin: 0;
 }
-
-/* ============================================
-   TAB: EVENTOS
-   ============================================ */
 .eventos-header {
   display: flex;
   justify-content: space-between;
@@ -582,9 +561,6 @@
   text-transform: uppercase;
 }
 
-/* ============================================
-   TAB: CERTIFICADOS
-   ============================================ */
 .certificados-header {
   margin-bottom: 2rem;
 }
@@ -690,9 +666,6 @@
   background: #4f46e5;
 }
 
-/* ============================================
-   TAB: CONFIGURACIÓN
-   ============================================ */
 .config-card {
   background: white;
   border-radius: 16px;
@@ -797,9 +770,6 @@
   background: #f9fafb;
 }
 
-/* ============================================
-   RESPONSIVE
-   ============================================ */
 @media (max-width: 1024px) {
   .grid-resumen {
     grid-template-columns: 1fr;

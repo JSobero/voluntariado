@@ -4,10 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { AuthService } from '../../services/auth.service'; // Ajusta la ruta a tu auth.service.ts
+import { Categoria } from '../../core/models/categoria.model';
+import { CategoriaService } from '../../core/services/categoria.service';
+import { AuthService } from '../../services/auth.service';
 import { InscripcionService } from '../../core/services/inscripcion.service';
 import { Inscripcion } from '../../core/models/inscripcion.model';
-
 interface Evento {
   id: number;
   titulo: string;
@@ -18,10 +19,10 @@ interface Evento {
   cupoMaximo: number;
   organizador: any;
   imagenUrl?: string;
-  categoria?: string;
+  categoria: Categoria | null;
   imagen?: string;
   inscritos?: number;
-  puntos?: number;
+  puntosOtorga?: number;
 }
 
 @Component({
@@ -36,173 +37,138 @@ export class EventosComponent implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
   private inscripcionService = inject(InscripcionService);
+  private categoriaService = inject(CategoriaService);
   private readonly API_EVENTOS = 'http://localhost:8080/eventos';
-
   searchTerm = '';
   fechaInicio = '';
   fechaFin = '';
   lugarFilter = '';
-  categoriaSeleccionada = 'todas';
+  categoriaSeleccionada: number | null = null;
   ordenarPor = 'relevancia';
-
   eventos: Evento[] = [];
   eventosFiltrados: Evento[] = [];
+  categorias: Categoria[] = [];
+
+
   isLoading = true;
   error: string | null = null;
-  p: number = 1; // Página actual
-  itemsPerPage: number = 3; // 9 eventos por página (3x3)
+  p: number = 1;
+  itemsPerPage: number = 9;
 
-  categorias = [
-    { id: 'todas', nombre: 'Todas', icon: '🌟' },
-    { id: 'medio-ambiente', nombre: 'Medio Ambiente', icon: '🌱' },
-    { id: 'educacion', nombre: 'Educación', icon: '📚' },
-    { id: 'salud', nombre: 'Salud', icon: '🏥' },
-    { id: 'animales', nombre: 'Animales', icon: '🐕' },
-    { id: 'adultos-mayores', nombre: 'Adultos Mayores', icon: '👵' },
-    { id: 'arte-cultura', nombre: 'Arte y Cultura', icon: '🎨' },
-    { id: 'construccion', nombre: 'Construcción', icon: '🏗️' },
-    { id: 'otras', nombre: 'Otras', icon: '🧩' }
-  ];
+  mostrarModal = false;
+  modalTitulo = '';
+  modalMensaje = '';
+  modalEsError = false;
 
   imagenesCategoria: { [key: string]: string } = {
-    'medio-ambiente': 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=300&fit=crop',
-    'educacion': 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&h=300&fit=crop',
-    'salud': 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400&h=300&fit=crop',
-    'animales': 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=400&h=300&fit=crop',
-    'adultos-mayores': 'https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?w=400&h=300&fit=crop',
-    'arte-cultura': 'https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=400&h=300&fit=crop',
-    'construccion': 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop',
+
+    'Ambiental': 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=300&fit=crop',
+    'Educación': 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&h=300&fit=crop',
+    'Salud': 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400&h=300&fit=crop',
+    'Animales': 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=400&h=300&fit=crop',
+    'Otras': 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&h=300&fit=crop',
     'default': 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&h=300&fit=crop'
   };
 
   ngOnInit(): void {
+    this.cargarCategorias();
     this.cargarEventos();
   }
-convertirFecha(fechaTexto: any): string {
-    // Si no hay fecha, devuelve un string vacío
+
+  cargarCategorias(): void {
+    this.categoriaService.getAll().subscribe({
+      next: (datos) => {
+        this.categorias = datos.filter(c =>
+          c.nombre === 'Ambiental' ||
+          c.nombre === 'Educación' ||
+          c.nombre === 'Salud' ||
+          c.nombre === 'Animales' ||
+          c.nombre === 'Otras'
+        );
+      },
+      error: (err) => {
+        console.error('Error al cargar categorías:', err);
+      }
+    });
+  }
+
+  convertirFecha(fechaTexto: any): string {
     if (!fechaTexto) return '';
-
-    // Si es el array del backend (mínimo 3 partes: año, mes, día)
     if (Array.isArray(fechaTexto) && fechaTexto.length >= 3) {
-      // Usamos 'desestructuración' para tomar los valores
       const [año, mes, día, hora = 0, minuto = 0] = fechaTexto;
-
-      // Creamos la fecha.
-      // ¡IMPORTANTE! JavaScript cuenta los meses desde 0 (Enero=0)
-      // Por eso restamos 1 al mes que viene del backend.
       const fecha = new Date(año, mes - 1, día, hora, minuto);
-
-      // Devolvemos un string estándar (ej: "2025-09-23T17:00:00.000Z")
-      // new Date() SÍ puede leer esto.
       return fecha.toISOString();
     }
-
-    // Si ya es un string (porque ya fue convertido), solo lo devolvemos
     if (typeof fechaTexto === 'string') {
       return fechaTexto;
     }
-
-    // Si es cualquier otra cosa, devuelve vacío para evitar errores
     return '';
   }
 
   cargarEventos(): void {
-        this.isLoading = true;
-        this.error = null;
+    this.isLoading = true;
+    this.error = null;
 
-        this.http.get<Evento[]>(this.API_EVENTOS).subscribe({
-          next: (eventos) => {
-            this.eventos = eventos.map(evento => {
+    this.http.get<Evento[]>(this.API_EVENTOS).subscribe({
+      next: (eventos) => {
+        this.eventos = eventos.map(evento => {
+          const fechaInicioISO = this.convertirFecha(evento.fechaInicio);
+          const fechaFinISO = evento.fechaFin ? this.convertirFecha(evento.fechaFin) : '';
+          const inscritosReales = evento.inscritos || 0;
 
-              // --- INICIO DE LA CORRECCIÓN ---
+          return {
+            ...evento,
+            fechaInicio: fechaInicioISO,
+            fechaFin: fechaFinISO,
+            imagen: this.asignarImagen(evento),
+            inscritos: inscritosReales
+          };
+        });
 
-              // 1. CONVERTIMOS LAS FECHAS PRIMERO
-              const fechaInicioISO = this.convertirFecha(evento.fechaInicio);
-              const fechaFinISO = evento.fechaFin ? this.convertirFecha(evento.fechaFin) : '';
-
-              // 2. OBTENEMOS INSCRITOS REALES (o 0 si el backend no los envía)
-              // ¡Dejamos de usar Math.random()!
-              const inscritosReales = evento.inscritos || 0;
-
-              // 3. CALCULAMOS PUNTOS (pasando las fechas ya convertidas)
-              // Creamos un objeto temporal solo para esta función
-              const puntos = this.calcularPuntos({
-                ...evento, // Copia el evento original
-                fechaInicio: fechaInicioISO, // Sobrescribe con la fecha buena
-                fechaFin: fechaFinISO      // Sobrescribe con la fecha buena
-              });
-
-              // 4. ENSAMBLAMOS EL OBJETO FINAL QUE USARÁ LA VISTA
-              return {
-                ...evento,
-                fechaInicio: fechaInicioISO,  // Fecha convertida
-                fechaFin: fechaFinISO,      // Fecha convertida
-                categoria: evento.categoria || 'otras',
-                imagen: this.asignarImagen(evento, evento.categoria || 'otras'),
-                inscritos: inscritosReales, // <-- Usamos el valor real (0)
-                puntos: puntos              // <-- Usamos los puntos bien calculados
-              };
-
-              // --- FIN DE LA CORRECCIÓN ---
-            });
-
-            this.eventosFiltrados = [...this.eventos];
-            this.aplicarOrden();
-            this.isLoading = false;
-          },
-          error: (error) => {
-            console.error('Error al cargar eventos:', error);
-            this.error = 'No se pudieron cargar los eventos. Intenta nuevamente.';
-            this.isLoading = false;
-          }
-      });
-    }
-
-
-
-  asignarImagen(evento: Evento, categoriaReal: string): string {
-
-      if (evento.imagenUrl && evento.imagenUrl.trim() !== '') {
-        return evento.imagenUrl;
+        this.eventosFiltrados = [...this.eventos];
+        this.aplicarOrden();
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar eventos:', error);
+        this.error = 'No se pudieron cargar los eventos. Intenta nuevamente.';
+        this.isLoading = false;
       }
+    });
+  }
 
-      if (evento.imagen) return evento.imagen;
-
-      return this.imagenesCategoria[categoriaReal] || this.imagenesCategoria['default'];
+  asignarImagen(evento: Evento): string {
+    if (evento.imagenUrl && evento.imagenUrl.trim() !== '') {
+      return evento.imagenUrl;
     }
+    if (evento.imagen) return evento.imagen;
+    const nombreCategoria = evento.categoria ? evento.categoria.nombre : 'default';
+    return this.imagenesCategoria[nombreCategoria] || this.imagenesCategoria['default'];
+  }
 
   calcularPuntos(evento: Evento): number {
-      if (evento.fechaInicio && evento.fechaFin) {
-
-        // Ahora 'evento.fechaInicio' es un string ISO (ej: "2025-09-23T17:00:00.000Z")
-        // y new Date() SÍ puede leerlo.
-        const inicio = new Date(evento.fechaInicio);
-        const fin = new Date(evento.fechaFin);
-
-        // --- MEJORA DE SEGURIDAD ---
-        // Si por alguna razón la fecha sigue siendo inválida,
-        // devolvemos 50 para evitar el 'NaN'
-        if (isNaN(inicio.getTime()) || isNaN(fin.getTime())) {
-          console.warn('Cálculo de puntos falló para evento:', evento.titulo);
-          return 50; // Devolver valor por defecto
-        }
-        // --- FIN MEJORA ---
-
-        const horas = Math.abs(fin.getTime() - inicio.getTime()) / 36e5;
-        return Math.round(horas * 10);
+    if (evento.fechaInicio && evento.fechaFin) {
+      const inicio = new Date(evento.fechaInicio);
+      const fin = new Date(evento.fechaFin);
+      if (isNaN(inicio.getTime()) || isNaN(fin.getTime())) {
+        console.warn('Cálculo de puntos falló para evento:', evento.titulo);
+        return 50;
       }
-      return 50; // Puntos por defecto
+      const horas = Math.abs(fin.getTime() - inicio.getTime()) / 36e5;
+      return Math.round(horas * 10);
     }
+    return 50;
+  }
 
   aplicarFiltros(): void {
     this.eventosFiltrados = this.eventos.filter(evento => {
       const matchSearch = !this.searchTerm ||
         evento.titulo.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        evento.descripcion.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        evento.descripcion?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
         evento.lugar.toLowerCase().includes(this.searchTerm.toLowerCase());
 
-      const matchCategoria = this.categoriaSeleccionada === 'todas' ||
-        evento.categoria === this.categoriaSeleccionada;
+      const matchCategoria = !this.categoriaSeleccionada ||
+        (evento.categoria && evento.categoria.id === this.categoriaSeleccionada);
 
       const matchLugar = !this.lugarFilter ||
         evento.lugar.toLowerCase().includes(this.lugarFilter.toLowerCase());
@@ -216,13 +182,12 @@ convertirFecha(fechaTexto: any): string {
       return matchSearch && matchCategoria && matchLugar && matchFechaInicio && matchFechaFin;
     });
 
-    // IMPORTANTE: Resetear la página a 1 cuando se aplican filtros
     this.p = 1;
     this.aplicarOrden();
   }
 
   aplicarOrden(): void {
-    switch (this.ordenarPor) {
+    switch(this.ordenarPor) {
       case 'fecha-asc':
         this.eventosFiltrados.sort((a, b) =>
           new Date(a.fechaInicio).getTime() - new Date(b.fechaInicio).getTime()
@@ -234,7 +199,9 @@ convertirFecha(fechaTexto: any): string {
         );
         break;
       case 'puntos':
-        this.eventosFiltrados.sort((a, b) => (b.puntos || 0) - (a.puntos || 0));
+        this.eventosFiltrados.sort((a, b) =>
+          (b.puntosOtorga || 0) - (a.puntosOtorga || 0)
+        );
         break;
       case 'cupos':
         this.eventosFiltrados.sort((a, b) => {
@@ -253,18 +220,19 @@ convertirFecha(fechaTexto: any): string {
     this.fechaInicio = '';
     this.fechaFin = '';
     this.lugarFilter = '';
-    this.categoriaSeleccionada = 'todas';
+    this.categoriaSeleccionada = null;
     this.ordenarPor = 'relevancia';
-    this.p = 1; // Resetear a página 1
+    this.p = 1;
     this.aplicarFiltros();
   }
 
-  seleccionarCategoria(categoria: string): void {
-    this.categoriaSeleccionada = categoria;
+  seleccionarCategoria(categoriaId: number | null): void {
+    this.categoriaSeleccionada = categoriaId;
     this.aplicarFiltros();
   }
 
   formatearFecha(fecha: string): string {
+    // ... (esta función queda igual)
     const date = new Date(fecha);
     return date.toLocaleDateString('es-ES', {
       day: '2-digit',
@@ -278,41 +246,46 @@ convertirFecha(fechaTexto: any): string {
     return Math.round((evento.inscritos / evento.cupoMaximo) * 100);
   }
 
- inscribirseEvento(eventoId: number): void {
+  obtenerNombreCategoria(categoria: Categoria | null): string {
+    return categoria ? categoria.nombre : 'Otras';
+  }
 
-     // Obtenemos el usuario actual del signal de tu AuthService
-     const usuarioActual = this.authService.currentUser();
+  inscribirseEvento(eventoId: number): void {
+    const usuarioActual = this.authService.currentUser();
+    if (!usuarioActual) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    const usuarioId = usuarioActual.id;
+    this.inscripcionService.inscribir(usuarioId, eventoId).subscribe({
+      next: (respuesta: Inscripcion) => {
+        this.abrirModal(
+          '¡Inscripción Exitosa!',
+          'Tu solicitud ha sido registrada. Está pendiente de aprobación por el organizador.',
+          false
+        );
+        this.cargarEventos();
+      },
+      error: (error: any) => {
+        this.abrirModal(
+          'Error en la Inscripción',
+          'No pudimos registrar tu solicitud. Es posible que ya estés inscrito o que no haya cupo disponible.',
+          true
+        );
+      }
+    });
+  }
 
-     // 1. Comprobar si el usuario ha iniciado sesión
-     if (!usuarioActual) {
-       alert('Por favor, inicia sesión para poder inscribirte a un evento.');
-       this.router.navigate(['/login']); // Asegúrate de que '/login' sea tu ruta
-       return;
-     }
+  abrirModal(titulo: string, mensaje: string, esError: boolean): void {
+    this.modalTitulo = titulo;
+    this.modalMensaje = mensaje;
+    this.modalEsError = esError;
+    this.mostrarModal = true;
+  }
 
-     // 2. Si el usuario existe, obtenemos su ID
-     const usuarioId = usuarioActual.id;
-
-     console.log(`Intentando inscribir usuario ${usuarioId} al evento ${eventoId}`);
-
-     // 3. Llamar al NUEVO método 'inscribir' de tu servicio
-     this.inscripcionService.inscribir(usuarioId, eventoId).subscribe({
-       next: (respuesta) => {
-         // ¡Éxito!
-         console.log('Inscripción exitosa:', respuesta);
-         alert('¡Te has inscrito al evento con éxito! Tu inscripción está pendiente de aprobación.');
-
-         // Recargamos los eventos para que el contador de "inscritos"
-         // se actualice de 0 a 1.
-         this.cargarEventos();
-       },
-       error: (error) => {
-         // Error (ej: ya inscrito, no hay cupo)
-         console.error('Error al inscribir:', error);
-         alert('Error al inscribirte. Es posible que ya estés inscrito o que no haya cupo disponible.');
-       }
-     });
-   }
+  cerrarModal(): void {
+    this.mostrarModal = false;
+  }
 
   compartirEvento(evento: Evento): void {
     if (navigator.share) {
@@ -332,10 +305,5 @@ convertirFecha(fechaTexto: any): string {
 
   navigateTo(path: string): void {
     this.router.navigate([path]);
-  }
-  obtenerNombreCategoria(id: string | undefined): string {
-    if (!id) return 'Otras'; // Fallback
-    const categoria = this.categorias.find(c => c.id === id);
-    return categoria ? categoria.nombre : 'Otras';
   }
 }

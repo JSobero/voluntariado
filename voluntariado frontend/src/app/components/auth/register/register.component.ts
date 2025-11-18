@@ -38,7 +38,6 @@ export class RegisterComponent implements OnInit {
   currentStep = 1;
   totalSteps = 3;
 
-  // Validaciones en tiempo real
   validations = {
     nombre: { valid: false, message: '' },
     correo: { valid: false, message: '' },
@@ -53,26 +52,20 @@ export class RegisterComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Inicializar validaciones si es necesario
   }
 getPasswordStrength(): string {
-    // 1. Obtenemos la contraseña del objeto registerData
     const password = this.registerData.password;
 
-    // 2. Si no hay contraseña, no mostramos texto
     if (!password) {
       return '';
     }
 
-    // 3. Definimos los criterios de fortaleza
     const hasLetters = /[a-zA-Z]/.test(password);
     const hasNumbers = /\d/.test(password);
-    const hasSymbols = /[^a-zA-Z0-9]/.test(password); // Caracteres no alfanuméricos
+    const hasSymbols = /[^a-zA-Z0-9]/.test(password);
     const length = password.length;
 
-    // 4. Devolvemos el texto basado en los criterios
     if (length < 6) {
-      // Esta validación ya la tienes en validatePassword()
       return 'Muy Débil';
     } else if (length >= 8 && hasLetters && hasNumbers && hasSymbols) {
       return 'Fuerte';
@@ -83,7 +76,6 @@ getPasswordStrength(): string {
     }
   }
 
-  // Validación de nombre
   validateNombre(): void {
     if (!this.registerData.nombre) {
       this.validations.nombre = { valid: false, message: 'El nombre es requerido' };
@@ -94,7 +86,6 @@ getPasswordStrength(): string {
     }
   }
 
-  // Validación de correo
   validateCorreo(): void {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!this.registerData.correo) {
@@ -106,7 +97,6 @@ getPasswordStrength(): string {
     }
   }
 
-  // Validación de contraseña
   validatePassword(): void {
     if (!this.registerData.password) {
       this.validations.password = { valid: false, message: 'La contraseña es requerida' };
@@ -117,7 +107,6 @@ getPasswordStrength(): string {
     }
   }
 
-  // Validación de confirmación de contraseña
   validateConfirmPassword(): void {
     if (!this.registerData.confirmPassword) {
       this.validations.confirmPassword = { valid: false, message: 'Confirma tu contraseña' };
@@ -128,7 +117,6 @@ getPasswordStrength(): string {
     }
   }
 
-  // Validación de teléfono
   validateTelefono(): void {
     const phoneRegex = /^[0-9]{9}$/;
     if (this.registerData.telefono && !phoneRegex.test(this.registerData.telefono)) {
@@ -137,8 +125,6 @@ getPasswordStrength(): string {
       this.validations.telefono = { valid: true, message: '' };
     }
   }
-
-  // Navegación entre pasos
   nextStep(): void {
     if (this.currentStep === 1) {
       this.validateNombre();
@@ -162,7 +148,6 @@ getPasswordStrength(): string {
     }
   }
 
-  // Toggle password visibility
   togglePasswordVisibility(field: 'password' | 'confirmPassword'): void {
     if (field === 'password') {
       this.showPassword = !this.showPassword;
@@ -171,7 +156,6 @@ getPasswordStrength(): string {
     }
   }
 
-  // Envío del formulario
   onSubmit(): void {
     if (!this.registerData.aceptaTerminos) {
       this.errorMessage = 'Debes aceptar los términos y condiciones';
@@ -181,7 +165,6 @@ getPasswordStrength(): string {
     this.isLoading = true;
     this.errorMessage = '';
 
-    // Obtener rol de VOLUNTARIO (id: 3)
     this.http.get<any[]>('http://localhost:8080/roles').subscribe({
       next: (roles) => {
         const rolVoluntario = roles.find(r => r.nombre === 'VOLUNTARIO') || { id: 3, nombre: 'VOLUNTARIO' };
@@ -196,13 +179,11 @@ getPasswordStrength(): string {
           rol: rolVoluntario
         };
 
-        // Crear usuario
         this.http.post('http://localhost:8080/usuarios', nuevoUsuario).subscribe({
           next: (response) => {
             this.successMessage = '¡Cuenta creada exitosamente!';
             this.isLoading = false;
 
-            // Redirigir al login después de 2 segundos
             setTimeout(() => {
               this.router.navigate(['/login']);
             }, 2000);

@@ -1,4 +1,3 @@
-// voluntariado frontend/src/app/core/services/image.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -17,11 +16,6 @@ export class ImageService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Sube una imagen al servidor
-   * @param file Archivo de imagen a subir
-   * @param folder Carpeta de destino (eventos, recompensas, usuarios)
-   */
   uploadImage(file: File, folder: string = 'general'): Observable<ImageUploadResponse> {
     const formData = new FormData();
     formData.append('file', file);
@@ -30,22 +24,14 @@ export class ImageService {
     return this.http.post<ImageUploadResponse>(`${this.apiUrl}/upload`, formData);
   }
 
-  /**
-   * Elimina una imagen del servidor
-   * @param imageUrl URL de la imagen a eliminar
-   */
   deleteImage(imageUrl: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/delete`, {
       params: { url: imageUrl }
     });
   }
 
-  /**
-   * Valida si el archivo es una imagen válida
-   * @param file Archivo a validar
-   */
   validateImage(file: File): { valid: boolean; error?: string } {
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    const maxSize = 5 * 1024 * 1024;
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
 
     if (!allowedTypes.includes(file.type)) {
@@ -65,10 +51,6 @@ export class ImageService {
     return { valid: true };
   }
 
-  /**
-   * Convierte un archivo a Base64 para vista previa
-   * @param file Archivo a convertir
-   */
   getBase64Preview(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();

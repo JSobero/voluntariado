@@ -23,10 +23,6 @@ public class Evento {
     @Column(columnDefinition = "TEXT")
     private String descripcion;
 
-    // ✅ CAMPO NUEVO: Categoría del evento
-    @Column(length = 50)
-    private String categoria = "otras";
-
     @Column(name = "fecha_inicio", nullable = false)
     private LocalDateTime fechaInicio;
 
@@ -45,6 +41,13 @@ public class Evento {
 
     @Column(name = "imagen_url")
     private String imagenUrl;
+
+    @Column(name = "puntos_otorga", nullable = false)
+    private Integer puntosOtorga = 0;
+
+    @ManyToOne
+    @JoinColumn(name = "categoria_id")
+    private Categoria categoria;
 
     @Transient
     private long inscritos;

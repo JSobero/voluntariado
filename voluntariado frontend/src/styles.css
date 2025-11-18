@@ -68,20 +68,20 @@ h1, h2, h3, h4, h5, h6 {
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-  --color-fondo: var(--gray-100);       /* Original: #f5f7fa */
+  --color-fondo: var(--gray-100);
     --color-tarjeta: white;
-    --color-texto-principal: var(--gray-800); /* Original: #1e293b */
-    --color-texto-secundario: var(--gray-600); /* Original: #64748b */
-    --color-texto-etiqueta: var(--gray-700);  /* Original: #374151 */
-    --color-borde: var(--gray-300);       /* Original: #e2e8f0 / #d1d5db */
-    --color-borde-divisor: var(--gray-100); /* Original: #f1f5f9 */
-    --color-fondo-input: var(--gray-50);    /* Original: #f8fafc */
-    --color-fondo-hover: var(--gray-100);   /* Original: #f1f5f9 */
-    --color-acento: var(--primary);       /* #6366f1 (tu config) es similar a --primary */
+    --color-texto-principal: var(--gray-800);
+    --color-texto-secundario: var(--gray-600);
+    --color-texto-etiqueta: var(--gray-700);
+    --color-borde: var(--gray-300);
+    --color-borde-divisor: var(--gray-100);
+    --color-fondo-input: var(--gray-50);
+    --color-fondo-hover: var(--gray-100);
+    --color-acento: var(--primary);
     --color-acento-hover: var(--primary-dark);
     --color-acento-texto: white;
-    --color-acento-sutil: #dbeafe;       /* badge-primary background */
-    --color-acento-sutil-texto: #1e40af; /* badge-primary text */
+    --color-acento-sutil: #dbeafe;
+    --color-acento-sutil-texto: #1e40af;
     --color-success-sutil: #d1fae5;
       --color-success-sutil-texto: #065f46;
       --color-danger-sutil: #fee2e2;
@@ -89,7 +89,7 @@ h1, h2, h3, h4, h5, h6 {
       --color-warning-sutil: #fef3c7;
       --color-warning-sutil-texto: #92400e;
       --color-secondary-dark: #7c3aed;
-        --color-secondary-sutil: #f3e8ff; /* Tono lila claro */
+        --color-secondary-sutil: #f3e8ff;
         --color-secondary-sutil-texto: #7c3aed;
         --color-secondary-borde-sutil: #e9d5ff;
 }
@@ -268,7 +268,6 @@ p {
   background: var(--gray-50);
 }
 
-/* Forms */
 .form-group {
   margin-bottom: 1.5rem;
 }
@@ -352,22 +351,20 @@ p {
   --color-texto-etiqueta: var(--gray-300);
   --color-borde: var(--gray-700);
   --color-borde-divisor: var(--gray-700);
-  --color-fondo-input: var(--gray-800); /* Un poco más claro que el fondo */
+  --color-fondo-input: var(--gray-800);
   --color-fondo-hover: var(--gray-700);
 
-  /* Los colores de acento pueden quedar igual o ajustarse */
-  /* --color-acento: var(--primary-light); */
 
-  --color-acento-sutil: #1e3a8a;       /* Dark badge-primary background */
-  --color-acento-sutil-texto: #bfdbfe; /* Dark badge-primary text */
-  --color-success-sutil: #064e3b; /* Fondo oscuro */
-    --color-success-sutil-texto: #a7f3d0; /* Texto claro */
+  --color-acento-sutil: #1e3a8a;
+  --color-acento-sutil-texto: #bfdbfe;
+  --color-success-sutil: #064e3b;
+    --color-success-sutil-texto: #a7f3d0;
     --color-danger-sutil: #7f1d1d;
     --color-danger-sutil-texto: #fecaca;
     --color-warning-sutil: #78350f;
     --color-warning-sutil-texto: #fde68a;
-    --color-secondary-sutil: #281d3e; /* Fondo púrpura oscuro */
-      --color-secondary-sutil-texto: #c4b5fd; /* Texto lila claro */
+    --color-secondary-sutil: #281d3e;
+      --color-secondary-sutil-texto: #c4b5fd;
       --color-secondary-borde-sutil: #5b21b6;
 }
 

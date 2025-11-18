@@ -60,9 +60,6 @@ export class LoginComponent {
             );
 
             if (usuario) {
-              // ----- ¡LÓGICA ACTUALIZADA! -----
-              // En lugar de redirigir y guardar en localStorage...
-              // simplemente llama al servicio. ¡El servicio hace el resto!
               this.authService.login(usuario);
               // ---------------------------------
             } else {

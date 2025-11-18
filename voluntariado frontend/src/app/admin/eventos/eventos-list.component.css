@@ -43,7 +43,7 @@
    ============================================ */
 .contenedor-pagina {
   padding: 2rem;
-  max-width: 1400px;
+  max-width: 1650px;
   margin: 0 auto;
 }
 
@@ -300,6 +300,24 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.celda-puntos {
+  text-align: center;
+  min-width: 140px;
+}
+
+.insignia-puntos {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.5rem 1rem;
+  /* Usamos los colores de "pendiente" que se ven bien para puntos (amarillo) */
+  background-color: #fffbeb;
+  color: #b45309;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.8125rem;
 }
 
 .celda-fecha {

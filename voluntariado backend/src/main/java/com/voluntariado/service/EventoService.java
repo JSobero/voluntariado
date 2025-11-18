@@ -13,40 +13,29 @@ public class EventoService {
 
     private final EventoRepository eventoRepository;
 
-    // --- 👇 2. AÑADE ESTE REPOSITORIO 👇 ---
     private final InscripcionRepository inscripcionRepository;
 
-    // --- 👇 3. MODIFICA EL CONSTRUCTOR 👇 ---
     public EventoService(EventoRepository eventoRepository,
-                         InscripcionRepository inscripcionRepository) { // <-- Añadir
+                         InscripcionRepository inscripcionRepository) {
         this.eventoRepository = eventoRepository;
-        this.inscripcionRepository = inscripcionRepository; // <-- Añadir
+        this.inscripcionRepository = inscripcionRepository;
     }
 
-    // --- 👇 4. MODIFICA 'listarEventos' (LA CLAVE) 👇 ---
     public List<Evento> listarEventos() {
-        // 1. Obtenemos todos los eventos como siempre
         List<Evento> eventos = eventoRepository.findAll();
 
-        // 2. Iteramos sobre la lista
         eventos.forEach(evento -> {
-            // 3. Para CADA evento, calculamos sus inscritos
-            // (Si quieres contar solo aceptadas, usa:
-            // long count = inscripcionRepository.countByEventoIdAndEstado(evento.getId(), "ACEPTADA");
             long count = inscripcionRepository.countByEventoId(evento.getId());
 
-            // 4. Asignamos el conteo al campo @Transient
             evento.setInscritos(count);
         });
 
-        // 5. Devolvemos la lista "enriquecida"
         return eventos;
     }
 
-    // ✅ NUEVO: Método para listar por categoría
-    public List<Evento> listarPorCategoria(String categoria) {
-        // También "enriquecemos" esta lista
-        List<Evento> eventos = eventoRepository.findByCategoria(categoria);
+
+    public List<Evento> listarPorCategoria(Long categoriaId) {
+        List<Evento> eventos = eventoRepository.findByCategoriaId(categoriaId);
         eventos.forEach(evento -> {
             long count = inscripcionRepository.countByEventoId(evento.getId());
             evento.setInscritos(count);
@@ -55,7 +44,7 @@ public class EventoService {
     }
 
     public Optional<Evento> obtenerPorId(Long id) {
-        // También "enriquecemos" este
+
         return eventoRepository.findById(id).map(evento -> {
             long count = inscripcionRepository.countByEventoId(evento.getId());
             evento.setInscritos(count);
@@ -64,9 +53,8 @@ public class EventoService {
     }
 
     public Evento guardarEvento(Evento evento) {
-        // Al guardar, no necesitamos el conteo, pero lo ponemos para consistencia
         Evento eventoGuardado = eventoRepository.save(evento);
-        eventoGuardado.setInscritos(0); // Un evento nuevo tiene 0 inscritos
+        eventoGuardado.setInscritos(0);
         return eventoGuardado;
     }
 
@@ -81,10 +69,10 @@ public class EventoService {
             e.setCupoMaximo(evento.getCupoMaximo());
             e.setOrganizador(evento.getOrganizador());
             e.setImagenUrl(evento.getImagenUrl());
+            e.setPuntosOtorga(evento.getPuntosOtorga());
 
             Evento eventoGuardado = eventoRepository.save(e);
 
-            // Calculamos los inscritos después de guardar
             long count = inscripcionRepository.countByEventoId(eventoGuardado.getId());
             eventoGuardado.setInscritos(count);
             return eventoGuardado;

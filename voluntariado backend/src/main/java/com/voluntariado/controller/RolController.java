@@ -17,13 +17,11 @@ public class RolController {
         this.rolService = rolService;
     }
 
-    // Listar todos los roles
     @GetMapping
     public List<Rol> listarRoles() {
         return rolService.listarRoles();
     }
 
-    // Obtener rol por ID
     @GetMapping("/{id}")
     public ResponseEntity<Rol> obtenerRol(@PathVariable Long id) {
         return rolService.obtenerPorId(id)
@@ -31,13 +29,11 @@ public class RolController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Crear rol (poco usado, pero útil si agregamos más roles)
     @PostMapping
     public Rol crearRol(@RequestBody Rol rol) {
         return rolService.guardarRol(rol);
     }
 
-    // Eliminar rol
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarRol(@PathVariable Long id) {
         rolService.eliminarRol(id);

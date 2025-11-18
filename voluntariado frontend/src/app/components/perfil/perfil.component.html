@@ -1,13 +1,10 @@
 <div class="perfil-page">
 
-
-  <!-- Loading State -->
   <div *ngIf="isLoading" class="loading-container">
     <div class="spinner"></div>
     <p>Cargando perfil...</p>
   </div>
 
-  <!-- Error State -->
   <div *ngIf="error && !isLoading" class="error-container">
     <div class="error-card">
       <div class="error-icon">⚠️</div>
@@ -17,10 +14,8 @@
     </div>
   </div>
 
-  <!-- Main Content -->
   <div *ngIf="!isLoading && !error && usuarioActual" class="perfil-container">
 
-    <!-- Hero Section con info del usuario -->
     <section class="hero-perfil">
       <div class="hero-background"></div>
       <div class="hero-content">
@@ -49,7 +44,6 @@
       </div>
     </section>
 
-    <!-- Tabs de Navegación -->
     <div class="tabs-container">
       <div class="tabs">
         <button
@@ -83,14 +77,11 @@
       </div>
     </div>
 
-    <!-- Contenido de Tabs -->
     <div class="tab-content">
 
-      <!-- TAB: Resumen -->
       <div *ngIf="tabActiva === 'resumen'" class="resumen-tab">
         <div class="grid-resumen">
 
-          <!-- Card de Progreso -->
           <div class="card-progreso">
             <h3>Tu Progreso</h3>
             <div class="progreso-item">
@@ -116,7 +107,6 @@
             </div>
           </div>
 
-          <!-- Card de Actividad Reciente -->
           <div class="card-actividad">
             <h3>Actividad Reciente</h3>
             <div class="lista-actividad">
@@ -140,7 +130,6 @@
             </div>
           </div>
 
-          <!-- Card de Logros -->
           <div class="card-logros">
             <h3>Logros Desbloqueados</h3>
             <div class="grid-logros">
@@ -164,7 +153,6 @@
         </div>
       </div>
 
-      <!-- TAB: Eventos -->
       <div *ngIf="tabActiva === 'eventos'" class="eventos-tab">
         <div class="eventos-header">
           <h2>Mis Eventos</h2>
@@ -202,7 +190,6 @@
         </div>
       </div>
 
-      <!-- TAB: Certificados -->
       <div *ngIf="tabActiva === 'certificados'" class="certificados-tab">
         <div class="certificados-header">
           <h2>Mis Certificados</h2>
@@ -233,7 +220,6 @@
         </div>
       </div>
 
-      <!-- TAB: Configuración -->
       <div *ngIf="tabActiva === 'configuracion'" class="configuracion-tab">
         <div class="config-card">
           <div class="config-header">

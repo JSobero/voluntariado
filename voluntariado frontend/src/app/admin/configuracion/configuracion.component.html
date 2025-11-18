@@ -1,5 +1,5 @@
 <div class="contenedor-pagina">
-  <!-- Header -->
+
   <div class="encabezado-pagina">
     <div class="encabezado-izquierda">
       <h1 class="titulo-pagina">
@@ -10,13 +10,11 @@
     </div>
   </div>
 
-  <!-- Mensaje de éxito -->
   <div *ngIf="mensaje" class="alerta-exito">
     <i class="bi bi-check-circle-fill"></i>
     <span>{{ mensaje }}</span>
   </div>
 
-  <!-- Información General -->
   <div class="tarjeta-seccion">
     <h2 class="titulo-seccion">Información General</h2>
 
@@ -33,7 +31,6 @@
     </div>
   </div>
 
-  <!-- Notificaciones -->
   <div class="tarjeta-seccion">
     <h2 class="titulo-seccion">Notificaciones</h2>
 
@@ -56,7 +53,6 @@
     </div>
   </div>
 
-  <!-- Sistema de Puntos -->
   <div class="tarjeta-seccion">
     <h2 class="titulo-seccion">Sistema de Puntos y Certificados</h2>
 
@@ -78,7 +74,6 @@
     </div>
   </div>
 
-  <!-- Preferencias de Interfaz -->
   <div class="tarjeta-seccion">
     <h2 class="titulo-seccion">Preferencias de Interfaz</h2>
 
@@ -116,7 +111,6 @@
     </div>
   </div>
 
-  <!-- Botones de Acción -->
   <div class="acciones-formulario">
     <button (click)="cancelar()" class="btn btn-secundario">Cancelar</button>
     <button (click)="guardarConfiguracion()" [disabled]="guardando" class="btn btn-primario">

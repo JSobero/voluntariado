@@ -41,7 +41,6 @@ public class ImageService {
 
     public boolean deleteImage(String imageUrl) {
         try {
-            // Extraer el path relativo de la URL
             String relativePath = imageUrl.replace(baseUrl + "/uploads/", "");
             Path filePath = Paths.get(uploadPath, relativePath);
 

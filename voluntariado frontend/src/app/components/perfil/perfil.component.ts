@@ -3,10 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-// 1. Importa nuestro AuthService y la interfaz Usuario
 import { AuthService, Usuario } from '../../services/auth.service';
 
-// Mantenemos tus otras interfaces locales si solo se usan aquí
 interface Inscripcion {
   id: number;
   evento: any;
@@ -31,7 +29,6 @@ interface Certificado {
 export class PerfilComponent implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
-  // 2. Inyecta el AuthService
   private authService = inject(AuthService);
 
   private readonly API_BASE = 'http://localhost:8080';
@@ -53,19 +50,14 @@ export class PerfilComponent implements OnInit {
   cargarDatosPerfil(): void {
     this.isLoading = true;
     this.error = null;
-
-    // 3. OBTIENE EL USUARIO DEL SERVICIO
     const usuarioLogueado = this.authService.currentUser();
 
     if (usuarioLogueado) {
-        // Si hay usuario, usamos sus datos
         this.usuarioActual = usuarioLogueado;
-        // Y cargamos sus datos relacionados
         this.cargarInscripciones();
         this.cargarCertificados();
         this.isLoading = false;
     } else {
-        // Si no hay nadie logueado, redirigimos al login
         this.router.navigate(['/login']);
     }
   }
@@ -88,12 +80,8 @@ export class PerfilComponent implements OnInit {
 
     this.http.get<Certificado[]>(`${this.API_BASE}/certificados`).subscribe({
       next: (data) => {
-        // Filtrar certificados del usuario actual
-        // NOTA: Ajusta esta lógica si tu backend ya filtra por usuario
         this.certificados = data.filter(
-            // Asegúrate de que la comparación sea correcta según tu modelo de datos real
            cert => cert.evento?.organizador?.id === this.usuarioActual?.id
-           // ¿O quizás debería ser 'cert.usuario.id === this.usuarioActual.id'? Revisalo.
         );
       },
       error: (err) => console.error('Error al cargar certificados:', err)
@@ -110,7 +98,6 @@ export class PerfilComponent implements OnInit {
     this.usuarioEditado = {
       nombre: this.usuarioActual.nombre,
       correo: this.usuarioActual.correo
-      // telefono: this.usuarioActual.telefono // Descomenta si añadiste 'telefono' a tu interfaz Usuario
     };
   }
 
@@ -133,8 +120,6 @@ export class PerfilComponent implements OnInit {
     ).subscribe({
       next: (usuario) => {
         this.usuarioActual = usuario;
-        // 4. ACTUALIZA EL SERVICIO DE AUTH TAMBIÉN
-        // Para que el Navbar muestre el nuevo nombre si cambió
         this.authService.currentUser.set(usuario);
         localStorage.setItem('currentUser', JSON.stringify(usuario));
 
@@ -160,27 +145,20 @@ export class PerfilComponent implements OnInit {
      if (!fecha) return 'Fecha desconocida';
 
      let fechaObj: Date;
-
-     // CASO 1: Si la fecha es un array [año, mes, dia, ...]
      if (Array.isArray(fecha)) {
-       // En Java, los meses a veces van de 1-12, pero en JS van de 0-11.
-       // Si tu backend envía 1 para Enero, restamos 1.
-       // Asumiremos que envía [año, mes, día, hora, minuto, segundo]
        fechaObj = new Date(
-         fecha[0],      // Año
-         fecha[1] - 1,  // Mes (restamos 1 porque en JS Enero es 0)
-         fecha[2],      // Día
-         fecha[3] || 0, // Hora (opcional)
-         fecha[4] || 0, // Minuto (opcional)
-         fecha[5] || 0  // Segundo (opcional)
+         fecha[0],
+         fecha[1] - 1,
+         fecha[2],
+         fecha[3] || 0,
+         fecha[4] || 0,
+         fecha[5] || 0
        );
      }
-     // CASO 2: Si la fecha es un string normal
      else {
        fechaObj = new Date(fecha);
      }
 
-     // Verificación final
      if (isNaN(fechaObj.getTime())) {
        return 'Fecha inválida';
      }

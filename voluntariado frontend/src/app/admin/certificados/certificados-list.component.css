@@ -1,6 +1,4 @@
-/* ============================================
-   TRANSICIONES (PARA MODO OSCURO)
-   ============================================ */
+
 .encabezado-pagina,
 .boton-secundario,
 .boton-secundario:hover,
@@ -27,20 +25,14 @@
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
 }
 
-/* ============================================
-   CONTENEDOR DE PÁGINA
-   ============================================ */
 .contenedor-pagina {
   padding: 2rem;
   max-width: 1400px;
   margin: 0 auto;
 }
 
-/* ============================================
-   ENCABEZADO DE PÁGINA
-   ============================================ */
 .encabezado-pagina {
-  background: var(--color-tarjeta); /* MODIFICADO */
+  background: var(--color-tarjeta);
   border-radius: 16px;
   padding: 2rem;
   margin-bottom: 1.5rem;
@@ -58,7 +50,7 @@
 .titulo-pagina {
   font-size: 2rem;
   font-weight: 800;
-  color: var(--color-texto-principal); /* MODIFICADO */
+  color: var(--color-texto-principal);
   margin: 0 0 0.5rem 0;
   display: flex;
   align-items: center;
@@ -67,12 +59,12 @@
 
 .icono-titulo {
   font-size: 2.25rem;
-  color: var(--color-texto-principal); /* MODIFICADO */
+  color: var(--color-texto-principal);
 }
 
 .subtitulo-pagina {
   font-size: 1rem;
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
   margin: 0;
 }
 
@@ -81,9 +73,6 @@
   gap: 1rem;
 }
 
-/* ============================================
-   BOTONES
-   ============================================ */
 .boton {
   padding: 0.75rem 1.5rem;
   border-radius: 10px;
@@ -95,8 +84,6 @@
   align-items: center;
   gap: 0.5rem;
 }
-
-/* Botón primario se mantiene (color de acento) */
 .boton-primario {
   background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: white;
@@ -107,11 +94,8 @@
   box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
 }
 
-/* ============================================
-   ESTADO DE CARGA Y VACÍO
-   ============================================ */
 .contenedor-carga, .estado-vacio {
-  background: var(--color-tarjeta); /* MODIFICADO */
+  background: var(--color-tarjeta);
   border-radius: 16px;
   padding: 4rem 2rem;
   text-align: center;
@@ -121,8 +105,8 @@
 .giratorio {
   width: 48px;
   height: 48px;
-  border: 4px solid var(--color-borde); /* MODIFICADO */
-  border-top-color: var(--primary); /* MODIFICADO */
+  border: 4px solid var(--color-borde);
+  border-top-color: var(--primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin: 0 auto 1rem;
@@ -133,7 +117,7 @@
 }
 
 .contenedor-carga p, .estado-vacio p {
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
   font-size: 0.875rem;
   margin: 0;
 }
@@ -142,21 +126,17 @@
   font-size: 4rem;
   margin-bottom: 1rem;
   opacity: 0.5;
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
 }
 
 .estado-vacio h3 {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--color-texto-principal); /* MODIFICADO */
+  color: var(--color-texto-principal);
   margin: 0 0 0.5rem 0;
 }
-
-/* ============================================
-   TABLA
-   ============================================ */
 .tarjeta-tabla {
-  background: var(--color-tarjeta); /* MODIFICADO */
+  background: var(--color-tarjeta);
   border-radius: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -172,8 +152,8 @@
 }
 
 .tabla-datos thead {
-  background: var(--color-fondo-input); /* MODIFICADO */
-  border-bottom: 2px solid var(--color-borde); /* MODIFICADO */
+  background: var(--color-fondo-input);
+  border-bottom: 2px solid var(--color-borde);
 }
 
 .tabla-datos th {
@@ -181,17 +161,17 @@
   text-align: left;
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .tabla-datos tbody tr {
-  border-bottom: 1px solid var(--color-borde-divisor); /* MODIFICADO */
+  border-bottom: 1px solid var(--color-borde-divisor);
 }
 
 .tabla-datos tbody tr:hover {
-  background: var(--color-fondo-hover); /* MODIFICADO */
+  background: var(--color-fondo-hover);
 }
 
 .tabla-datos td {
@@ -200,7 +180,6 @@
   vertical-align: middle;
 }
 
-/* Celdas de la Tabla */
 .celda-id {
   width: 80px;
 }
@@ -208,8 +187,8 @@
 .insignia-id {
   display: inline-flex;
   padding: 0.25rem 0.75rem;
-  background: var(--color-fondo-hover); /* MODIFICADO */
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  background: var(--color-fondo-hover);
+  color: var(--color-texto-secundario);
   border-radius: 6px;
   font-weight: 600;
 }
@@ -222,7 +201,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
 }
 
 .envoltorio-fecha {
@@ -246,7 +225,7 @@
   font-size: 1.125rem;
   border-radius: 6px;
   margin: 0 0.25rem;
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
 }
 
 .boton-accion:hover {
@@ -254,18 +233,15 @@
 }
 
 .boton-editar:hover {
-  background: var(--color-acento-sutil); /* MODIFICADO */
-  color: var(--color-acento-sutil-texto); /* MODIFICADO */
+  background: var(--color-acento-sutil);
+  color: var(--color-acento-sutil-texto);
 }
 
 .boton-eliminar:hover {
-  background: var(--color-danger-sutil); /* MODIFICADO */
-  color: var(--color-danger-sutil-texto); /* MODIFICADO */
+  background: var(--color-danger-sutil);
+  color: var(--color-danger-sutil-texto);
 }
 
-/* ============================================
-   ESTILOS ADICIONALES PARA CERTIFICADOS
-   ============================================ */
 
 .celda-info-principal, .celda-info-secundaria {
   min-width: 250px;
@@ -277,7 +253,6 @@
   align-items: center;
 }
 
-/* Avatar se mantiene (color de acento) */
 .avatar-usuario {
   width: 36px;
   height: 36px;
@@ -294,12 +269,12 @@
 
 .texto-titulo {
   font-weight: 600;
-  color: var(--color-texto-principal); /* MODIFICADO */
+  color: var(--color-texto-principal);
 }
 
 .texto-subtitulo {
   font-size: 0.8125rem;
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
 }
 
 .celda-enlace {
@@ -307,25 +282,22 @@
 }
 
 .enlace-pdf {
-  color: var(--primary); /* MODIFICADO */
+  color: var(--primary);
   font-weight: 600;
   text-decoration: none;
 }
 
 .enlace-pdf:hover {
-  color: var(--primary-dark); /* MODIFICADO */
+  color: var(--primary-dark);
   text-decoration: underline;
 }
 
 .texto-deshabilitado {
-  color: var(--color-texto-secundario); /* MODIFICADO */
-  opacity: 0.7; /* MODIFICADO */
+  color: var(--color-texto-secundario);
+  opacity: 0.7;
   font-style: italic;
 }
 
-/* ============================================
-   MODAL (Traduciendo la segunda sección)
-   ============================================ */
 
 .modal-superposicion {
   position: fixed;
@@ -340,7 +312,7 @@
 }
 
 .modal-contenedor {
-  background: var(--color-tarjeta); /* MODIFICADO */
+  background: var(--color-tarjeta);
   border-radius: 16px;
   width: 100%;
   max-width: 500px;
@@ -363,7 +335,7 @@
 
 .modal-encabezado {
   padding: 1.5rem;
-  border-bottom: 1px solid var(--color-borde-divisor); /* MODIFICADO */
+  border-bottom: 1px solid var(--color-borde-divisor);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -372,7 +344,7 @@
 .modal-titulo {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--color-texto-principal); /* MODIFICADO (corregido 1e2s93b) */
+  color: var(--color-texto-principal);
   margin: 0;
   display: flex;
   align-items: center;
@@ -381,23 +353,23 @@
 
 .icono-modal {
   font-size: 1.5rem;
-  color: var(--primary); /* MODIFICADO */
+  color: var(--primary);
 }
 
 .cerrar-modal {
   width: 36px;
   height: 36px;
   border-radius: 8px;
-  background: var(--color-fondo-hover); /* MODIFICADO */
+  background: var(--color-fondo-hover);
   border: none;
   cursor: pointer;
   font-size: 1.25rem;
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
 }
 
 .cerrar-modal:hover {
-  background: var(--color-borde); /* MODIFICADO */
-  color: var(--color-texto-principal); /* MODIFICADO */
+  background: var(--color-borde);
+  color: var(--color-texto-principal);
   transform: rotate(90deg);
 }
 
@@ -408,16 +380,15 @@
 
 .modal-pie {
   padding: 1.5rem;
-  border-top: 1px solid var(--color-borde-divisor); /* MODIFICADO */
+  border-top: 1px solid var(--color-borde-divisor);
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  background-color: var(--color-fondo-input); /* MODIFICADO */
+  background-color: var(--color-fondo-input);
   border-bottom-left-radius: 16px;
   border-bottom-right-radius: 16px;
 }
 
-/* --- Estilos para Formularios --- */
 .grupo-formulario {
   margin-bottom: 1.25rem;
 }
@@ -425,13 +396,13 @@
 .etiqueta-formulario {
   display: block;
   font-weight: 600;
-  color: var(--color-texto-etiqueta); /* MODIFICADO */
+  color: var(--color-texto-etiqueta);
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
 }
 
 .etiqueta-requerido {
-  color: var(--danger); /* MODIFICADO */
+  color: var(--danger);
   margin-left: 0.25rem;
 }
 
@@ -439,35 +410,35 @@
 .selector-formulario {
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 1px solid var(--color-borde); /* MODIFICADO */
+  border: 1px solid var(--color-borde);
   border-radius: 8px;
   font-size: 0.875rem;
-  background-color: var(--color-fondo-input); /* MODIFICADO */
-  color: var(--color-texto-principal); /* MODIFICADO */
+  background-color: var(--color-fondo-input);
+  color: var(--color-texto-principal);
 }
 
 .entrada-formulario:focus,
 .selector-formulario:focus {
   outline: none;
-  border-color: var(--primary); /* MODIFICADO */
+  border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-  background-color: var(--color-tarjeta); /* MODIFICADO */
+  background-color: var(--color-tarjeta);
 }
 
 .boton-secundario {
-  background: var(--color-tarjeta); /* MODIFICADO */
-  color: var(--color-texto-secundario); /* MODIFICADO */
-  border: 1px solid var(--color-borde); /* MODIFICADO */
+  background: var(--color-tarjeta);
+  color: var(--color-texto-secundario);
+  border: 1px solid var(--color-borde);
 }
 
 .boton-secundario:hover {
-  background: var(--color-fondo-hover); /* MODIFICADO */
+  background: var(--color-fondo-hover);
 }
 
 .boton[disabled] {
-  background: var(--color-borde); /* MODIFICADO */
-  color: var(--color-texto-secundario); /* MODIFICADO */
-  opacity: 0.7; /* MODIFICADO */
+  background: var(--color-borde);
+  color: var(--color-texto-secundario);
+  opacity: 0.7;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;

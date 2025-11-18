@@ -43,7 +43,6 @@ export class ConfiguracionComponent implements OnInit, OnDestroy {
 
   private themeSub!: Subscription;
   constructor(
-    // ✅ AÑADIDO: Inyectamos el servicio de Tema
     private themeService: TemaService
   ) {}
   ngOnInit(): void {
@@ -54,7 +53,6 @@ export class ConfiguracionComponent implements OnInit, OnDestroy {
         });
   }
 ngOnDestroy(): void {
-    // ✅ AÑADIDO: Limpiamos la suscripción para evitar fugas de memoria
     if (this.themeSub) {
       this.themeSub.unsubscribe();
     }
@@ -69,19 +67,14 @@ ngOnDestroy(): void {
           console.error('Error al cargar configuración:', error);
         }
       }
-      // ⛔ ELIMINADO: Ya no aplicamos el tema aquí.
-      // this.aplicarTemaOscuro(this.configuracion.temaOscuro);
     }
 
   guardarConfiguracion(): void {
-      // ... tu lógica de guardado está perfecta ...
       this.guardando = true;
       this.mensaje = '';
 
       setTimeout(() => {
         try {
-          // Al guardar, 'this.configuracion.temaOscuro' ya está actualizado
-          // gracias al (ngModelChange) y la suscripción.
           localStorage.setItem('configuracionSistema', JSON.stringify(this.configuracion));
           this.guardando = false;
           this.mensaje = 'Configuración guardada exitosamente';
@@ -98,16 +91,10 @@ ngOnDestroy(): void {
   cancelar(): void {
       this.cargarConfiguracion();
 
-      // ✅ AÑADIDO: Si cancela, debemos revertir el tema "en vivo"
-      // al valor que acabamos de recargar del localStorage.
       this.themeService.setTema(this.configuracion.temaOscuro);
     }
 
 onTemaOscuroChange(activado: boolean): void {
-    // 'activado' ya tiene el nuevo valor del checkbox gracias
-    // al evento (ngModelChange) en tu HTML.
-
-    // Simplemente le decimos al servicio cuál es el nuevo estado.
     this.themeService.setTema(activado);
   }
 }

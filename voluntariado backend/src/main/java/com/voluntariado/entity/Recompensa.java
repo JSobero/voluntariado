@@ -28,6 +28,10 @@ public class Recompensa {
     @Column(nullable = false)
     private Integer stock;
 
-    @Column(name = "imagen_url", length = 500)
+    @Column(name = "imagen_url")
     private String imagenUrl;
+
+    @ManyToOne
+    @JoinColumn(name = "categoria_id")
+    private Categoria categoria;
 }

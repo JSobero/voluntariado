@@ -1,6 +1,4 @@
-/* voluntariado frontend/src/app/admin/configuracion/configuracion.component.css */
 
-/* Añadimos transiciones para un cambio de tema suave */
 .encabezado-pagina,
 .tarjeta-seccion,
 .entrada-formulario,
@@ -16,13 +14,12 @@
   margin: 0 auto;
 }
 
-/* Header */
 .encabezado-pagina {
-  background: var(--color-tarjeta); /* MODIFICADO */
+  background: var(--color-tarjeta);
   border-radius: 16px;
   padding: 2rem;
   margin-bottom: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); /* Sombra se mantiene */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .encabezado-izquierda {
@@ -32,7 +29,7 @@
 .titulo-pagina {
   font-size: 2rem;
   font-weight: 800;
-  color: var(--color-texto-principal); /* MODIFICADO */
+  color: var(--color-texto-principal);
   margin: 0 0 0.5rem 0;
   display: flex;
   align-items: center;
@@ -41,20 +38,19 @@
 
 .icono-titulo {
   font-size: 2.25rem;
-  color: var(--color-acento); /* MODIFICADO */
+  color: var(--color-acento);
 }
 
 .subtitulo-pagina {
   font-size: 1rem;
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
   margin: 0;
 }
 
-/* Alerta de éxito (usando tus variables de --success) */
 .alerta-exito {
-  background: #d1fae5; /* Esto viene de .badge-success en styles.css */
+  background: #d1fae5;
   border: 2px solid var(--success);
-  color: #065f46;     /* Esto viene de .badge-success en styles.css */
+  color: #065f46;
   padding: 1rem 1.5rem;
   border-radius: 12px;
   margin-bottom: 1.5rem;
@@ -63,7 +59,6 @@
   gap: 0.75rem;
   animation: slideIn 0.3s ease-out;
 }
-/* ... (tu @keyframes slideIn no cambia) ... */
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -79,9 +74,8 @@
   font-size: 1.25rem;
 }
 
-/* Tarjetas de sección */
 .tarjeta-seccion {
-  background: var(--color-tarjeta); /* MODIFICADO */
+  background: var(--color-tarjeta);
   border-radius: 16px;
   padding: 2rem;
   margin-bottom: 1.5rem;
@@ -91,10 +85,10 @@
 .titulo-seccion {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-texto-principal); /* MODIFICADO */
+  color: var(--color-texto-principal);
   margin: 0 0 1.5rem 0;
   padding-bottom: 1rem;
-  border-bottom: 2px solid var(--color-borde-divisor); /* MODIFICADO */
+  border-bottom: 2px solid var(--color-borde-divisor);
 }
 
 /* Formularios */
@@ -116,7 +110,7 @@
 .etiqueta-formulario {
   display: block;
   font-weight: 600;
-  color: var(--color-texto-etiqueta); /* MODIFICADO */
+  color: var(--color-texto-etiqueta);
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
 }
@@ -125,9 +119,9 @@
 .selector-formulario {
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 2px solid var(--color-borde); /* MODIFICADO */
-  background: var(--color-fondo); /* MODIFICADO (para que combine con el fondo) */
-  color: var(--color-texto-principal); /* MODIFICADO */
+  border: 2px solid var(--color-borde);
+  background: var(--color-fondo);
+  color: var(--color-texto-principal);
   border-radius: 10px;
   font-size: 0.875rem;
   transition: all 0.2s;
@@ -136,11 +130,10 @@
 .entrada-formulario:focus,
 .selector-formulario:focus {
   outline: none;
-  border-color: var(--color-acento); /* MODIFICADO */
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); /* Puedes mantenerlo o ajustarlo */
+  border-color: var(--color-acento);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
-/* Checkboxes */
 .contenedor-checks {
   display: flex;
   flex-direction: column;
@@ -152,20 +145,20 @@
   align-items: center;
   gap: 0.75rem;
   padding: 1rem;
-  background: var(--color-fondo-input); /* MODIFICADO */
+  background: var(--color-fondo-input);
   border-radius: 10px;
   cursor: pointer;
 }
 
 .check-item:hover {
-  background: var(--color-fondo-hover); /* MODIFICADO */
+  background: var(--color-fondo-hover);
 }
 
 .check-item input[type="checkbox"] {
   width: 20px;
   height: 20px;
   cursor: pointer;
-  accent-color: var(--color-acento); /* MODIFICADO */
+  accent-color: var(--color-acento);
 }
 
 .check-contenido {
@@ -174,19 +167,15 @@
 
 .check-titulo {
   font-weight: 600;
-  color: var(--color-texto-principal); /* MODIFICADO */
+  color: var(--color-texto-principal);
   margin-bottom: 0.25rem;
 }
 
 .check-descripcion {
   font-size: 0.875rem;
-  color: var(--color-texto-secundario); /* MODIFICADO */
+  color: var(--color-texto-secundario);
 }
 
-/* Botones */
-/* Tu styles.css ya define .btn y .btn-primary.
-   Es mejor usar esos.
-   Solo traduciré tu .btn-secundario que es específico de aquí. */
 .acciones-formulario {
   display: flex;
   gap: 1rem;
@@ -194,9 +183,7 @@
   padding-top: 1rem;
 }
 
-/* Hereda .btn de styles.css, solo definimos los colores */
 .btn-primario {
-  /* Usando las variables de tu styles.css global */
   background: var(--primary);
   color: white;
   box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
@@ -215,15 +202,14 @@
 }
 
 .btn-secundario {
-  background: var(--color-fondo-hover); /* MODIFICADO */
-  color: var(--color-texto-etiqueta); /* MODIFICADO */
+  background: var(--color-fondo-hover);
+  color: var(--color-texto-etiqueta);
 }
 
 .btn-secundario:hover {
-  background: var(--color-borde); /* Un poco más oscuro */
+  background: var(--color-borde);
 }
 
-/* ... (tu sección @media responsive no necesita cambios) ... */
 @media (max-width: 768px) {
   .contenedor-pagina {
     padding: 1rem;

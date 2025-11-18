@@ -1,6 +1,5 @@
 <div class="register-page">
   <div class="register-container">
-    <!-- Logo y título -->
     <div class="register-header">
       <div class="logo" (click)="navigateToHome()">
         <img src="/logo.png" alt="Logo Nexo V" class="logo-icon">
@@ -10,7 +9,6 @@
       <p>Únete a nuestra comunidad y comienza tu impacto social</p>
     </div>
 
-    <!-- Indicador de progreso -->
     <div class="progress-indicator">
       <div class="progress-step" [class.active]="currentStep >= 1" [class.completed]="currentStep > 1">
         <div class="step-circle">
@@ -34,9 +32,8 @@
       </div>
     </div>
 
-    <!-- Formulario de registro -->
     <form class="register-form" (ngSubmit)="onSubmit()">
-      <!-- Mensajes -->
+
       <div class="error-message" *ngIf="errorMessage">
         <i class="bi bi-exclamation-triangle-fill"></i>
         <span>{{ errorMessage }}</span>
@@ -47,7 +44,6 @@
         <span>{{ successMessage }}</span>
       </div>
 
-      <!-- Paso 1: Datos básicos -->
       <div class="form-step" *ngIf="currentStep === 1">
         <div class="step-header">
           <i class="bi bi-person-badge"></i>
@@ -109,7 +105,6 @@
         </div>
       </div>
 
-      <!-- Paso 2: Seguridad -->
       <div class="form-step" *ngIf="currentStep === 2">
         <div class="step-header">
           <i class="bi bi-shield-lock"></i>
@@ -224,7 +219,6 @@
         </div>
       </div>
 
-      <!-- Paso 3: Confirmación -->
       <div class="form-step" *ngIf="currentStep === 3">
         <div class="step-header">
           <i class="bi bi-clipboard-check"></i>
@@ -312,14 +306,12 @@
         </div>
       </div>
 
-      <!-- Link a login -->
       <div class="login-prompt">
         <p>¿Ya tienes una cuenta? <a href="/login" class="login-link" (click)="navigateToLogin()">Inicia sesión aquí</a></p>
       </div>
     </form>
   </div>
 
-  <!-- Imagen lateral -->
   <div class="register-image">
     <div class="image-overlay">
       <div class="overlay-content">
