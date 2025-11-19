@@ -10,7 +10,7 @@
           <div class="slide-content">
             <h1 class="slide-title">{{slide.title}}</h1>
             <p class="slide-subtitle">{{slide.subtitle}}</p>
-            <button class="cta-button" (click)="navigateToRegister()">{{slide.cta}}</button>
+            <button class="cta-button" (click)="navigateByPath(slide.route)">{{slide.cta}}</button>
           </div>
         </div>
       </div>
@@ -141,30 +141,23 @@
         <h2>Lo que dicen nuestros voluntarios</h2>
         <p>Historias reales de personas que están cambiando el mundo</p>
       </div>
-      <div class="testimonial-carousel">
-        <button class="testimonial-btn prev" (click)="prevTestimonial()">
-          <i class="bi bi-chevron-left"></i>
-        </button>
 
-        <div class="testimonial-content">
-          <div class="testimonial-card" *ngFor="let testimonial of testimonials; let i = index" [class.active]="i === currentTestimonial">
-            <div class="testimonial-stars">
-              <span *ngFor="let star of [1,2,3,4,5]"><i class="bi bi-star-fill"></i></span>
-            </div>
-            <p class="testimonial-text">"{{testimonial.text}}"</p>
-            <div class="testimonial-author">
-              <img [src]="testimonial.avatar" [alt]="testimonial.name">
-              <div>
-                <h4>{{testimonial.name}}</h4>
-                <p>{{testimonial.role}}</p>
-              </div>
+      <div class="testimonials-grid">
+
+        <div class="testimonial-card" *ngFor="let testimonial of testimonials">
+          <div class="testimonial-stars">
+            <span *ngFor="let star of [1,2,3,4,5]"><i class="bi bi-star-fill"></i></span>
+          </div>
+          <p class="testimonial-text">"{{testimonial.text}}"</p>
+          <div class="testimonial-author">
+            <img [src]="testimonial.avatar" [alt]="testimonial.name">
+            <div>
+              <h4>{{testimonial.name}}</h4>
+              <p>{{testimonial.role}}</p>
             </div>
           </div>
         </div>
 
-        <button class="testimonial-btn next" (click)="nextTestimonial()">
-          <i class="bi bi-chevron-right"></i>
-        </button>
       </div>
     </div>
   </section>
@@ -186,13 +179,20 @@
     <div class="container">
       <div class="footer-content">
         <div class="footer-section">
-          <h3>Voluntariado</h3>
-          <p>Conectando voluntarios con causas que importan desde 2020</p>
+          <h3>NEXO V</h3>
+          <p>Conectando voluntarios con causas que importan. Juntos construimos un mundo mejor, una acción a la vez.</p>
+          <div class="social-links">
+            <a href="#" title="Facebook"><i class="bi bi-facebook"></i></a>
+            <a href="#" title="Instagram"><i class="bi bi-instagram"></i></a>
+            <a href="#" title="Twitter"><i class="bi bi-twitter"></i></a>
+            <a href="#" title="LinkedIn"><i class="bi bi-linkedin"></i></a>
+          </div>
         </div>
         <div class="footer-section">
           <h4>Enlaces rápidos</h4>
           <ul>
             <li><a href="#">Sobre nosotros</a></li>
+            <li><a href="#">Cómo funciona</a></li>
             <li><a href="#">Eventos</a></li>
             <li><a href="#">Organizaciones</a></li>
             <li><a href="#">Blog</a></li>
@@ -201,24 +201,26 @@
         <div class="footer-section">
           <h4>Soporte</h4>
           <ul>
+            <li><a href="#">Centro de ayuda</a></li>
             <li><a href="#">Preguntas frecuentes</a></li>
             <li><a href="#">Contacto</a></li>
             <li><a href="#">Términos de uso</a></li>
-            <li><a href="#">Privacidad</a></li>
+            <li><a href="#">Política de privacidad</a></li>
           </ul>
         </div>
         <div class="footer-section">
-          <h4>Síguenos</h4>
-          <div class="social-links">
-            <a href="#">Facebook</a>
-            <a href="#">Instagram</a>
-            <a href="#">Twitter</a>
-            <a href="#">LinkedIn</a>
-          </div>
+          <h4>Para organizaciones</h4>
+          <ul>
+            <li><a href="#">Registra tu organización</a></li>
+            <li><a href="#">Publica eventos</a></li>
+            <li><a href="#">Guía para ONGs</a></li>
+            <li><a href="#">Casos de éxito</a></li>
+            <li><a href="#">Recursos</a></li>
+          </ul>
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; 2025 Voluntariado. Todos los derechos reservados.</p>
+        <p>&copy; 2025 Voluntariado. Todos los derechos reservados. Hecho con ❤️ para hacer del mundo un lugar mejor.</p>
       </div>
     </div>
   </footer>

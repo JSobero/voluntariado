@@ -3,7 +3,7 @@ import { Recompensa} from './recompensa.model';
 export interface Canje {
   id?: number;
   usuario: Usuario;
-  recompensa: Recompensa;
+  recompensa: Recompensa | null;
   fecha?: string | Date | any;
   puntosUsados: number;
   estado: 'PENDIENTE' | 'ENTREGADO' | 'CANCELADO';

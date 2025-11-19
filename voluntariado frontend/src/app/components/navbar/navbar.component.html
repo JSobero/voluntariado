@@ -1,63 +1,78 @@
 <nav class="navbar">
   <div class="nav-container">
-    <a class="logo" (click)="volverInicio()">
-      <img src="/logo.png" alt="" class="logo-icon">
-      <span class="logo-text">NEXO V</span>
-    </a>
-    <ul class="nav-menu">
+
+    <div class="nav-header">
+      <a class="logo" (click)="volverInicio()">
+        <img src="/logo.png" alt="Nexo V Logo" class="logo-icon">
+        <span class="logo-text">NEXO V</span>
+      </a>
+    </div>
+
+    <ul class="nav-menu" [class.active]="mobileMenuOpen">
       <li><a (click)="volverInicio()">Inicio</a></li>
       <li><a (click)="navigateTo('/eventos')">Eventos</a></li>
       <li><a (click)="navigateTo('/recompensas')">Recompensas</a></li>
       <li><a (click)="navigateTo('/categorias')">Categorías</a></li>
       <li><a (click)="navigateTo('/testimonios')">Testimonios</a></li>
+
+      <!-- Botones de autenticación en mobile -->
+      <li class="mobile-auth-buttons" *ngIf="!authService.currentUser()">
+        <button class="btn-login" (click)="navigateTo('/login')">Iniciar sesión</button>
+        <button class="btn-register" (click)="navigateTo('/register')">Registrarse</button>
+      </li>
     </ul>
 
     <div class="nav-actions">
-
+      <!-- Botones de autenticación en desktop -->
       <ng-container *ngIf="!authService.currentUser()">
-        <button class="btn-login" (click)="navigateTo('/login')">Iniciar sesión</button>
-        <button class="btn-register" (click)="navigateTo('/register')">Registrarse</button>
-      </ng-container>
-
-      <ng-container *ngIf="authService.currentUser() as user">
-
-        <div class="user-menu-container">
-
-          <div class="user-toggle" (click)="toggleMenu()">
-            <span class="nav-puntos" *ngIf="user.puntos !== undefined">⭐ {{ user.puntos }}</span>
-            <span class="nav-username">¡Hola, {{ user.nombre }}!</span>
-            <i class="bi bi-chevron-down"></i>
-          </div>
-
-          <div class="dropdown-menu" *ngIf="menuAbierto">
-            <button class="dropdown-item" (click)="navigateTo('/perfil'); cerrarMenu()">
-              <i class="bi bi-person"></i> Mi Perfil
-            </button>
-
-            <button class="dropdown-item" (click)="navigateTo('/mis-inscripciones'); cerrarMenu()">
-              <i class="bi bi-clipboard-check"></i> Mis Inscripciones
-            </button>
-            <button class="dropdown-item" (click)="navigateTo('/recompensas'); cerrarMenu()">
-              <i class="bi bi-gift"></i> Canjear Puntos
-            </button>
-
-            <button
-              *ngIf="user.rol.nombre === 'ADMIN' || user.rol.nombre === 'ORGANIZADOR'"
-              class="dropdown-item"
-              (click)="navigateTo('/admin/dashboard'); cerrarMenu()">
-              <i class="bi bi-speedometer2"></i> Dashboard
-            </button>
-
-            <div class="dropdown-divider"></div>
-
-            <button class="dropdown-item danger" (click)="onLogout(); cerrarMenu()">
-              <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
-            </button>
-          </div>
-
+        <div class="desktop-auth-buttons">
+          <button class="btn-login" (click)="navigateTo('/login')">Iniciar sesión</button>
+          <button class="btn-register" (click)="navigateTo('/register')">Registrarse</button>
         </div>
       </ng-container>
 
+      <!-- Menú de usuario autenticado -->
+      <ng-container *ngIf="authService.currentUser() as user">
+        <div class="user-menu-container">
+          <div class="user-toggle" (click)="toggleUserMenu()">
+            <span class="nav-puntos" *ngIf="user.puntos !== undefined">
+              <i class="bi bi-star-fill"></i> {{ user.puntos }}
+            </span>
+            <span class="nav-username d-none d-md-inline">¡Hola, {{ user.nombre }}!</span>
+            <i class="bi bi-chevron-down"></i>
+          </div>
+
+          <div class="dropdown-menu" *ngIf="userMenuAbierto">
+            <button class="dropdown-item" (click)="navigateTo('/perfil')">
+              <i class="bi bi-person-circle"></i>
+              <span>Mi Perfil</span>
+            </button>
+            <button class="dropdown-item" (click)="navigateTo('/mis-inscripciones')">
+              <i class="bi bi-clipboard-check"></i>
+              <span>Mis Inscripciones</span>
+            </button>
+            <button class="dropdown-item" (click)="navigateTo('/recompensas')">
+              <i class="bi bi-gift-fill"></i>
+              <span>Canjear Puntos</span>
+            </button>
+            <button *ngIf="user.rol.nombre === 'ADMIN' || user.rol.nombre === 'ORGANIZADOR'"
+                    class="dropdown-item" (click)="navigateTo('/admin/dashboard')">
+              <i class="bi bi-speedometer2"></i>
+              <span>Dashboard</span>
+            </button>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item danger" (click)="onLogout()">
+              <i class="bi bi-box-arrow-right"></i>
+              <span>Cerrar Sesión</span>
+            </button>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Botón de menú móvil -->
+      <button class="mobile-menu-btn" (click)="toggleMobileMenu()">
+        <i class="bi" [class.bi-list]="!mobileMenuOpen" [class.bi-x-lg]="mobileMenuOpen"></i>
+      </button>
     </div>
   </div>
 </nav>

@@ -9,6 +9,7 @@ import { CategoriaService } from '../../core/services/categoria.service';
 import { AuthService } from '../../services/auth.service';
 import { InscripcionService } from '../../core/services/inscripcion.service';
 import { Inscripcion } from '../../core/models/inscripcion.model';
+
 interface Evento {
   id: number;
   titulo: string;
@@ -49,7 +50,6 @@ export class EventosComponent implements OnInit {
   eventosFiltrados: Evento[] = [];
   categorias: Categoria[] = [];
 
-
   isLoading = true;
   error: string | null = null;
   p: number = 1;
@@ -61,7 +61,6 @@ export class EventosComponent implements OnInit {
   modalEsError = false;
 
   imagenesCategoria: { [key: string]: string } = {
-
     'Ambiental': 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=300&fit=crop',
     'Educación': 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&h=300&fit=crop',
     'Salud': 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400&h=300&fit=crop',
@@ -69,6 +68,30 @@ export class EventosComponent implements OnInit {
     'Otras': 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&h=300&fit=crop',
     'default': 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&h=300&fit=crop'
   };
+
+  clasesIconoBootstrap: { [key: string]: string } = {
+    'Ambiental': 'bi-tree',
+    'Educación': 'bi-book',
+    'Salud': 'bi-heart-pulse',
+    'Animales': 'bi-paw',
+    'Otras': 'bi-three-dots-horizontal',
+    'default': 'bi-question-circle',
+    'Todas': 'bi-star'
+  };
+
+  coloresCategoria: { [key: string]: string } = {
+    'Ambiental': '#10b981',
+    'Educación': '#3b82f6',
+    'Salud': '#ef4444',
+    'Animales': '#f97316',
+    'Otras': '#6b7280',
+    'Todas': '#f59e0b',
+    'default': '#6b7280'
+  };
+
+  getColorCategoria(nombre: string): string {
+    return this.coloresCategoria[nombre] || this.coloresCategoria['default'];
+  }
 
   ngOnInit(): void {
     this.cargarCategorias();
@@ -232,7 +255,6 @@ export class EventosComponent implements OnInit {
   }
 
   formatearFecha(fecha: string): string {
-    // ... (esta función queda igual)
     const date = new Date(fecha);
     return date.toLocaleDateString('es-ES', {
       day: '2-digit',

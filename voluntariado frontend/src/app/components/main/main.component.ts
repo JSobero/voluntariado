@@ -1,6 +1,21 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+
+interface EventoBackend {
+  id: number;
+  titulo: string;
+  descripcion: string;
+  fechaInicio: string;
+  lugar: string;
+  cupoMaximo: number;
+  inscritos?: number;
+  puntosOtorga?: number;
+  imagenUrl?: string;
+  categoria: any;
+  imagen?: string;
+}
 
 @Component({
   selector: 'app-landing',
@@ -11,32 +26,38 @@ import { Router } from '@angular/router';
 })
 export class LandingComponent implements OnInit, OnDestroy {
 
+  private http = inject(HttpClient);
+  private router = inject(Router);
+
+  private readonly API_EVENTOS = 'http://localhost:8080/eventos';
+
   currentSlide = 0;
   currentTestimonial = 0;
   carouselInterval: any;
-
 
   heroSlides = [
     {
       title: 'Transforma vidas con tu tiempo',
       subtitle: 'Únete a nuestra comunidad de voluntarios y genera un impacto real en tu ciudad',
       image: 'https://images.unsplash.com/photo-1559027615-cd4628902d4a?w=1200&h=600&fit=crop',
-      cta: 'Comenzar ahora'
+      cta: 'Comenzar ahora',
+      route: '/register'
     },
     {
       title: 'Gana mientras ayudas',
       subtitle: 'Acumula puntos por cada hora de voluntariado y canjéalos por increíbles recompensas',
       image: 'https://images.unsplash.com/photo-1593113598332-cd288d649433?w=1200&h=600&fit=crop',
-      cta: 'Ver recompensas'
+      cta: 'Ver recompensas',
+      route: '/recompensas'
     },
     {
       title: 'Eventos para todos',
       subtitle: 'Encuentra oportunidades que se ajusten a tus intereses y disponibilidad',
       image: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=1200&h=600&fit=crop',
-      cta: 'Explorar eventos'
+      cta: 'Explorar eventos',
+      route: '/eventos'
     }
   ];
-
 
   stats = [
     { value: '5,000+', label: 'Voluntarios activos' },
@@ -44,7 +65,6 @@ export class LandingComponent implements OnInit, OnDestroy {
     { value: '25,000+', label: 'Horas de voluntariado' },
     { value: '50+', label: 'Organizaciones aliadas' }
   ];
-
 
   categories = [
     { icon: 'bi bi-tree-fill', name: 'Medio Ambiente', description: 'Limpieza de playas, reforestación y más' },
@@ -55,37 +75,16 @@ export class LandingComponent implements OnInit, OnDestroy {
     { icon: 'bi bi-palette-fill', name: 'Arte y Cultura', description: 'Eventos culturales y talleres creativos' }
   ];
 
+  featuredEvents: any[] = [];
 
-  featuredEvents = [
-    {
-      title: 'Limpieza de Playas Costa Verde',
-      date: '15 Oct 2025',
-      location: 'Lima, Perú',
-      image: 'https://images.unsplash.com/photo-1618477461853-cf6ed80faba5?w=400&h=300&fit=crop',
-      participants: 45,
-      maxParticipants: 50,
-      points: 50
-    },
-    {
-      title: 'Taller de Lectura para Niños',
-      date: '18 Oct 2025',
-      location: 'Biblioteca Municipal',
-      image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&h=300&fit=crop',
-      participants: 12,
-      maxParticipants: 20,
-      points: 30
-    },
-    {
-      title: 'Reforestación en Parque Nacional',
-      date: '22 Oct 2025',
-      location: 'Huaraz, Perú',
-      image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=300&fit=crop',
-      participants: 28,
-      maxParticipants: 30,
-      points: 100
-    }
-  ];
-
+  imagenesCategoria: { [key: string]: string } = {
+    'Ambiental': 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=300&fit=crop',
+    'Educación': 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&h=300&fit=crop',
+    'Salud': 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400&h=300&fit=crop',
+    'Animales': 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=400&h=300&fit=crop',
+    'Otras': 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&h=300&fit=crop',
+    'default': 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&h=300&fit=crop'
+  };
 
   testimonials = [
     {
@@ -111,10 +110,9 @@ export class LandingComponent implements OnInit, OnDestroy {
     }
   ];
 
-  constructor(private router: Router) {}
-
   ngOnInit(): void {
     this.startCarousel();
+    this.cargarEventosDestacados();
   }
 
   ngOnDestroy(): void {
@@ -122,6 +120,51 @@ export class LandingComponent implements OnInit, OnDestroy {
       clearInterval(this.carouselInterval);
     }
   }
+
+
+  cargarEventosDestacados(): void {
+    this.http.get<EventoBackend[]>(this.API_EVENTOS).subscribe({
+      next: (datos) => {
+        const ultimosEventos = datos.slice(0, 3);
+
+        this.featuredEvents = ultimosEventos.map(evento => ({
+          id: evento.id,
+          title: evento.titulo,
+          date: this.formatearFecha(evento.fechaInicio),
+          location: evento.lugar,
+          image: this.asignarImagen(evento),
+          participants: evento.inscritos || 0,
+          maxParticipants: evento.cupoMaximo,
+          points: evento.puntosOtorga || 50
+        }));
+      },
+      error: (err) => {
+        console.error('Error cargando eventos destacados:', err);
+      }
+    });
+  }
+
+  asignarImagen(evento: EventoBackend): string {
+    if (evento.imagenUrl && evento.imagenUrl.trim() !== '') {
+      return evento.imagenUrl;
+    }
+    const nombreCategoria = evento.categoria ? evento.categoria.nombre : 'default';
+    return this.imagenesCategoria[nombreCategoria] || this.imagenesCategoria['default'];
+  }
+
+  formatearFecha(fechaISO: any): string {
+    if (!fechaISO) return '';
+
+    if (Array.isArray(fechaISO)) {
+       const [año, mes, día] = fechaISO;
+       const fecha = new Date(año, mes - 1, día);
+       return fecha.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    const fecha = new Date(fechaISO);
+    return fecha.toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
 
   startCarousel(): void {
     this.carouselInterval = setInterval(() => {
@@ -141,7 +184,6 @@ export class LandingComponent implements OnInit, OnDestroy {
     this.currentSlide = index;
   }
 
-
   nextTestimonial(): void {
     this.currentTestimonial = (this.currentTestimonial + 1) % this.testimonials.length;
   }
@@ -150,11 +192,16 @@ export class LandingComponent implements OnInit, OnDestroy {
     this.currentTestimonial = this.currentTestimonial === 0 ? this.testimonials.length - 1 : this.currentTestimonial - 1;
   }
 
-
   scrollToSection(sectionId: string): void {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  navigateByPath(path: string): void {
+    if (path) {
+      this.router.navigate([path]);
     }
   }
 

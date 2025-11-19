@@ -22,7 +22,12 @@
           class="filter-chip"
           [class.active]="categoriaSeleccionada === null"
           (click)="seleccionarCategoria(null)">
-          <span class="filter-chip-icon">🌟</span>
+
+          <i
+            class="filter-chip-icon bi"
+            [class]="clasesIconoBootstrap['Todas']"
+            [style.color]="categoriaSeleccionada === null ? 'white' : getColorCategoria('Todas')">
+          </i>
           <span>Todas</span>
         </button>
 
@@ -31,12 +36,18 @@
           class="filter-chip"
           [class.active]="categoriaSeleccionada === cat.id"
           (click)="seleccionarCategoria(cat.id)">
-          <span class="filter-chip-icon">🌱</span>
+
+          <i
+            class="filter-chip-icon bi"
+            [class]="clasesIconoBootstrap[cat.nombre] || clasesIconoBootstrap['default']"
+            [style.color]="categoriaSeleccionada === cat.id ? 'white' : getColorCategoria(cat.nombre)">
+          </i>
           <span>{{cat.nombre}}</span>
         </button>
       </div>
     </div>
   </section>
+
   <div class="main-content">
     <div class="content-grid">
       <aside class="filters-sidebar">
