@@ -13,7 +13,6 @@
 - [Tecnologías utilizadas](#tecnologías-utilizadas)
 - [Personas Desarrolladores del Proyecto](#personas-desarrolladores-del-proyecto)
 - [Conclusión](#conclusión)
-- [Bibliografía](#bibliografía)
 
 ## 📖 Descripción del proyecto
 
@@ -38,7 +37,7 @@ El proyecto ha completado la fase de **Proyecto Final**. Se han implementado las
 Muestra la propuesta de valor y eventos destacados.
 
 ![Landing](img/landing.png)
-* (Captura: Página Principal Nexo V)*
+* (Captura: Página Principal Nexo V)
 
 ### 🔑 Login y Registro
 El sistema permite un registro en 3 pasos y un inicio de sesión seguro.
@@ -48,10 +47,10 @@ El sistema permite un registro en 3 pasos y un inicio de sesión seguro.
 ![Registro2](img/registrar2.jpg)
 
 ![Registro3](img/registrar3.jpg)
-* (Captura: Registro en 3 pasos)*
+* (Captura: Registro en 3 pasos)
 
 ![Login](img/login.jpg)
-* (Captura: Despues de registrar la cuenta nos logueamos)*
+* (Captura: Despues de registrar la cuenta nos logueamos)
 
 ### 👤 Beneficios acerca de la página voluntariado
 
