@@ -17,20 +17,20 @@
 
 ## 📖 Descripción del proyecto
 
-[cite_start]Este proyecto, denominado **Nexo V**, es una plataforma web integral diseñada para democratizar y optimizar la gestión del voluntariado[cite: 50, 46]. [cite_start]Surge en un contexto donde los métodos tradicionales son manuales y fragmentados, y responde a la necesidad de cumplir con la **Ley N° 32396**, promulgada el 1 de julio de 2025, la cual reconoce el voluntariado con créditos académicos y beneficios estatales[cite: 36, 40].
+Este proyecto, denominado **Nexo V**, es una plataforma web integral diseñada para democratizar y optimizar la gestión del voluntariado[cite: 50, 46]. Surge en un contexto donde los métodos tradicionales son manuales y fragmentados, y responde a la necesidad de cumplir con la **Ley N° 32396**, promulgada el 1 de julio de 2025, la cual reconoce el voluntariado con créditos académicos y beneficios estatales.
 
-[cite_start]El sistema está desarrollado utilizando **Spring Boot 3.5.5** para el backend y **Angular** para el frontend, conectado a una base de datos **MySQL**[cite: 50, 85, 93].
+El sistema está desarrollado utilizando **Spring Boot 3.5.5** para el backend y **Angular** para el frontend, conectado a una base de datos **MySQL**.
 
 La propuesta de valor incluye:
-* [cite_start]**Gamificación:** Sistema de puntos y recompensas para motivar a los voluntarios[cite: 55].
-* [cite_start]**Roles:** Gestión diferenciada para Administradores, Organizadores y Voluntarios[cite: 59].
-* [cite_start]**Certificación:** Emisión automatizada de certificados válidos por ley[cite: 47].
+* **Gamificación:** Sistema de puntos y recompensas para motivar a los voluntarios.
+* **Roles:** Gestión diferenciada para Administradores, Organizadores y Voluntarios.
+* **Certificación:** Emisión automatizada de certificados válidos por ley.
 
 ## 🔍 Estado del proyecto
 
 ![Estado del proyecto](https://img.shields.io/badge/status-completado-green)
 
-El proyecto ha completado la fase de **Avance del Proyecto Final**. [cite_start]Se han implementado las ramas para el Home-Page, mejoras en el backend, integración de la base de datos y la funcionalidad de canje de productos [cite: 6, 92-95].
+El proyecto ha completado la fase de **Proyecto Final**. Se han implementado las ramas para el Home-Page, mejoras en el backend, integración de la base de datos y la funcionalidad de canje de productos.
 
 ## ✨ Características de la aplicación y demostración
 
@@ -38,7 +38,7 @@ El proyecto ha completado la fase de **Avance del Proyecto Final**. [cite_start]
 Muestra la propuesta de valor y eventos destacados.
 
 ![Landing](img/landing.png)
-[cite_start]*(Captura: Página Principal Nexo V)* [cite: 100]
+* (Captura: Página Principal Nexo V)*
 
 ### 🔑 Login y Registro
 El sistema permite un registro en 3 pasos y un inicio de sesión seguro.
@@ -48,48 +48,48 @@ El sistema permite un registro en 3 pasos y un inicio de sesión seguro.
 ![Registro2](img/registrar2.jpg)
 
 ![Registro3](img/registrar3.jpg)
-[cite_start]*(Captura: Registro en 3 pasos)* [cite: 101]
+* (Captura: Registro en 3 pasos)*
 
 ![Login](img/login.jpg)
-[cite_start]*(Captura: Despues de registrar la cuenta nos logueamos)* [cite: 102]
+* (Captura: Despues de registrar la cuenta nos logueamos)*
 
 ### 👤 Beneficios acerca de la página voluntariado
 
-- [cite_start]**Beneficios acerca de la página**: Permite visualizar los beneficios de usar nuestra página web para nuestros usuarios[cite: 104, 105].
+- **Beneficios acerca de la página**: Permite visualizar los beneficios de usar nuestra página web para nuestros usuarios.
 
 ![Eventos](img/beneficios.jpg)
 
 ### 👤 Sección de categorias
 
-- [cite_start]**Categorias**: Permite explorar los eventos que se ajusten a los interéses  pasiones de nuestros usuarios[cite: 104, 105].
+- **Categorias**: Permite explorar los eventos que se ajusten a los interéses  pasiones de nuestros usuarios.
 
 ![Eventos](img/categoria.jpg)
 
 ### 👤 Sección de eventos
 
-- [cite_start]**Eventos**: Se visualiza los eventos destacados según los gustos de los clientes[cite: 104, 105].
+- **Eventos**: Se visualiza los eventos destacados según los gustos de los clientes.
 
 ![Eventos](img/eventos.jpg)
 
 ### 👤 Panel de Progreso
 
-- [cite_start]**Panel de Progreso (Gamificación)**: El usuario puede ver sus puntos acumulados, horas de voluntariado y eventos asistidos[cite: 114].
+- **Panel de Progreso (Gamificación)**: El usuario puede ver sus puntos acumulados, horas de voluntariado y eventos asistidos.
 
 ![Dashboard](img/gestor%20de%20inscripciones.jpg)
 
 ### 👤 Catalogo de recompensas
 
-- [cite_start]**Catálogo de Recompensas**: Permite canjear puntos por productos (ej. camisetas, entradas)[cite: 117].
+- **Catálogo de Recompensas**: Permite canjear puntos por productos (ej. camisetas, entradas).
 
 ![Recompensas](img/catalogo%20recompensas.jpg)
 
 ### 👔 Administrador
 
-- [cite_start]**Panel de Administración**: Gestión completa de usuarios (Administradores, Organizadores, Voluntarios) y métricas del sistema[cite: 109].
+- **Panel de Administración**: Gestión completa de usuarios (Administradores, Organizadores, Voluntarios) y métricas del sistema.
 
 ![Admin](img/administrador.jpg)
 
-- [cite_start]**Gestión de Inscripciones y Canjes**: Aprobación o rechazo de solicitudes de voluntariado y entrega de recompensas[cite: 111, 113].
+- **Gestión de Inscripciones y Canjes**: Aprobación o rechazo de solicitudes de voluntariado y entrega de recompensas.
 
 ![Inscripciones](img/gestor%20de%20inscripciones.jpg)
 
@@ -102,19 +102,19 @@ El sistema permite un registro en 3 pasos y un inicio de sesión seguro.
 
 ## 💻 Tecnologías utilizadas
 
-*![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+* ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
 
-*![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
+* ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
 
-*![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+* ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 
-*![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+* ![Angular](https://img.shields.io/badge/Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
 
-*![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+* ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 
-*![HTML](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+* ![HTML](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
 
-*![CSS](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+* ![CSS](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 
 ## 👥 Personas Desarrolladores del Proyecto
 
@@ -125,4 +125,4 @@ El sistema permite un registro en 3 pasos y un inicio de sesión seguro.
 
 ## 📝 Conclusión
 
-[cite_start]El proyecto "Sistema web - Nexo V" está diseñado para facilitar la gestión integral de programas de voluntariado, abarcando desde la administración de eventos y usuarios hasta la emisión de certificados válidos por la Ley N° 32396[cite: 50, 51, 52]. [cite_start]Utilizando tecnologías como Spring Boot, Angular, MySQL y Java, este sistema busca optimizar los procesos administrativos, mejorar la motivación de los participantes mediante gamificación y proporcionar una experiencia segura y transparente[cite: 50, 54, 58]. [cite_start]Su enfoque en la innovación y el cumplimiento normativo promete convertirse en una herramienta esencial para la formalización y reconocimiento del voluntariado[cite: 123, 124].
+El proyecto "Sistema web - Nexo V" está diseñado para facilitar la gestión integral de programas de voluntariado, abarcando desde la administración de eventos y usuarios hasta la emisión de certificados válidos por la Ley N° 32396. Utilizando tecnologías como Spring Boot, Angular, MySQL y Java, este sistema busca optimizar los procesos administrativos, mejorar la motivación de los participantes mediante gamificación y proporcionar una experiencia segura y transparente. Su enfoque en la innovación y el cumplimiento normativo promete convertirse en una herramienta esencial para la formalización y reconocimiento del voluntariado.
