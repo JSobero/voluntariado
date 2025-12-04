@@ -124,6 +124,14 @@
             </div>
           </td>
           <td class="celda-acciones">
+            <button
+              class="boton-accion boton-asistencia"
+              (click)="abrirControlAsistencia(evento)"
+              title="Tomar Asistencia"
+              *ngIf="esCreadorDelEvento(evento)">
+
+              <i class="bi bi-clipboard-check-fill"></i>
+            </button>
             <button class="boton-accion boton-editar" (click)="abrirModal(evento)" title="Editar">
               <i class="bi bi-pencil-fill"></i>
             </button>
@@ -335,4 +343,67 @@
       </div>
     </div>
   </div>
+  <div *ngIf="mostrarModalAsistencia" class="superposicion-modal" (click)="cerrarModalAsistencia()">
+    <div class="contenedor-modal modal-ancho" (click)="$event.stopPropagation()">
+      <div class="encabezado-modal">
+        <h2 class="titulo-modal">
+          <i class="bi bi-people-fill icono-modal"></i>
+          Control de Asistencia
+        </h2>
+        <button class="cerrar-modal" (click)="cerrarModalAsistencia()"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <div class="cuerpo-modal">
+        <h3 class="subtitulo-asistencia">Participantes de: <strong>{{ eventoParaAsistencia }}</strong></h3>
+
+        <div *ngIf="cargandoAsistencia" class="contenedor-carga">
+          <div class="giratorio"></div>
+          <p>Cargando lista de inscritos...</p>
+        </div>
+
+        <div *ngIf="!cargandoAsistencia && inscritos.length === 0" class="estado-vacio">
+          <div class="icono-vacio"><i class="bi bi-person-x"></i></div>
+          <p class="mt-2">No hay personas inscritas en este evento aún.</p>
+        </div>
+
+        <div *ngIf="!cargandoAsistencia && inscritos.length > 0" class="tabla-responsiva tabla-asistencia">
+          <table class="tabla-datos">
+            <thead>
+            <tr>
+              <th>Voluntario</th>
+              <th>Correo</th>
+              <th>Fecha Inscripción</th>
+              <th class="text-center">¿Asistió?</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let inscripcion of inscritos">
+              <td>
+                <div class="info-organizador">
+                  <div class="avatar-organizador" style="background-color: #6366f1; color: white;">
+                    {{ inscripcion.usuario.nombre.charAt(0).toUpperCase() }}
+                  </div>
+                  <span>{{ inscripcion.usuario.nombre }}</span>
+                </div>
+              </td>
+              <td style="color: #6b7280; font-size: 0.9rem;">
+                {{ inscripcion.usuario.correo }}
+              </td>
+              <td style="color: #6b7280; font-size: 0.9rem;">{{ inscripcion.solicitadoEn | date:'dd/MM/yyyy' }}</td>
+              <td style="text-align: center;">
+                <label class="switch">
+                  <input type="checkbox"
+                         [checked]="inscripcion.estado === 'CONFIRMADA' || inscripcion.estado === 'ASISTIO'"
+                         (change)="cambiarAsistencia(inscripcion, $event)">
+                  <span class="slider round"></span>
+                </label>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+

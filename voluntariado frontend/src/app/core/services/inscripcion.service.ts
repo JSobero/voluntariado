@@ -47,4 +47,7 @@ export class InscripcionService {
     };
     return this.http.post<Inscripcion>(this.apiUrl, body);
   }
+  obtenerPorEvento(eventoId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/inscripciones/evento/${eventoId}`);
+  }
 }

@@ -829,6 +829,79 @@
   border: 2px solid;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
+/* Botón de Asistencia en la tabla */
+.boton-asistencia {
+  background-color: #e0e7ff;
+  color: #4f46e5;
+}
+.boton-asistencia:hover {
+  background-color: #4f46e5;
+  color: white;
+}
+
+/* Modal más ancho para la lista */
+.modal-ancho {
+  max-width: 800px;
+  width: 90%;
+}
+
+.subtitulo-asistencia {
+  font-size: 1.1rem;
+  color: #4b5563;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Estilo Switch (Toggle) iOS style */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #10b981; /* Verde éxito */
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #10b981;
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
 
 /* ... (keyframes se mantienen) ... */
 

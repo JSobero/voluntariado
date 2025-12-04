@@ -1,5 +1,6 @@
 package com.voluntariado.controller;
 
+import com.voluntariado.dto.AsistenciaRequestDTO;
 import com.voluntariado.entity.Asistencia;
 import com.voluntariado.service.AsistenciaService;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/asistencias")
+
 public class AsistenciaController {
 
     private final AsistenciaService asistenciaService;
@@ -17,36 +19,29 @@ public class AsistenciaController {
         this.asistenciaService = asistenciaService;
     }
 
+    // 💡 Endpoint principal para marcar el checkbox desde Angular
+    @PostMapping("/registrar")
+    public ResponseEntity<Asistencia> registrar(@RequestBody AsistenciaRequestDTO request) {
+        try {
+            Asistencia asistencia = asistenciaService.registrarAsistencia(request);
+            return ResponseEntity.ok(asistencia);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @GetMapping
     public List<Asistencia> listarAsistencias() {
         return asistenciaService.listarAsistencias();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Asistencia> obtenerPorId(@PathVariable Long id) {
-        return asistenciaService.obtenerPorId(id)
+    // Endpoint útil para pintar los checkboxes al cargar la página
+    @GetMapping("/verificar")
+    public ResponseEntity<Asistencia> obtenerPorUsuarioYEvento(
+            @RequestParam Long usuarioId,
+            @RequestParam Long eventoId) {
+        return asistenciaService.obtenerPorUsuarioYEvento(usuarioId, eventoId)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public Asistencia guardarAsistencia(@RequestBody Asistencia asistencia) {
-        return asistenciaService.guardarAsistencia(asistencia);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Asistencia> actualizarAsistencia(@PathVariable Long id, @RequestBody Asistencia asistencia) {
-        try {
-            Asistencia actualizado = asistenciaService.actualizarAsistencia(id, asistencia);
-            return ResponseEntity.ok(actualizado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminarAsistencia(@PathVariable Long id) {
-        asistenciaService.eliminarAsistencia(id);
-        return ResponseEntity.noContent().build();
+                .orElse(ResponseEntity.noContent().build());
     }
 }

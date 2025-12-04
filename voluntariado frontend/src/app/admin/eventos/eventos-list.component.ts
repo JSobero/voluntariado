@@ -8,6 +8,10 @@ import { CategoriaService } from '../../core/services/categoria.service'; // <--
 import { Evento } from '../../core/models/evento.model';
 import { Usuario } from '../../core/models/usuario.model';
 import { Categoria } from '../../core/models/categoria.model'; // <-- 2. IMPORTAR
+import { InscripcionService } from '../../core/services/inscripcion.service';
+import { AsistenciaService } from '../../core/services/asistencia.service';
+import { Inscripcion } from '../../core/models/inscripcion.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-eventos-list',
@@ -33,13 +37,20 @@ export class EventosListComponent implements OnInit {
   imagenPreview: string | null = null;
   subiendoImagen = false;
   errorImagen: string | null = null;
+  mostrarModalAsistencia = false;
+    inscritos: Inscripcion[] = [];
+    cargandoAsistencia = false;
+    eventoParaAsistencia: string = '';
 
   constructor(
     private eventoService: EventoService,
     private usuarioService: UsuarioService,
     private imageService: ImageService,
     private categoriaService: CategoriaService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private inscripcionService: InscripcionService,
+    private asistenciaService: AsistenciaService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -50,10 +61,10 @@ export class EventosListComponent implements OnInit {
   }
 
   cargarCategorias() {
-      // Llamamos al nuevo método que solo trae categorías de eventos
+
       this.categoriaService.getAllParaEventos().subscribe({
         next: (datos) => {
-          // ¡Ya no necesitamos filtrar! El backend lo hizo por nosotros.
+
           this.categorias = datos;
           this.cdRef.detectChanges();
         },
@@ -62,42 +73,62 @@ export class EventosListComponent implements OnInit {
     }
 
   cargarEventos() {
-    this.cargando = true;
-    this.eventoService.getAll().subscribe({
-      next: (datos) => {
-        this.eventos = datos.map(e => {
-          const fechaInicio = this.convertirFecha(e.fechaInicio);
-          const fechaFin = e.fechaFin ? this.convertirFecha(e.fechaFin) : undefined;
-          return {
-            ...e,
-            fechaInicio: fechaInicio || '',
-            fechaFin: fechaFin || undefined
-          };
-        });
-        this.eventosFiltrados = this.eventos;
-        this.cargando = false;
-        this.cdRef.detectChanges();
-      },
-      error: (err) => {
-        console.error('Error al cargar eventos:', err);
-        this.cargando = false;
-        this.cdRef.detectChanges();
-      }
-    });
-  }
+      this.cargando = true;
+      this.eventoService.getAll().subscribe({
+        next: (datos) => {
+          this.eventos = datos.map(e => {
+            const fechaInicio = this.convertirFecha(e.fechaInicio);
+            const fechaFin = e.fechaFin ? this.convertirFecha(e.fechaFin) : undefined;
+            return {
+              ...e,
+              fechaInicio: fechaInicio || '',
+              fechaFin: fechaFin || undefined
+            };
+          })
 
-  convertirFecha(fechaTexto: any): string {
-    if (!fechaTexto) return '';
-    if (Array.isArray(fechaTexto)) {
-      const [año, mes, día, hora = 0, minuto = 0] = fechaTexto;
-      const fecha = new Date(año, mes - 1, día, hora, minuto);
-      return fecha.toISOString().slice(0, 16);
+          .sort((a, b) => (b.id || 0) - (a.id || 0));
+
+
+          this.eventosFiltrados = this.eventos;
+          this.cargando = false;
+          this.cdRef.detectChanges();
+        },
+        error: (err) => {
+          console.error('Error al cargar eventos:', err);
+          this.cargando = false;
+          this.cdRef.detectChanges();
+        }
+      });
     }
-    if (typeof fechaTexto === 'string') {
-      return new Date(fechaTexto).toISOString().slice(0, 16);
+  esCreadorDelEvento(evento: any): boolean {
+      const usuarioActual = this.authService.currentUser();
+
+      if (!usuarioActual || !evento.organizador) {
+        return false;
+      }
+
+      return evento.organizador.id === usuarioActual.id;
+   }
+
+  convertirFecha(fecha: any): string {
+      if (!fecha) return '';
+
+      // CASO 1: Si viene como arreglo [2025, 12, 3, 13, 11] (Común en Java LocalDateTime)
+      if (Array.isArray(fecha)) {
+        const [anio, mes, dia, hora, minuto] = fecha;
+        // Nota: En Javascript los meses van de 0 a 11, por eso restamos 1 al mes
+        const fechaObj = new Date(anio, mes - 1, dia, hora || 0, minuto || 0);
+        return fechaObj.toISOString();
+      }
+
+      // CASO 2: Si ya es un string, intentamos convertirlo
+      if (typeof fecha === 'string') {
+        // A veces llega como "2025,12,3...", limpiamos si es necesario
+        return new Date(fecha).toISOString();
+      }
+
+      return '';
     }
-    return '';
-  }
 
   cargarOrganizadores() {
     // ... (esta función queda igual)
@@ -162,11 +193,45 @@ export class EventosListComponent implements OnInit {
   }
 
   limpiarImagen(): void {
-    // ... (esta función queda igual)
     this.imagenSeleccionada = null;
     this.imagenPreview = null;
     this.errorImagen = null;
     this.cdRef.detectChanges();
+  }
+  abrirControlAsistencia(evento: Evento) {
+      this.eventoParaAsistencia = evento.titulo;
+      this.mostrarModalAsistencia = true;
+      this.cargandoAsistencia = true;
+      this.inscritos = [];
+
+      if (evento.id) {
+        this.inscripcionService.obtenerPorEvento(evento.id).subscribe({
+          next: (data) => {
+            // 👇👇 AQUÍ ESTÁ EL CAMBIO MÁGICO 👇👇
+            // Recorremos los datos y convertimos la fecha antes de asignarla
+            this.inscritos = data.map((inscripcion: any) => {
+              return {
+                ...inscripcion,
+                // Usamos la función convertirFecha que ya tienes en este componente
+                solicitadoEn: this.convertirFecha(inscripcion.solicitadoEn)
+              };
+            });
+            // 👆👆 FIN DEL CAMBIO 👆👆
+
+            this.cargandoAsistencia = false;
+            this.cdRef.detectChanges();
+          },
+          error: (err) => {
+            console.error('Error cargando inscritos', err);
+            this.cargandoAsistencia = false;
+            this.cdRef.detectChanges();
+          }
+        });
+      }
+    }
+  cerrarModalAsistencia() {
+    this.mostrarModalAsistencia = false;
+    this.inscritos = [];
   }
 
   abrirModal(evento?: Evento) {
@@ -363,5 +428,22 @@ export class EventosListComponent implements OnInit {
         return;
       }
       this.eventoActual.organizador = this.organizadores.find(o => o.id === +id) || null! as Usuario;
+    }
+  cambiarAsistencia(inscripcion: Inscripcion, event: any) {
+      const marcado = event.target.checked; // true o false
+
+      // Llamamos al backend
+      this.asistenciaService.registrarAsistencia(inscripcion.id!, marcado).subscribe({
+        next: (resp) => {
+          console.log('Asistencia registrada:', resp);
+
+        },
+        error: (err) => {
+          console.error('Error marcando asistencia:', err);
+          // Si falla, revertimos el checkbox visualmente
+          event.target.checked = !marcado;
+          alert('Error al registrar asistencia. Intenta nuevamente.');
+        }
+      });
     }
   }
