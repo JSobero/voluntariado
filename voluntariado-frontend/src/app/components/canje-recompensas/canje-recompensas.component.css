@@ -1,0 +1,339 @@
+.contenedor-canje {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 8rem 1rem 2rem 1rem;
+  background-color: #f8fafc;
+  min-height: 100vh;
+}
+
+.marcador-puntos {
+  position: sticky;
+    top: 80px;
+    z-index: 90;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4rem;
+  backdrop-filter: blur(10px);
+}
+
+.info-usuario {
+    display: flex;
+    flex-direction: column;
+}
+
+.hola {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.titulo-puntos {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.puntos-total {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+}
+
+.icono-estrella {
+    color: #fbbf24;
+    font-size: 1.5rem;
+}
+
+.numero-puntos {
+    font-size: 1.8rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.encabezado-pagina {
+    text-align: center;
+    margin-bottom: 3rem;
+    margin-bottom: 3rem;
+}
+
+.encabezado-pagina h1 {
+    font-size: 2.5rem;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.encabezado-pagina p {
+    color: #64748b;
+    font-size: 1.1rem;
+}
+
+.grid-recompensas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.tarjeta-recompensa {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.tarjeta-recompensa:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.tarjeta-recompensa.alcanzable {
+    border: 2px solid #8b5cf6;
+}
+
+.imagen-recompensa {
+    height: 200px;
+    background-color: #e2e8f0;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.badge-costo {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fbbf24;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 700;
+    backdrop-filter: blur(4px);
+}
+
+.overlay-agotado {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.overlay-agotado span {
+    background: #ef4444;
+    color: white;
+    padding: 0.5rem 2rem;
+    font-weight: 800;
+    transform: rotate(-5deg);
+    font-size: 1.2rem;
+    border-radius: 4px;
+}
+
+.cuerpo-tarjeta {
+    padding: 1.5rem;
+    flex-grow: 1;
+}
+
+.cuerpo-tarjeta h3 {
+    margin-top: 0;
+    color: #1e293b;
+    font-size: 1.25rem;
+}
+
+.descripcion {
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.progreso-contenedor {
+    margin-top: 1.5rem;
+}
+
+.barra-fondo {
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.barra-relleno {
+    height: 100%;
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    border-radius: 4px;
+    transition: width 0.5s ease-out;
+}
+
+.texto-progreso {
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.texto-progreso strong {
+    color: #f59e0b;
+}
+
+.info-stock-bajo {
+    margin-top: 1rem;
+    color: #dc2626;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pie-tarjeta {
+    padding: 1.5rem;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+}
+
+.pie-tarjeta button {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 10px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-canjear {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    color: white;
+    box-shadow: 0 4px 6px -1px rgba(139, 92, 246, 0.3);
+}
+
+.btn-canjear:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.4);
+}
+
+.btn-insuficiente {
+    background: #e2e8f0;
+    color: #94a3b8;
+    cursor: not-allowed;
+}
+
+.btn-agotado {
+    background: #fee2e2;
+    color: #991b1b;
+    cursor: not-allowed;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.modal-content {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 24px;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    animation: slideUp 0.3s ease-out;
+    text-align: center;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.icono-modal, .icono-exito, .icono-error {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+.icono-modal { color: #8b5cf6; }
+.icono-exito { color: #10b981; }
+.icono-error { color: #ef4444; }
+
+.nombre-premio {
+    color: #8b5cf6;
+    font-size: 1.5rem;
+    margin: 1rem 0;
+}
+
+.resumen-puntos {
+    background: #f8fafc;
+    padding: 1rem;
+    border-radius: 12px;
+    margin: 1.5rem 0;
+}
+
+.fila-resumen {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    color: #64748b;
+}
+
+.fila-resumen.costo { color: #ef4444; }
+.fila-resumen.total {
+    border-top: 2px solid #e2e8f0;
+    padding-top: 0.5rem;
+    margin-top: 0.5rem;
+    color: #1e293b;
+    font-size: 1.1rem;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.modal-actions button {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: 10px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-cancelar { background: #f1f5f9; color: #64748b; }
+.btn-confirmar { background: #8b5cf6; color: white; }
+
+.spinner-grande {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #e2e8f0;
+    border-top-color: #8b5cf6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+}
+
+@media (max-width: 768px) {
+    .marcador-puntos {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    .puntos-total {
+        width: 100%;
+        justify-content: center;
+    }
+}

@@ -22,6 +22,12 @@ public class EventoController {
         return eventoService.listarEventos();
     }
 
+
+    @GetMapping("/categoria/{id}")
+    public List<Evento> listarPorCategoria(@PathVariable Long id) {
+        return eventoService.listarPorCategoria(id);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Evento> obtenerEvento(@PathVariable Long id) {
         return eventoService.obtenerPorId(id)

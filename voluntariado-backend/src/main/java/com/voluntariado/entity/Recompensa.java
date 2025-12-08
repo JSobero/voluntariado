@@ -23,12 +23,12 @@ public class Recompensa {
     private String descripcion;
 
     @Column(name = "costo_puntos", nullable = false)
-    private Integer costoPuntos;
+    private Integer puntosNecesarios;
 
     @Column(nullable = false)
     private Integer stock;
 
-    @Column(name = "imagen_url", length = 500)
+    @Column(name = "imagen_url")
     private String imagenUrl;
 
     @ManyToOne

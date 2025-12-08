@@ -1,0 +1,121 @@
+<div class="contenedor-pagina">
+
+  <div class="encabezado-pagina">
+    <div class="encabezado-izquierda">
+      <h1 class="titulo-pagina">
+        <i class="icono-titulo bi bi-gear-fill"></i>
+        Configuración del Sistema
+      </h1>
+      <p class="subtitulo-pagina">Personaliza los ajustes generales de la plataforma</p>
+    </div>
+  </div>
+
+  <div *ngIf="mensaje" class="alerta-exito">
+    <i class="bi bi-check-circle-fill"></i>
+    <span>{{ mensaje }}</span>
+  </div>
+
+  <div class="tarjeta-seccion">
+    <h2 class="titulo-seccion">Información General</h2>
+
+    <div class="grilla-formulario">
+      <div class="grupo-formulario">
+        <label class="etiqueta-formulario">Nombre del Sistema</label>
+        <input type="text" [(ngModel)]="configuracion.nombreSistema" class="entrada-formulario">
+      </div>
+
+      <div class="grupo-formulario">
+        <label class="etiqueta-formulario">Correo para Notificaciones</label>
+        <input type="email" [(ngModel)]="configuracion.correoNotificaciones" class="entrada-formulario">
+      </div>
+    </div>
+  </div>
+
+  <div class="tarjeta-seccion">
+    <h2 class="titulo-seccion">Notificaciones</h2>
+
+    <div class="contenedor-checks">
+      <label class="check-item">
+        <input type="checkbox" [(ngModel)]="configuracion.notificacionesEmail">
+        <div class="check-contenido">
+          <div class="check-titulo">Notificaciones por Email</div>
+          <div class="check-descripcion">Recibir alertas de eventos importantes por correo</div>
+        </div>
+      </label>
+
+      <label class="check-item">
+        <input type="checkbox" [(ngModel)]="configuracion.notificacionesPush">
+        <div class="check-contenido">
+          <div class="check-titulo">Notificaciones Push</div>
+          <div class="check-descripcion">Alertas en tiempo real en el navegador</div>
+        </div>
+      </label>
+    </div>
+  </div>
+
+  <div class="tarjeta-seccion">
+    <h2 class="titulo-seccion">Sistema de Puntos y Certificados</h2>
+
+    <div class="grilla-formulario grilla-3">
+      <div class="grupo-formulario">
+        <label class="etiqueta-formulario">Puntos por Hora de Voluntariado</label>
+        <input type="number" [(ngModel)]="configuracion.puntosXHora" min="1" class="entrada-formulario">
+      </div>
+
+      <div class="grupo-formulario">
+        <label class="etiqueta-formulario">Horas Mínimas para Certificado</label>
+        <input type="number" [(ngModel)]="configuracion.horasMinimasCertificado" min="1" class="entrada-formulario">
+      </div>
+
+      <div class="grupo-formulario">
+        <label class="etiqueta-formulario">Días de Anticipación para Eventos</label>
+        <input type="number" [(ngModel)]="configuracion.diasAnticipacionEventos" min="1" class="entrada-formulario">
+      </div>
+    </div>
+  </div>
+
+  <div class="tarjeta-seccion">
+    <h2 class="titulo-seccion">Preferencias de Interfaz</h2>
+
+    <div class="contenedor-checks" style="margin-bottom: 1.5rem;">
+      <label class="check-item">
+        <input type="checkbox"
+               [(ngModel)]="configuracion.temaOscuro"
+               (ngModelChange)="onTemaOscuroChange($event)">
+        <div class="check-contenido">
+          <div class="check-titulo">Modo Oscuro</div>
+          <div class="check-descripcion">Activar tema oscuro para la interfaz</div>
+        </div>
+      </label>
+    </div>
+
+    <div class="grilla-formulario">
+      <div class="grupo-formulario">
+        <label class="etiqueta-formulario">Idioma</label>
+        <select [(ngModel)]="configuracion.idiomaInterface" class="selector-formulario">
+          <option value="es">Español</option>
+          <option value="en">English</option>
+          <option value="pt">Português</option>
+        </select>
+      </div>
+
+      <div class="grupo-formulario">
+        <label class="etiqueta-formulario">Zona Horaria</label>
+        <select [(ngModel)]="configuracion.zonaHoraria" class="selector-formulario">
+          <option value="America/Lima">Lima (GMT-5)</option>
+          <option value="America/New_York">Nueva York (GMT-5)</option>
+          <option value="America/Mexico_City">Ciudad de México (GMT-6)</option>
+          <option value="America/Bogota">Bogotá (GMT-5)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="acciones-formulario">
+    <button (click)="cancelar()" class="btn btn-secundario">Cancelar</button>
+    <button (click)="guardarConfiguracion()" [disabled]="guardando" class="btn btn-primario">
+      <i class="bi" [ngClass]="guardando ? 'bi-hourglass-split' : 'bi-save-fill'"></i>
+      {{ guardando ? 'Guardando...' : 'Guardar Configuración' }}
+    </button>
+  </div>
+</div>

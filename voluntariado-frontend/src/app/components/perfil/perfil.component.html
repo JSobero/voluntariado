@@ -1,0 +1,296 @@
+<div class="perfil-page">
+
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Cargando perfil...</p>
+  </div>
+
+  <div *ngIf="error && !isLoading" class="error-container">
+    <div class="error-card">
+      <div class="error-icon">⚠️</div>
+      <h3>Error al cargar</h3>
+      <p>{{error}}</p>
+      <button class="btn-retry" (click)="cargarDatosPerfil()">Reintentar</button>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && !error && usuarioActual" class="perfil-container">
+
+    <section class="hero-perfil">
+      <div class="hero-background"></div>
+      <div class="hero-content">
+        <div class="avatar-grande">
+          {{usuarioActual.nombre.charAt(0).toUpperCase()}}
+        </div>
+        <div class="info-principal">
+          <h1 class="nombre-usuario">{{usuarioActual.nombre}}</h1>
+          <p class="rol-usuario">{{usuarioActual.rol.nombre}}</p>
+          <p class="fecha-registro">Miembro desde {{formatearFecha(usuarioActual.creadoEn)}}</p>
+        </div>
+        <div class="estadisticas-hero">
+          <div class="stat-hero">
+            <span class="stat-valor">{{usuarioActual.puntos}}</span>
+            <span class="stat-label">Puntos</span>
+          </div>
+          <div class="stat-hero">
+            <span class="stat-valor">{{usuarioActual.horasAcumuladas}}</span>
+            <span class="stat-label">Horas</span>
+          </div>
+          <div class="stat-hero">
+            <span class="stat-valor">{{inscripciones.length}}</span>
+            <span class="stat-label">Eventos</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="tabs-container">
+      <div class="tabs">
+        <button class="tab" [class.active]="tabActiva === 'resumen'" (click)="cambiarTab('resumen')">
+          <i class="bi bi-grid-fill"></i>
+          Resumen
+        </button>
+        <button class="tab" [class.active]="tabActiva === 'eventos'" (click)="cambiarTab('eventos')">
+          <i class="bi bi-calendar-event"></i>
+          Mis Eventos
+        </button>
+        <button class="tab" [class.active]="tabActiva === 'certificados'" (click)="cambiarTab('certificados')">
+          <i class="bi bi-award-fill"></i>
+          Certificados
+        </button>
+        <button class="tab" [class.active]="tabActiva === 'canjes'"
+                (click)="cambiarTab('canjes')">
+          <i class="bi bi-gift-fill"></i>Mis canjes
+        </button>
+        <button class="tab" [class.active]="tabActiva === 'configuracion'" (click)="cambiarTab('configuracion')">
+          <i class="bi bi-gear-fill"></i>
+          Configuración
+        </button>
+      </div>
+    </div>
+
+    <div class="tab-content">
+
+      <div *ngIf="tabActiva === 'resumen'" class="resumen-tab">
+        <div class="grid-resumen">
+
+          <div class="card-progreso">
+            <h3>Tu Progreso</h3>
+            <div class="progreso-item">
+              <div class="progreso-info">
+                <span>Puntos acumulados</span>
+                <strong>{{usuarioActual.puntos}} pts</strong>
+              </div>
+              <div class="barra-progreso">
+                <div class="barra-fill" [style.width]="(usuarioActual.puntos / 1000 * 100) + '%'"></div>
+              </div>
+              <p class="progreso-meta">Meta: 1000 pts</p>
+            </div>
+
+            <div class="progreso-item">
+              <div class="progreso-info">
+                <span>Horas de voluntariado</span>
+                <strong>{{usuarioActual.horasAcumuladas}} hrs</strong>
+              </div>
+              <div class="barra-progreso">
+                <div class="barra-fill success" [style.width]="(usuarioActual.horasAcumuladas / 100 * 100) + '%'"></div>
+              </div>
+              <p class="progreso-meta">Meta: 100 hrs</p>
+            </div>
+          </div>
+
+          <div class="card-actividad">
+            <h3>Actividad Reciente</h3>
+            <div class="lista-actividad">
+              <div class="actividad-item" *ngFor="let inscripcion of inscripciones.slice(0, 3)">
+                <div class="actividad-icono">
+                  <i class="bi bi-calendar-check"></i>
+                </div>
+                <div class="actividad-detalles">
+                  <p class="actividad-titulo">{{inscripcion.evento.titulo}}</p>
+                  <p class="actividad-fecha">{{formatearFecha(inscripcion.solicitadoEn)}}</p>
+                </div>
+                <span class="actividad-estado" [ngClass]="obtenerClaseEstado(inscripcion.estado)">
+                  {{inscripcion.estado}}
+                </span>
+              </div>
+
+              <div *ngIf="inscripciones.length === 0" class="sin-actividad">
+                <i class="bi bi-inbox"></i>
+                <p>No hay actividad reciente</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-logros">
+            <h3>Logros Desbloqueados</h3>
+            <div class="grid-logros">
+              <div class="logro-item desbloqueado">
+                <div class="logro-icono">🌟</div>
+                <p class="logro-nombre">Primer Paso</p>
+                <p class="logro-descripcion">Completaste tu primer evento</p>
+              </div>
+              <div class="logro-item desbloqueado">
+                <div class="logro-icono">⚡</div>
+                <p class="logro-nombre">Rayo</p>
+                <p class="logro-descripcion">10 horas en un mes</p>
+              </div>
+              <div class="logro-item bloqueado">
+                <div class="logro-icono">🏆</div>
+                <p class="logro-nombre">Campeón</p>
+                <p class="logro-descripcion">100 horas totales</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="tabActiva === 'eventos'" class="eventos-tab">
+        <div class="eventos-header">
+          <h2>Mis Eventos</h2>
+          <button class="btn-primario" (click)="navegarEventos()">
+            <i class="bi bi-plus-lg"></i> Buscar eventos
+          </button>
+        </div>
+
+        <div *ngIf="inscripciones.length === 0" class="sin-eventos">
+          <i class="bi bi-calendar-x"></i>
+          <h3>No estás inscrito en ningún evento</h3>
+          <p>Explora eventos disponibles y comienza a hacer la diferencia</p>
+          <button class="btn-primario" (click)="navegarEventos()">Ver eventos</button>
+        </div>
+
+        <div *ngIf="inscripciones.length > 0" class="lista-eventos">
+          <div class="evento-card" *ngFor="let inscripcion of inscripciones">
+            <div class="evento-fecha">
+              <span class="dia">{{formatearFecha(inscripcion.evento.fechaInicio).split(' ')[0]}}</span>
+              <span class="mes">{{formatearFecha(inscripcion.evento.fechaInicio).split(' ')[1]}}</span>
+            </div>
+            <div class="evento-info">
+              <h4>{{inscripcion.evento.titulo}}</h4>
+              <p class="evento-lugar">
+                <i class="bi bi-geo-alt"></i> {{inscripcion.evento.lugar}}
+              </p>
+              <p class="evento-descripcion">{{inscripcion.evento.descripcion}}</p>
+            </div>
+            <div class="evento-estado">
+              <span class="badge" [ngClass]="obtenerClaseEstado(inscripcion.estado)">
+                {{inscripcion.estado}}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="tabActiva === 'certificados'" class="certificados-tab">
+        <div class="certificados-header">
+          <h2>Mis Certificados</h2>
+          <p>Has obtenido {{certificados.length}} certificado(s)</p>
+        </div>
+
+        <div *ngIf="certificados.length === 0" class="sin-certificados">
+          <i class="bi bi-award"></i>
+          <h3>Aún no tienes certificados</h3>
+          <p>Completa eventos para obtener certificados oficiales</p>
+        </div>
+
+        <div *ngIf="certificados.length > 0" class="grid-certificados">
+          <div class="certificado-card" *ngFor="let cert of certificados">
+            <div class="certificado-header">
+              <i class="bi bi-patch-check-fill"></i>
+            </div>
+            <div class="certificado-body">
+              <h4>{{cert.evento.titulo}}</h4>
+              <p class="cert-fecha">Emitido el {{formatearFecha(cert.fechaEmision)}}</p>
+            </div>
+            <div class="certificado-footer">
+              <button class="btn-descargar" (click)="descargarCertificado(cert)">
+                <i class="bi bi-download"></i> Descargar
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <div *ngIf="tabActiva === 'canjes'" class="certificados-tab">
+        <div class="certificados-header">
+          <h2>Mi Historial de Canjes</h2>
+          <p>Has realizado {{canjes.length}} canje(s) en total.</p>
+        </div>
+
+        <div *ngIf="canjes.length === 0" class="sin-certificados">
+          <i class="bi bi-gift"></i>
+          <h3>Aún no has canjeado recompensas</h3>
+          <p>Explora las recompensas disponibles y usa tus puntos acumulados.</p>
+          <button class="btn-primario" (click)="navegarRecompensas()">Ver Recompensas</button>
+        </div>
+
+        <div *ngIf="canjes.length > 0" class="lista-eventos">
+          <div class="evento-card" *ngFor="let canje of canjes">
+
+            <div class="evento-fecha">
+              <span class="dia" style="color: var(--color-danger); font-size: 1.1em;">-{{canje.puntosUsados}}</span>
+              <span class="mes">PUNTOS</span>
+            </div>
+
+            <div class="evento-info">
+              <h4>{{canje.recompensa?.nombre || 'Recompensa eliminada'}}</h4>
+              <p class="evento-lugar">
+                <i class="bi bi-calendar-check"></i> Canjeado el: {{formatearFecha(canje.fecha)}}
+              </p>
+              <p class="evento-descripcion">{{canje.recompensa?.descripcion}}</p>
+            </div>
+
+            <div class="evento-estado">
+              <span class="badge" [ngClass]="obtenerClaseEstadoCanje(canje.estado)">
+                {{canje.estado}}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="tabActiva === 'configuracion'" class="configuracion-tab">
+        <div class="config-card">
+          <div class="config-header">
+            <h2>Información Personal</h2>
+            <button *ngIf="!editMode" class="btn-editar" (click)="activarEdicion()">
+              <i class="bi bi-pencil-fill"></i> Editar
+            </button>
+          </div>
+
+          <div class="config-body">
+            <div class="form-group">
+              <label>Nombre Completo</label>
+              <input type="text" class="form-input" [value]="usuarioActual.nombre" [(ngModel)]="usuarioEditado.nombre"
+                [disabled]="!editMode">
+            </div>
+
+            <div class="form-group">
+              <label>Correo Electrónico</label>
+              <input type="email" class="form-input" [value]="usuarioActual.correo" [(ngModel)]="usuarioEditado.correo"
+                [disabled]="!editMode">
+            </div>
+
+            <div class="form-group">
+              <label>Teléfono</label>
+              <input type="tel" class="form-input" [value]="usuarioActual.telefono || ''"
+                     [(ngModel)]="usuarioEditado.telefono" [disabled]="!editMode">
+            </div>
+
+            <div class="form-group">
+              <label>Rol</label>
+              <input type="text" class="form-input" [value]="usuarioActual.rol.nombre" disabled>
+            </div>
+          </div>
+
+          <div *ngIf="editMode" class="config-footer">
+            <button class="btn-secundario" (click)="cancelarEdicion()">Cancelar</button>
+            <button class="btn-primario" (click)="guardarCambios()">Guardar cambios</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

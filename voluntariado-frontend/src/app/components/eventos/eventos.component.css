@@ -1,4 +1,4 @@
-/* Estilos mejorados para eventos */
+
 * {
   margin: 0;
   padding: 0;
@@ -11,8 +11,6 @@
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
   overflow-x: hidden;
 }
-
-/* Navbar (copiado de main) */
 .navbar {
   position: fixed;
   top: 0;
@@ -44,9 +42,9 @@
 }
 
 .logo-icon {
-  width: 60px;  /* Ajusta el tamaño */
+  width: 60px;
   height: 60px;
-  object-fit: contain; /* Mantiene proporciones */
+  object-fit: contain;
 
 }
 
@@ -97,17 +95,16 @@
   background: #4f46e5;
 }
 
-/* Hero Section Mejorado */
 .hero-section {
   background-image: url('https://voluntariado.net/wp-content/uploads/2017/01/Voluntariado-Ambiental.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  color: white;
   padding: 8rem 2rem 3rem;
   margin-top: 70px;
   position: relative;
   overflow: hidden;
+  color: white;
 }
 
 .hero-section::before {
@@ -117,8 +114,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>');
-  opacity: 0.3;
+  background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4));
 }
 
 .hero-content {
@@ -133,12 +129,14 @@
   font-weight: 700;
   margin-bottom: 1rem;
   line-height: 1.2;
+  color: white !important;
 }
 
 .hero-subtitle {
   font-size: 1.25rem;
   opacity: 0.95;
   margin-bottom: 2rem;
+  color: white !important;
 }
 
 .hero-stats {
@@ -164,7 +162,6 @@
   margin-top: 0.5rem;
 }
 
-/* Filtros modernos en chips */
 .filters-bar {
   background: white;
   border-bottom: 1px solid #e5e7eb;
@@ -176,7 +173,7 @@
 }
 
 .filters-container {
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 0 2rem;
 }
@@ -226,9 +223,8 @@
   font-size: 1.1rem;
 }
 
-/* Main Content */
 .main-content {
-  max-width: 1400px;
+  max-width:2000px;
   margin: 0 auto;
   padding: 2rem;
 }
@@ -239,7 +235,6 @@
   gap: 2rem;
 }
 
-/* Sidebar de filtros mejorado */
 .filters-sidebar {
   position: sticky;
   top: 150px;
@@ -344,7 +339,6 @@
   color: white;
 }
 
-/* Events Section */
 .events-section {
   min-height: 600px;
 }
@@ -395,7 +389,6 @@
   border-color: #6366f1;
 }
 
-/* Loading, Error & Empty States */
 .loading-state,
 .error-state,
 .empty-state {
@@ -461,11 +454,88 @@
   background: #4f46e5;
 }
 
-/* Events Grid */
 .events-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
+  width: 100%;
+}
+@media (max-width: 1024px) {
+  .events-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .events-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+.controles-paginacion {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+  margin-bottom: 2rem;
+}
+
+::ng-deep .ngx-pagination {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 0.75rem;
+  background: transparent;
+  border-radius: 999px;
+  border: none;
+  box-shadow: none;
+}
+
+::ng-deep .ngx-pagination li {
+  list-style: none;
+  border-radius: 999px;
+  min-width: 40px;
+  min-height: 40px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease, color 0.18s ease;
+}
+
+::ng-deep .ngx-pagination a,
+::ng-deep .ngx-pagination span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.85rem;
+  color: #43307a;
+  text-decoration: none;
+  border-radius: 999px;
+  background: transparent;
+  border: none;
+}
+
+::ng-deep .ngx-pagination li.current {
+  background: transparent;
+  transform: translateY(-1px);
+}
+
+::ng-deep .ngx-pagination li.current a,
+::ng-deep .ngx-pagination li.current span {
+  background: linear-gradient(135deg, #6650d8, #7f56d9);
+  color: #fff;
+  border: none;
+  box-shadow: none;
+}
+
+::ng-deep .ngx-pagination li:hover:not(.current):not(.disabled) {
+  background: #f2f4fb;
+  transform: translateY(-1px);
+  box-shadow: none;
+}
+
+::ng-deep .ngx-pagination .disabled {
+  opacity: 0.4;
+  pointer-events: none;
 }
 
 .event-card {
@@ -648,7 +718,6 @@
   color: white;
 }
 
-/* Responsive Design */
 @media (max-width: 1200px) {
   .content-grid {
     grid-template-columns: 280px 1fr;
@@ -768,7 +837,6 @@
   }
 }
 
-/* Mejora de accesibilidad */
 .btn-join:focus,
 .btn-share:focus,
 .filter-chip:focus,
@@ -779,3 +847,88 @@
   outline: 2px solid #6366f1;
   outline-offset: 2px;
 }
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  width: 90%;
+  max-width: 450px;
+  text-align: center;
+  animation: modal-fade-in 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+@keyframes modal-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-icon {
+  font-size: 4rem;
+  color: #28a745;
+  margin-bottom: 1rem;
+}
+
+.modal-icon.error {
+  color: #dc3545;
+}
+
+.modal-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+}
+
+.modal-message {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 2rem;
+}
+
+.modal-button {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  transition: background-color 0.2s;
+}
+
+.modal-button:hover {
+  background-color: #0056b3;
+}
+
+.modal-button.error-button {
+  background-color: #dc3545;
+}
+
+.modal-button.error-button:hover {
+  background-color: #c82333;
+}
+
+

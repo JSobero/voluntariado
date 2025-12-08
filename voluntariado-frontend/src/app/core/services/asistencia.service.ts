@@ -31,4 +31,10 @@ export class AsistenciaService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+  registrarAsistencia(inscripcionId: number, asistio: boolean): Observable<any> {
+    return this.http.post(`${this.apiUrl}/registrar`, {
+      inscripcionId,
+      asistio
+    });
+  }
 }

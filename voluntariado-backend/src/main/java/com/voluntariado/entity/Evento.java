@@ -49,6 +49,9 @@ public class Evento {
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 
+    @Transient
+    private long inscritos;
+
     @Column(name = "creado_en", updatable = false, insertable = false)
     private LocalDateTime creadoEn;
 }

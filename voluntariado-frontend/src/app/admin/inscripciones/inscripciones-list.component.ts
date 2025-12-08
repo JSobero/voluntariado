@@ -28,10 +28,27 @@ export class InscripcionesListComponent implements OnInit {
     this.cargando = true;
     this.inscripcionService.getAll().subscribe({
       next: (datos) => {
-        this.inscripciones = datos;
-        this.inscripcionesFiltradas = datos;
-        this.cargando = false;
-      },
+        const inscripcionesProcesadas = datos.map(inscripcion => {
+                  // Asumimos que el campo de fecha que da problemas
+                  // es 'solicitadoEn' (basado en tu 'Inscripcion.java')
+                  const fechaConvertida = this.convertirFecha(inscripcion.solicitadoEn);
+
+                  // Devolvemos el objeto de inscripción con la fecha ya convertida
+                  return {
+                    ...inscripcion, // Copia todos los campos (id, usuario, evento, estado)
+                    solicitadoEn: fechaConvertida // Reemplaza el array por el string ISO
+                  };
+                });
+                // --- FIN DE LA SOLUCIÓN ---
+
+                // Ahora asignamos los datos YA PROCESADOS
+                this.inscripciones = inscripcionesProcesadas;
+                this.inscripcionesFiltradas = inscripcionesProcesadas;
+                this.cargando = false;
+
+                // (Llamamos a filtrar por si acaso, aunque ya está filtrado)
+                this.filtrarInscripciones();
+              },
       error: (err) => {
         console.error('Error al cargar inscripciones:', err);
         this.cargando = false;
@@ -42,7 +59,7 @@ export class InscripcionesListComponent implements OnInit {
   filtrarInscripciones() {
     let filtradas = [...this.inscripciones];
 
-    // Filtrar por búsqueda
+
     if (this.terminoBusqueda) {
       const termino = this.terminoBusqueda.toLowerCase();
       filtradas = filtradas.filter(i =>
@@ -51,7 +68,7 @@ export class InscripcionesListComponent implements OnInit {
       );
     }
 
-    // Filtrar por estado
+
     if (this.filtroEstado) {
       filtradas = filtradas.filter(i => i.estado === this.filtroEstado);
     }
@@ -139,6 +156,31 @@ export class InscripcionesListComponent implements OnInit {
     if (horas > 0) return `Hace ${horas} hora${horas > 1 ? 's' : ''}`;
     if (minutos > 0) return `Hace ${minutos} minuto${minutos > 1 ? 's' : ''}`;
     return 'Hace un momento';
+  }
+  // Pega esta función dentro de tu clase InscripcionesListComponent
+
+  convertirFecha(fechaTexto: any): string {
+    // Si no hay fecha, devuelve un string vacío
+    if (!fechaTexto) return '';
+
+    // Si es el array del backend (mínimo 3 partes: año, mes, día)
+    if (Array.isArray(fechaTexto) && fechaTexto.length >= 3) {
+      const [año, mes, día, hora = 0, minuto = 0, segundo = 0] = fechaTexto;
+
+      // Creamos la fecha (¡OJO! el mes es 0-indexado, por eso 'mes - 1')
+      const fecha = new Date(año, mes - 1, día, hora, minuto, segundo);
+
+      // Devolvemos un string estándar (ej: "2025-11-12T14:19:19.000Z")
+      return fecha.toISOString();
+    }
+
+    // Si ya es un string, solo lo devolvemos
+    if (typeof fechaTexto === 'string') {
+      return fechaTexto;
+    }
+
+    // Si es cualquier otra cosa, devuelve vacío
+    return '';
   }
 
 }

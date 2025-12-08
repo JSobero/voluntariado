@@ -1,25 +1,5 @@
 <div class="eventos-page">
-  <!-- Navbar (igual al de main) -->
-  <nav class="navbar">
-    <div class="nav-container">
-      <a class="logo" (click)="volverInicio()">
-        <img src="/logo.png" alt="" class="logo-icon">
-        <span class="logo-text">NEXO V</span>
-      </a>
-      <ul class="nav-menu">
-        <li><a (click)="volverInicio()">Inicio</a></li>
-        <li><a>Eventos</a></li>
-        <li><a (click)="navigateTo('/categorias')">Categorías</a></li>
-        <li><a (click)="navigateTo('/testimonios')">Testimonios</a></li>
-      </ul>
-      <div class="nav-actions">
-        <button class="btn-nav" (click)="navigateTo('/login')">Iniciar sesión</button>
-        <button class="btn-nav primary" (click)="navigateTo('/register')">Registrarse</button>
-      </div>
-    </div>
-  </nav>
 
-  <!-- Hero Section mejorado -->
   <section class="hero-section">
     <div class="hero-content">
       <h1>Encuentra tu próximo<br>proyecto de voluntariado</h1>
@@ -29,44 +9,51 @@
           <span class="hero-stat-value">{{eventosFiltrados.length}}</span>
           <span class="hero-stat-label">Eventos disponibles</span>
         </div>
-        <div class="hero-stat">
-          <span class="hero-stat-value">50+</span>
-          <span class="hero-stat-label">Organizaciones</span>
-        </div>
-        <div class="hero-stat">
-          <span class="hero-stat-value">1000+</span>
-          <span class="hero-stat-label">Voluntarios activos</span>
-        </div>
       </div>
     </div>
   </section>
 
-  <!-- Filtros rápidos en chips -->
   <section class="filters-bar">
     <div class="filters-container">
       <div class="filters-title">Filtrar por categoría</div>
       <div class="filters-chips">
+
+        <button
+          class="filter-chip"
+          [class.active]="categoriaSeleccionada === null"
+          (click)="seleccionarCategoria(null)">
+
+          <i
+            class="filter-chip-icon bi"
+            [class]="clasesIconoBootstrap['Todas']"
+            [style.color]="categoriaSeleccionada === null ? 'white' : getColorCategoria('Todas')">
+          </i>
+          <span>Todas</span>
+        </button>
+
         <button
           *ngFor="let cat of categorias"
           class="filter-chip"
           [class.active]="categoriaSeleccionada === cat.id"
           (click)="seleccionarCategoria(cat.id)">
-          <span class="filter-chip-icon">{{cat.icon}}</span>
+
+          <i
+            class="filter-chip-icon bi"
+            [class]="clasesIconoBootstrap[cat.nombre] || clasesIconoBootstrap['default']"
+            [style.color]="categoriaSeleccionada === cat.id ? 'white' : getColorCategoria(cat.nombre)">
+          </i>
           <span>{{cat.nombre}}</span>
         </button>
       </div>
     </div>
   </section>
 
-  <!-- Main Content -->
   <div class="main-content">
     <div class="content-grid">
-      <!-- Sidebar Filters (mejorado) -->
       <aside class="filters-sidebar">
         <div class="filters-card">
           <h2>Filtros</h2>
           <p class="filters-subtitle">Refina tu búsqueda</p>
-
           <div class="filter-group">
             <label>Buscar eventos</label>
             <div class="search-box">
@@ -81,9 +68,7 @@
                 placeholder="Buscar por título o descripción...">
             </div>
           </div>
-
           <div class="filter-divider"></div>
-
           <div class="filter-group">
             <label>Fecha de inicio</label>
             <input
@@ -92,7 +77,6 @@
               [(ngModel)]="fechaInicio"
               (change)="aplicarFiltros()">
           </div>
-
           <div class="filter-group">
             <label>Fecha de fin</label>
             <input
@@ -101,9 +85,7 @@
               [(ngModel)]="fechaFin"
               (change)="aplicarFiltros()">
           </div>
-
           <div class="filter-divider"></div>
-
           <div class="filter-group">
             <label>Ubicación</label>
             <div class="search-box">
@@ -118,14 +100,12 @@
                 placeholder="Lima, Perú">
             </div>
           </div>
-
           <button class="clear-btn" (click)="limpiarFiltros()">
             Limpiar todos los filtros
           </button>
         </div>
       </aside>
 
-      <!-- Events List -->
       <main class="events-section">
         <div class="events-header">
           <div class="results-info">
@@ -147,43 +127,22 @@
           </div>
         </div>
 
-        <!-- Loading State -->
         <div *ngIf="isLoading" class="loading-state">
-          <div class="spinner"></div>
-          <p>Cargando eventos...</p>
         </div>
-
-        <!-- Error State -->
         <div *ngIf="error && !isLoading" class="error-state">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="8" x2="12" y2="12"></line>
-            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-          </svg>
-          <h3>Error al cargar eventos</h3>
-          <p>{{error}}</p>
-          <button class="retry-btn" (click)="cargarEventos()">Reintentar</button>
         </div>
-
-        <!-- Empty State -->
         <div *ngIf="!isLoading && !error && eventosFiltrados.length === 0" class="empty-state">
-          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="15" y1="9" x2="9" y2="15"></line>
-            <line x1="9" y1="9" x2="15" y2="15"></line>
-          </svg>
-          <h3>No se encontraron eventos</h3>
-          <p>Intenta ajustar tus filtros de búsqueda</p>
-          <button class="clear-btn" (click)="limpiarFiltros()">Limpiar filtros</button>
         </div>
 
-        <!-- Events Grid -->
         <div *ngIf="!isLoading && !error && eventosFiltrados.length > 0" class="events-grid">
-          <article class="event-card" *ngFor="let evento of eventosFiltrados">
+          <article class="event-card" *ngFor="let evento of eventosFiltrados | paginate: { itemsPerPage: itemsPerPage, currentPage: p }">
             <div class="event-image" [style.backgroundImage]="'url(' + evento.imagen + ')'">
               <div class="event-badges">
-                <span class="badge badge-points">{{evento.puntos}} pts</span>
-                <span class="badge badge-category">{{evento.categoria}}</span>
+                <span class="badge badge-points">{{evento.puntosOtorga || 0}} pts</span>
+
+                <span class="badge badge-category">
+                  {{ evento.categoria ? evento.categoria.nombre : 'Otras' }}
+                </span>
               </div>
             </div>
 
@@ -201,7 +160,6 @@
                   </svg>
                   <span>Del {{formatearFecha(evento.fechaInicio)}} al {{formatearFecha(evento.fechaFin)}}</span>
                 </div>
-
                 <div class="meta-item">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="10"></circle>
@@ -209,7 +167,6 @@
                   </svg>
                   <span>Horario flexible</span>
                 </div>
-
                 <div class="meta-item">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -228,11 +185,15 @@
                   <div class="cupos-bar">
                     <div class="cupos-fill" [style.width.%]="obtenerPorcentajeInscritos(evento)"></div>
                   </div>
-                  <span class="cupos-text">Cupos disponibles: {{evento.cupoMaximo - (evento.inscritos || 0)}}</span>
+                  <span class="cupos-text">
+                    <ng-container *ngIf="tieneCupos(evento); else agotado">
+                      {{ (evento.cupoMaximo - (evento.inscritos || 0)) }} cupos disponibles
+                    </ng-container>
+                    <ng-template #agotado>Agotado</ng-template>
+                  </span>
                 </div>
-
                 <div class="event-actions">
-                  <button class="btn-join" (click)="inscribirseEvento(evento.id)">
+                  <button class="btn-join" (click)="inscribirseEvento(evento.id)" [disabled]="!tieneCupos(evento)">
                     Únete
                   </button>
                   <button class="btn-share" (click)="compartirEvento(evento)">
@@ -243,7 +204,38 @@
             </div>
           </article>
         </div>
+        <div class="controles-paginacion" *ngIf="!isLoading && eventosFiltrados.length > itemsPerPage">
+          <pagination-controls
+            (pageChange)="p = $event"
+            previousLabel="Anterior"
+            nextLabel="Siguiente"
+            screenReaderPaginationLabel="Paginación"
+            screenReaderPageLabel="página"
+            screenReaderCurrentLabel="Estás en la página">
+          </pagination-controls>
+        </div>
       </main>
     </div>
   </div>
+
+  <div
+    class="modal-overlay"
+    *ngIf="mostrarModal"
+    (click)="cerrarModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-icon" [class.error]="modalEsError">
+        <i *ngIf="!modalEsError" class="bi bi-check-circle-fill"></i>
+        <i *ngIf="modalEsError" class="bi bi-exclamation-triangle-fill"></i>
+      </div>
+      <h2 class="modal-title">{{ modalTitulo }}</h2>
+      <p class="modal-message">{{ modalMensaje }}</p>
+      <button
+        class="modal-button"
+        [class.error-button]="modalEsError"
+        (click)="cerrarModal()">
+        Entendido
+      </button>
+    </div>
+  </div>
+
 </div>

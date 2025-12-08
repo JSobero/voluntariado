@@ -3,6 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { Categoria } from '../../core/models/categoria.model';
+import { CategoriaService } from '../../core/services/categoria.service';
+import { AuthService } from '../../services/auth.service';
+import { InscripcionService } from '../../core/services/inscripcion.service';
+import { Inscripcion } from '../../core/models/inscripcion.model';
 
 interface Evento {
   id: number;
@@ -13,64 +19,114 @@ interface Evento {
   lugar: string;
   cupoMaximo: number;
   organizador: any;
-  categoria?: string;
+  imagenUrl?: string;
+  categoria: Categoria | null;
   imagen?: string;
   inscritos?: number;
-  puntos?: number;
+  cuposDisponibles?: number;
+  puntosOtorga?: number;
 }
 
 @Component({
   selector: 'app-eventos',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, NgxPaginationModule],
   templateUrl: './eventos.component.html',
   styleUrls: ['./eventos.component.css']
 })
 export class EventosComponent implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
+  private authService = inject(AuthService);
+  private inscripcionService = inject(InscripcionService);
+  private categoriaService = inject(CategoriaService);
   private readonly API_EVENTOS = 'http://localhost:8080/eventos';
-
-  // Filtros
   searchTerm = '';
   fechaInicio = '';
   fechaFin = '';
   lugarFilter = '';
-  categoriaSeleccionada = 'todas';
+  categoriaSeleccionada: number | null = null;
   ordenarPor = 'relevancia';
-
-  // Datos
   eventos: Evento[] = [];
   eventosFiltrados: Evento[] = [];
+  categorias: Categoria[] = [];
+
   isLoading = true;
   error: string | null = null;
+  p: number = 1;
+  itemsPerPage: number = 9;
 
-  // Categorías disponibles (simplificadas - sin el horrible diseño de bloques)
-  categorias = [
-    { id: 'todas', nombre: 'Todas', icon: '🌟' },
-    { id: 'medio-ambiente', nombre: 'Medio Ambiente', icon: '🌱' },
-    { id: 'educacion', nombre: 'Educación', icon: '📚' },
-    { id: 'salud', nombre: 'Salud', icon: '🏥' },
-    { id: 'animales', nombre: 'Animales', icon: '🐕' },
-    { id: 'adultos-mayores', nombre: 'Adultos Mayores', icon: '👵' },
-    { id: 'arte-cultura', nombre: 'Arte y Cultura', icon: '🎨' },
-    { id: 'construccion', nombre: 'Construcción', icon: '🏗️' }
-  ];
+  mostrarModal = false;
+  modalTitulo = '';
+  modalMensaje = '';
+  modalEsError = false;
 
-  // Imágenes por defecto según categoría
   imagenesCategoria: { [key: string]: string } = {
-    'medio-ambiente': 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=300&fit=crop',
-    'educacion': 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&h=300&fit=crop',
-    'salud': 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400&h=300&fit=crop',
-    'animales': 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=400&h=300&fit=crop',
-    'adultos-mayores': 'https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?w=400&h=300&fit=crop',
-    'arte-cultura': 'https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=400&h=300&fit=crop',
-    'construccion': 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&h=300&fit=crop',
+    'Ambiental': 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=300&fit=crop',
+    'Educación': 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&h=300&fit=crop',
+    'Salud': 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400&h=300&fit=crop',
+    'Animales': 'https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=400&h=300&fit=crop',
+    'Otras': 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&h=300&fit=crop',
     'default': 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&h=300&fit=crop'
   };
 
+  clasesIconoBootstrap: { [key: string]: string } = {
+    'Ambiental': 'bi-tree',
+    'Educación': 'bi-book',
+    'Salud': 'bi-heart-pulse',
+    'Animales': 'bi-paw',
+    'Otras': 'bi-three-dots-horizontal',
+    'default': 'bi-question-circle',
+    'Todas': 'bi-star'
+  };
+
+  coloresCategoria: { [key: string]: string } = {
+    'Ambiental': '#10b981',
+    'Educación': '#3b82f6',
+    'Salud': '#ef4444',
+    'Animales': '#f97316',
+    'Otras': '#6b7280',
+    'Todas': '#f59e0b',
+    'default': '#6b7280'
+  };
+
+  getColorCategoria(nombre: string): string {
+    return this.coloresCategoria[nombre] || this.coloresCategoria['default'];
+  }
+
   ngOnInit(): void {
+    this.cargarCategorias();
     this.cargarEventos();
+  }
+
+  cargarCategorias(): void {
+    this.categoriaService.getAll().subscribe({
+      next: (datos) => {
+        this.categorias = datos.filter(c =>
+          c.nombre === 'Ambiental' ||
+          c.nombre === 'Educación' ||
+          c.nombre === 'Salud' ||
+          c.nombre === 'Animales' ||
+          c.nombre === 'Otras'
+        );
+      },
+      error: (err) => {
+        console.error('Error al cargar categorías:', err);
+      }
+    });
+  }
+
+  convertirFecha(fechaTexto: any): string {
+    if (!fechaTexto) return '';
+    if (Array.isArray(fechaTexto) && fechaTexto.length >= 3) {
+      const [año, mes, día, hora = 0, minuto = 0] = fechaTexto;
+      const fecha = new Date(año, mes - 1, día, hora, minuto);
+      return fecha.toISOString();
+    }
+    if (typeof fechaTexto === 'string') {
+      return fechaTexto;
+    }
+    return '';
   }
 
   cargarEventos(): void {
@@ -79,14 +135,21 @@ export class EventosComponent implements OnInit {
 
     this.http.get<Evento[]>(this.API_EVENTOS).subscribe({
       next: (eventos) => {
-        // Enriquecer eventos con datos adicionales
-        this.eventos = eventos.map(evento => ({
-          ...evento,
-          categoria: this.asignarCategoria(evento.titulo, evento.descripcion),
-          imagen: this.asignarImagen(evento),
-          inscritos: Math.floor(Math.random() * (evento.cupoMaximo * 0.8)),
-          puntos: this.calcularPuntos(evento)
-        }));
+        this.eventos = eventos.map(evento => {
+          const fechaInicioISO = this.convertirFecha(evento.fechaInicio);
+          const fechaFinISO = evento.fechaFin ? this.convertirFecha(evento.fechaFin) : '';
+          const inscritosReales = evento.inscritos || 0;
+          const cuposDisponibles = Math.max((evento.cupoMaximo || 0) - inscritosReales, 0);
+
+          return {
+            ...evento,
+            fechaInicio: fechaInicioISO,
+            fechaFin: fechaFinISO,
+            imagen: this.asignarImagen(evento),
+            inscritos: inscritosReales,
+            cuposDisponibles
+          };
+        }).filter(ev => (ev.cuposDisponibles || 0) > 0);
 
         this.eventosFiltrados = [...this.eventos];
         this.aplicarOrden();
@@ -100,77 +163,60 @@ export class EventosComponent implements OnInit {
     });
   }
 
-  asignarCategoria(titulo: string, descripcion: string): string {
-    const texto = (titulo + ' ' + descripcion).toLowerCase();
-
-    if (texto.includes('playa') || texto.includes('limpieza') || texto.includes('reforest') || texto.includes('ambient')) {
-      return 'medio-ambiente';
-    } else if (texto.includes('educac') || texto.includes('taller') || texto.includes('lectura') || texto.includes('enseñ')) {
-      return 'educacion';
-    } else if (texto.includes('salud') || texto.includes('médic') || texto.includes('hospital')) {
-      return 'salud';
-    } else if (texto.includes('animal') || texto.includes('mascota') || texto.includes('perro') || texto.includes('gato')) {
-      return 'animales';
-    } else if (texto.includes('adulto') || texto.includes('anciano') || texto.includes('mayor')) {
-      return 'adultos-mayores';
-    } else if (texto.includes('arte') || texto.includes('cultura') || texto.includes('música') || texto.includes('pintura')) {
-      return 'arte-cultura';
-    } else if (texto.includes('construc') || texto.includes('obra') || texto.includes('edificar')) {
-      return 'construccion';
-    }
-
-    return 'otras';
-  }
-
   asignarImagen(evento: Evento): string {
+    if (evento.imagenUrl && evento.imagenUrl.trim() !== '') {
+      return evento.imagenUrl;
+    }
     if (evento.imagen) return evento.imagen;
-    const categoria = this.asignarCategoria(evento.titulo, evento.descripcion);
-    return this.imagenesCategoria[categoria] || this.imagenesCategoria['default'];
+    const nombreCategoria = evento.categoria ? evento.categoria.nombre : 'default';
+    return this.imagenesCategoria[nombreCategoria] || this.imagenesCategoria['default'];
   }
 
   calcularPuntos(evento: Evento): number {
-    // Calcular puntos según duración del evento
     if (evento.fechaInicio && evento.fechaFin) {
       const inicio = new Date(evento.fechaInicio);
       const fin = new Date(evento.fechaFin);
+      if (isNaN(inicio.getTime()) || isNaN(fin.getTime())) {
+        console.warn('Cálculo de puntos falló para evento:', evento.titulo);
+        return 50;
+      }
       const horas = Math.abs(fin.getTime() - inicio.getTime()) / 36e5;
       return Math.round(horas * 10);
     }
-    return 50; // Puntos por defecto
+    return 50;
   }
 
   aplicarFiltros(): void {
     this.eventosFiltrados = this.eventos.filter(evento => {
-      // Filtro por búsqueda de texto
       const matchSearch = !this.searchTerm ||
         evento.titulo.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        evento.descripcion.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        evento.descripcion?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
         evento.lugar.toLowerCase().includes(this.searchTerm.toLowerCase());
 
-      // Filtro por categoría
-      const matchCategoria = this.categoriaSeleccionada === 'todas' ||
-        evento.categoria === this.categoriaSeleccionada;
+      const matchCategoria = !this.categoriaSeleccionada ||
+        (evento.categoria && evento.categoria.id === this.categoriaSeleccionada);
 
-      // Filtro por lugar
       const matchLugar = !this.lugarFilter ||
         evento.lugar.toLowerCase().includes(this.lugarFilter.toLowerCase());
 
-      // Filtro por fecha de inicio
       const matchFechaInicio = !this.fechaInicio ||
         new Date(evento.fechaInicio) >= new Date(this.fechaInicio);
 
-      // Filtro por fecha de fin
       const matchFechaFin = !this.fechaFin ||
         new Date(evento.fechaInicio) <= new Date(this.fechaFin);
 
-      return matchSearch && matchCategoria && matchLugar && matchFechaInicio && matchFechaFin;
+      const cupos = evento.cuposDisponibles ?? Math.max((evento.cupoMaximo || 0) - (evento.inscritos || 0), 0);
+      const matchCupos = cupos > 0;
+
+      return matchSearch && matchCategoria && matchLugar && matchFechaInicio && matchFechaFin && matchCupos;
     });
 
+    this.p = 1;
     this.aplicarOrden();
   }
 
   aplicarOrden(): void {
-    switch (this.ordenarPor) {
+    switch(this.ordenarPor) {
       case 'fecha-asc':
         this.eventosFiltrados.sort((a, b) =>
           new Date(a.fechaInicio).getTime() - new Date(b.fechaInicio).getTime()
@@ -182,7 +228,9 @@ export class EventosComponent implements OnInit {
         );
         break;
       case 'puntos':
-        this.eventosFiltrados.sort((a, b) => (b.puntos || 0) - (a.puntos || 0));
+        this.eventosFiltrados.sort((a, b) =>
+          (b.puntosOtorga || 0) - (a.puntosOtorga || 0)
+        );
         break;
       case 'cupos':
         this.eventosFiltrados.sort((a, b) => {
@@ -191,7 +239,7 @@ export class EventosComponent implements OnInit {
           return disponiblesB - disponiblesA;
         });
         break;
-      default: // relevancia
+      default:
         break;
     }
   }
@@ -201,13 +249,14 @@ export class EventosComponent implements OnInit {
     this.fechaInicio = '';
     this.fechaFin = '';
     this.lugarFilter = '';
-    this.categoriaSeleccionada = 'todas';
+    this.categoriaSeleccionada = null;
     this.ordenarPor = 'relevancia';
+    this.p = 1;
     this.aplicarFiltros();
   }
 
-  seleccionarCategoria(categoria: string): void {
-    this.categoriaSeleccionada = categoria;
+  seleccionarCategoria(categoriaId: number | null): void {
+    this.categoriaSeleccionada = categoriaId;
     this.aplicarFiltros();
   }
 
@@ -225,10 +274,60 @@ export class EventosComponent implements OnInit {
     return Math.round((evento.inscritos / evento.cupoMaximo) * 100);
   }
 
+  tieneCupos(evento: Evento): boolean {
+    const cupos = evento.cuposDisponibles ?? Math.max((evento.cupoMaximo || 0) - (evento.inscritos || 0), 0);
+    return cupos > 0;
+  }
+
+  obtenerNombreCategoria(categoria: Categoria | null): string {
+    return categoria ? categoria.nombre : 'Otras';
+  }
+
   inscribirseEvento(eventoId: number): void {
-    console.log('Inscribirse al evento:', eventoId);
-    // Aquí implementarás la lógica de inscripción
-    alert('Funcionalidad de inscripción próximamente');
+    const usuarioActual = this.authService.currentUser();
+    if (!usuarioActual) {
+      this.router.navigate(['/login']);
+      return;
+    }
+
+    const eventoSeleccionado = this.eventos.find(e => e.id === eventoId);
+    if (eventoSeleccionado && !this.tieneCupos(eventoSeleccionado)) {
+      this.abrirModal(
+        'Cupos no disponibles',
+        'Este evento ya no tiene cupos disponibles.',
+        true
+      );
+      return;
+    }
+    const usuarioId = usuarioActual.id;
+    this.inscripcionService.inscribir(usuarioId, eventoId).subscribe({
+      next: (respuesta: Inscripcion) => {
+        this.abrirModal(
+          '¡Inscripción Exitosa!',
+          'Tu solicitud ha sido registrada. Está pendiente de aprobación por el organizador.',
+          false
+        );
+        this.cargarEventos();
+      },
+      error: (error: any) => {
+        this.abrirModal(
+          'Error en la Inscripción',
+          'No pudimos registrar tu solicitud. Es posible que ya estés inscrito o que no haya cupo disponible.',
+          true
+        );
+      }
+    });
+  }
+
+  abrirModal(titulo: string, mensaje: string, esError: boolean): void {
+    this.modalTitulo = titulo;
+    this.modalMensaje = mensaje;
+    this.modalEsError = esError;
+    this.mostrarModal = true;
+  }
+
+  cerrarModal(): void {
+    this.mostrarModal = false;
   }
 
   compartirEvento(evento: Evento): void {

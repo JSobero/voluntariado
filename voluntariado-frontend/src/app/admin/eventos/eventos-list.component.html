@@ -16,14 +16,26 @@
   </div>
 
   <div class="seccion-filtros">
-    <div class="contenedor-busqueda">
-      <i class="icono-busqueda bi bi-search"></i>
-      <input
-        type="text"
-        class="entrada-busqueda"
-        placeholder="Buscar eventos por título, descripción o lugar..."
-        [(ngModel)]="terminoBusqueda"
-        (ngModelChange)="filtrarEventos()">
+    <div class="fila-filtros">
+      <div class="contenedor-busqueda">
+        <i class="icono-busqueda bi bi-search"></i>
+        <input
+          type="text"
+          class="entrada-busqueda"
+          placeholder="Buscar eventos por título, descripción o lugar..."
+          [(ngModel)]="terminoBusqueda"
+          (ngModelChange)="filtrarEventos()">
+      </div>
+
+      <select
+        class="selector-categoria-filtro"
+        [(ngModel)]="categoriaFiltro"
+        (change)="filtrarEventos()">
+        <option value="">Todas las categorías</option>
+        <option *ngFor="let cat of categorias" [ngValue]="cat.id">
+          {{cat.nombre}}
+        </option>
+      </select>
     </div>
   </div>
 
@@ -39,9 +51,11 @@
         <tr>
           <th>ID</th>
           <th>Evento</th>
+          <th>Categoría</th>
           <th>Fecha Inicio</th>
           <th>Lugar</th>
           <th>Cupo</th>
+          <th>Puntos</th>
           <th>Estado</th>
           <th>Organizador</th>
           <th>Acciones</th>
@@ -60,6 +74,15 @@
                 <div class="descripcion-evento">{{ evento.descripcion }}</div>
               </div>
             </div>
+          </td>
+          <td class="celda-categoria">
+            <span class="insignia-categoria"
+                  [style.background-color]="obtenerColorCategoria(evento.categoria) + '20'"
+                  [style.color]="obtenerColorCategoria(evento.categoria)"
+                  [style.border-color]="obtenerColorCategoria(evento.categoria)">
+              <span class="icono-categoria">{{obtenerIconoCategoria(evento.categoria)}}</span>
+              {{obtenerNombreCategoria(evento.categoria)}}
+            </span>
           </td>
           <td class="celda-fecha">
             <div class="envoltorio-fecha">
@@ -82,6 +105,11 @@
               {{ evento.cupoMaximo }} personas
             </span>
           </td>
+          <td class="celda-puntos">
+            <span class="insignia-puntos">
+              ⭐ {{ evento.puntosOtorga || 0 }} pts
+            </span>
+          </td>
           <td class="celda-estado">
             <span [ngClass]="obtenerClaseEstadoEvento(evento.fechaInicio)" class="insignia-estado">
               {{ obtenerEstadoEvento(evento.fechaInicio) }}
@@ -90,12 +118,20 @@
           <td class="celda-organizador">
             <div class="info-organizador">
               <div class="avatar-organizador">
-                {{ evento.organizador.nombre.charAt(0) }}
+                {{ evento.organizador?.nombre?.charAt(0) || '?' }}
               </div>
-              <span>{{ evento.organizador.nombre }}</span>
+              <span>{{ evento.organizador?.nombre || 'N/A' }}</span>
             </div>
           </td>
           <td class="celda-acciones">
+            <button
+              class="boton-accion boton-asistencia"
+              (click)="abrirControlAsistencia(evento)"
+              title="Tomar Asistencia"
+              *ngIf="esCreadorDelEvento(evento)">
+
+              <i class="bi bi-clipboard-check-fill"></i>
+            </button>
             <button class="boton-accion boton-editar" (click)="abrirModal(evento)" title="Editar">
               <i class="bi bi-pencil-fill"></i>
             </button>
@@ -126,6 +162,67 @@
       </div>
 
       <div class="cuerpo-modal">
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario">
+            <span class="texto-etiqueta">Imagen del evento</span>
+          </label>
+          <div class="contenedor-upload-imagen">
+            <div class="preview-imagen" *ngIf="imagenPreview">
+              <img [src]="imagenPreview" alt="Preview">
+              <button type="button" class="btn-eliminar-preview" (click)="limpiarImagen()">
+                <i class="bi bi-x-circle-fill"></i>
+              </button>
+            </div>
+            <div class="area-upload" *ngIf="!imagenPreview">
+              <input
+                type="file"
+                id="fileInput"
+                accept="image/*"
+                (change)="onFileSelected($event)"
+                style="display: none">
+              <label for="fileInput" class="label-upload">
+                <i class="bi bi-cloud-upload-fill icono-upload"></i>
+                <span class="texto-upload">Click para subir imagen</span>
+                <span class="texto-upload-small">JPG, PNG, GIF, WEBP (máx. 5MB)</span>
+              </label>
+            </div>
+            <div class="error-imagen" *ngIf="errorImagen">
+              <i class="bi bi-exclamation-triangle-fill"></i>
+              {{ errorImagen }}
+            </div>
+            <div class="loading-upload" *ngIf="subiendoImagen">
+              <div class="spinner-upload"></div>
+              <span>Subiendo imagen...</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario">
+            <span class="texto-etiqueta">Categoría</span>
+            <span class="etiqueta-requerido">*</span>
+          </label>
+          <select
+            class="entrada-formulario"
+            [ngModel]="eventoActual.categoria?.id"
+            (ngModelChange)="onCategoriaChange($event)"
+            required>
+            <option [ngValue]="null">Seleccionar categoría...</option>
+            <option *ngFor="let cat of categorias" [ngValue]="cat.id">
+              {{cat.nombre}}
+            </option>
+          </select>
+
+          <div class="vista-previa-categoria" *ngIf="eventoActual.categoria">
+            <span class="insignia-categoria-preview"
+                  [style.background-color]="obtenerColorCategoria(eventoActual.categoria) + '20'"
+                  [style.color]="obtenerColorCategoria(eventoActual.categoria)"
+                  [style.border-color]="obtenerColorCategoria(eventoActual.categoria)">
+              <span class="icono-categoria">{{obtenerIconoCategoria(eventoActual.categoria)}}</span>
+              {{obtenerNombreCategoria(eventoActual.categoria)}}
+            </span>
+          </div>
+        </div>
         <div class="grupo-formulario">
           <label class="etiqueta-formulario">
             <span class="texto-etiqueta">Título</span>
@@ -197,26 +294,41 @@
               type="number"
               class="entrada-formulario"
               [(ngModel)]="eventoActual.cupoMaximo"
-              min="1"
+              min="0"
               placeholder="50"
               required>
           </div>
 
           <div class="grupo-formulario">
             <label class="etiqueta-formulario">
-              <span class="texto-etiqueta">Organizador</span>
+              <span class="texto-etiqueta">Puntos que Otorga</span>
               <span class="etiqueta-requerido">*</span>
             </label>
-            <select
-              class="selector-formulario"
-              [(ngModel)]="eventoActual.organizador"
+            <input
+              type="number"
+              class="entrada-formulario"
+              [(ngModel)]="eventoActual.puntosOtorga"
+              min="0"
+              placeholder="100"
               required>
-              <option value="">Seleccionar organizador...</option>
-              <option *ngFor="let org of organizadores" [ngValue]="org.id">
-                {{ org.nombre }}
-              </option>
-            </select>
           </div>
+        </div>
+
+        <div class="grupo-formulario">
+          <label class="etiqueta-formulario">
+            <span class="texto-etiqueta">Organizador</span>
+            <span class="etiqueta-requerido">*</span>
+          </label>
+          <select
+            class="selector-formulario"
+            [ngModel]="eventoActual.organizador?.id"
+            (ngModelChange)="onOrganizadorChange($event)"
+            required>
+            <option [ngValue]="null">Seleccionar organizador...</option>
+            <option *ngFor="let org of organizadores" [ngValue]="org.id">
+              {{ org.nombre }}
+            </option>
+          </select>
         </div>
       </div>
 
@@ -224,11 +336,74 @@
         <button class="boton boton-secundario" (click)="cerrarModal()">
           Cancelar
         </button>
-        <button class="boton boton-primario" (click)="guardarEvento()">
+        <button class="boton boton-primario" (click)="guardarEvento()" [disabled]="subiendoImagen">
           <i class="icono-boton" [ngClass]="modoEdicion ? 'bi bi-save-fill' : 'bi bi-plus-lg'"></i>
           {{ modoEdicion ? 'Actualizar' : 'Crear' }} Evento
         </button>
       </div>
     </div>
   </div>
+  <div *ngIf="mostrarModalAsistencia" class="superposicion-modal" (click)="cerrarModalAsistencia()">
+    <div class="contenedor-modal modal-ancho" (click)="$event.stopPropagation()">
+      <div class="encabezado-modal">
+        <h2 class="titulo-modal">
+          <i class="bi bi-people-fill icono-modal"></i>
+          Control de Asistencia
+        </h2>
+        <button class="cerrar-modal" (click)="cerrarModalAsistencia()"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <div class="cuerpo-modal">
+        <h3 class="subtitulo-asistencia">Participantes de: <strong>{{ eventoParaAsistencia }}</strong></h3>
+
+        <div *ngIf="cargandoAsistencia" class="contenedor-carga">
+          <div class="giratorio"></div>
+          <p>Cargando lista de inscritos...</p>
+        </div>
+
+        <div *ngIf="!cargandoAsistencia && inscritos.length === 0" class="estado-vacio">
+          <div class="icono-vacio"><i class="bi bi-person-x"></i></div>
+          <p class="mt-2">No hay personas inscritas en este evento aún.</p>
+        </div>
+
+        <div *ngIf="!cargandoAsistencia && inscritos.length > 0" class="tabla-responsiva tabla-asistencia">
+          <table class="tabla-datos">
+            <thead>
+            <tr>
+              <th>Voluntario</th>
+              <th>Correo</th>
+              <th>Fecha Inscripción</th>
+              <th class="text-center">¿Asistió?</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let inscripcion of inscritos">
+              <td>
+                <div class="info-organizador">
+                  <div class="avatar-organizador" style="background-color: #6366f1; color: white;">
+                    {{ inscripcion.usuario.nombre.charAt(0).toUpperCase() }}
+                  </div>
+                  <span>{{ inscripcion.usuario.nombre }}</span>
+                </div>
+              </td>
+              <td style="color: #6b7280; font-size: 0.9rem;">
+                {{ inscripcion.usuario.correo }}
+              </td>
+              <td style="color: #6b7280; font-size: 0.9rem;">{{ inscripcion.solicitadoEn | date:'dd/MM/yyyy' }}</td>
+              <td style="text-align: center;">
+                <label class="switch">
+                  <input type="checkbox"
+                         [checked]="inscripcion.estado === 'CONFIRMADA' || inscripcion.estado === 'ASISTIO'"
+                         (change)="cambiarAsistencia(inscripcion, $event)">
+                  <span class="slider round"></span>
+                </label>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+

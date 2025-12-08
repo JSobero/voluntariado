@@ -32,10 +32,9 @@ public class RecompensaService {
         return recompensaRepository.findById(id).map(r -> {
             r.setNombre(recompensa.getNombre());
             r.setDescripcion(recompensa.getDescripcion());
-            r.setCostoPuntos(recompensa.getCostoPuntos());
+            r.setPuntosNecesarios(recompensa.getPuntosNecesarios());
             r.setStock(recompensa.getStock());
             r.setImagenUrl(recompensa.getImagenUrl());
-            r.setCategoria(recompensa.getCategoria());
             return recompensaRepository.save(r);
         }).orElseThrow(() -> new RuntimeException("Recompensa no encontrada"));
     }

@@ -4,6 +4,6 @@ export interface Inscripcion {
   id?: number;
   usuario: Usuario;
   evento: Evento;
-  estado: 'PENDIENTE' | 'ACEPTADA' | 'RECHAZADA';
+  estado: 'PENDIENTE' | 'ACEPTADA' | 'RECHAZADA'| 'CONFIRMADA' | 'NO_ASISTIO' | 'ASISTIO';
   solicitadoEn?: string;
 }

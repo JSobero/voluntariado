@@ -2,6 +2,7 @@ package com.voluntariado.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "categoria")
@@ -21,4 +22,9 @@ public class Categoria {
 
     @Column(columnDefinition = "TEXT")
     private String descripcion;
+
+    @Column(name = "creado_en", updatable = false, insertable = false)
+    private LocalDateTime creadoEn;
+
+
 }

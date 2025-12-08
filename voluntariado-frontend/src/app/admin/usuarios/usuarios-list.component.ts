@@ -12,7 +12,7 @@ import { Usuario } from '../../core/models/usuario.model';
   styleUrls: ['./usuarios-list.component.css']
 })
 export class UsuariosListComponent implements OnInit {
-  // --- PROPIEDADES ---
+  
   usuarios: Usuario[] = [];
   usuariosFiltrados: Usuario[] = [];
   cargando = false;
@@ -34,7 +34,7 @@ export class UsuariosListComponent implements OnInit {
     this.cargarUsuarios();
   }
 
-  // --- MÉTODOS PARA CARGAR Y FILTRAR DATOS ---
+
   cargarUsuarios() {
     this.cargando = true;
     this.usuarioServicio.getAll().subscribe({
@@ -68,7 +68,7 @@ export class UsuariosListComponent implements OnInit {
     return this.usuarios.filter(u => u.rol.nombre === nombreRol);
   }
 
-  // --- MÉTODOS PARA GESTIONAR EL MODAL ---
+
   abrirModal(usuario?: Usuario) {
     this.mostrarModal = true;
     if (usuario) {
@@ -85,7 +85,7 @@ export class UsuariosListComponent implements OnInit {
     this.usuarioActual = this.obtenerUsuarioVacio();
   }
 
-  // --- MÉTODOS CRUD (Crear, Actualizar, Eliminar) ---
+
   guardarUsuario() {
     if (!this.usuarioActual.nombre || !this.usuarioActual.correo || !this.usuarioActual.rol.nombre) {
       alert('Por favor completa todos los campos requeridos');
@@ -136,7 +136,7 @@ export class UsuariosListComponent implements OnInit {
     }
   }
 
-  // --- MÉTODOS AUXILIARES ---
+
   obtenerUsuarioVacio(): Usuario {
     return {
       nombre: '',

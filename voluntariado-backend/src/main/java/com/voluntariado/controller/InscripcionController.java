@@ -1,5 +1,6 @@
 package com.voluntariado.controller;
 
+import com.voluntariado.dto.InscripcionRequestDTO; // <-- NUEVO
 import com.voluntariado.entity.Inscripcion;
 import com.voluntariado.service.InscripcionService;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,17 @@ public class InscripcionController {
         this.inscripcionService = inscripcionService;
     }
 
+    @PostMapping
+    public ResponseEntity<Inscripcion> crear(@RequestBody InscripcionRequestDTO request) {
+        try {
+            Inscripcion nuevaInscripcion = inscripcionService.guardarInscripcion(request);
+            return ResponseEntity.ok(nuevaInscripcion);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+    }
+
+
     @GetMapping
     public List<Inscripcion> listarInscripciones() {
         return inscripcionService.listarInscripciones();
@@ -27,11 +39,6 @@ public class InscripcionController {
         return inscripcionService.obtenerPorId(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public Inscripcion crear(@RequestBody Inscripcion inscripcion) {
-        return inscripcionService.guardarInscripcion(inscripcion);
     }
 
     @PutMapping("/{id}")

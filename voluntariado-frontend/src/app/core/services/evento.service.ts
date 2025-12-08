@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Evento } from '../models/evento.model';
 import { environment } from '../../../environments/environment';
@@ -10,20 +10,30 @@ import { environment } from '../../../environments/environment';
 export class EventoService {
   private apiUrl = `${environment.apiUrl}/eventos`;
 
+  private getHeaders() {
+    return new HttpHeaders({
+      'Cache-Control': 'no-cache',
+      'Pragma': 'no-cache'
+    });
+  }
+
   constructor(private http: HttpClient) {}
 
   getAll(): Observable<Evento[]> {
-    return this.http.get<Evento[]>(this.apiUrl);
+    return this.http.get<Evento[]>(this.apiUrl, { headers: this.getHeaders() });
   }
 
   getById(id: number): Observable<Evento> {
-    return this.http.get<Evento>(`${this.apiUrl}/${id}`);
+    return this.http.get<Evento>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
+  }
+
+  getByCategoria(id: number): Observable<Evento[]> {
+    return this.http.get<Evento[]>(`${this.apiUrl}/categoria/${id}`, { headers: this.getHeaders() });
   }
 
   create(evento: Evento): Observable<Evento> {
     return this.http.post<Evento>(this.apiUrl, evento);
   }
-
   update(id: number, evento: Evento): Observable<Evento> {
     return this.http.put<Evento>(`${this.apiUrl}/${id}`, evento);
   }

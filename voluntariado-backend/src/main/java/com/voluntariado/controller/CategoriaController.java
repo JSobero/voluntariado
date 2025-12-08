@@ -1,9 +1,10 @@
 package com.voluntariado.controller;
 
 import com.voluntariado.entity.Categoria;
-import com.voluntariado.service.CategoriaService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import com.voluntariado.repository.CategoriaRepository;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -11,35 +12,19 @@ import java.util.List;
 @RequestMapping("/categorias")
 public class CategoriaController {
 
-    private final CategoriaService service;
+    private final CategoriaRepository categoriaRepository;
 
-    public CategoriaController(CategoriaService service) {
-        this.service = service;
+    public CategoriaController(CategoriaRepository categoriaRepository) {
+        this.categoriaRepository = categoriaRepository;
     }
 
     @GetMapping
-    public List<Categoria> listar() { return service.listar(); }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Categoria> obtener(@PathVariable Long id) {
-        return service.obtenerPorId(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    public List<Categoria> listarCategorias() {
+        return categoriaRepository.findAll();
     }
 
-    @PostMapping
-    public Categoria crear(@RequestBody Categoria c) { return service.guardar(c); }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Categoria> actualizar(@PathVariable Long id, @RequestBody Categoria c) {
-        try {
-            return ResponseEntity.ok(service.actualizar(id, c));
-        } catch (RuntimeException ex) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        service.eliminar(id);
-        return ResponseEntity.noContent().build();
+    @GetMapping("/eventos")
+    public List<Categoria> listarCategoriasDeEventos() {
+        return categoriaRepository.findCategoriasDeEventos();
     }
 }

@@ -5,7 +5,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-// Interfaces
 export interface Usuario {
   id: number;
   nombre: string;
@@ -80,11 +79,9 @@ export enum EstadoCanje {
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  // Inyección de dependencias con inject() - Angular 15+
   private http = inject(HttpClient);
   private router = inject(Router);
 
-  // URLs de la API
   private readonly API_BASE = 'http://localhost:8080';
   private readonly API_USUARIOS = `${this.API_BASE}/usuarios`;
   private readonly API_EVENTOS = `${this.API_BASE}/eventos`;
@@ -92,12 +89,10 @@ export class HomeComponent implements OnInit {
   private readonly API_INSCRIPCIONES = `${this.API_BASE}/inscripciones`;
   private readonly API_CANJES = `${this.API_BASE}/canjes`;
 
-  // Estado del componente
   usuarioActual: Usuario | null = null;
   isLoading = true;
   error: string | null = null;
 
-  // Datos para las estadísticas
   estadisticas = {
     totalEventos: 0,
     voluntariosActivos: 0,
@@ -105,7 +100,6 @@ export class HomeComponent implements OnInit {
     recompensasDisponibles: 0
   };
 
-  // Datos principales
   eventosProximos: Evento[] = [];
   recompensasDestacadas: Recompensa[] = [];
 
@@ -113,7 +107,6 @@ export class HomeComponent implements OnInit {
     this.cargarDatos();
   }
 
-  // Métodos de servicio integrados
   private obtenerUsuarios(): Observable<Usuario[]> {
     return this.http.get<Usuario[]>(this.API_USUARIOS).pipe(
       catchError(this.handleError)
@@ -144,17 +137,14 @@ export class HomeComponent implements OnInit {
     );
   }
 
-  // Carga de datos principal
   cargarDatos(): void {
     this.isLoading = true;
     this.error = null;
 
-    // Simulamos obtener el usuario actual (ID 1)
-    // En producción esto vendría del sistema de autenticación
     this.obtenerUsuarios().subscribe({
       next: (usuarios) => {
         if (usuarios.length > 0) {
-          this.usuarioActual = usuarios[0]; // Tomar el primer usuario como actual
+          this.usuarioActual = usuarios[0];
           this.cargarEventosYRecompensas();
           this.calcularEstadisticas(usuarios);
         } else {
@@ -174,7 +164,6 @@ export class HomeComponent implements OnInit {
     let eventosLoaded = false;
     let recompensasLoaded = false;
 
-    // Cargar eventos
     this.obtenerEventos().subscribe({
       next: (eventos) => {
         // Filtrar eventos futuros y tomar los primeros 3
@@ -182,11 +171,11 @@ export class HomeComponent implements OnInit {
           .filter(evento => new Date(evento.fechaInicio) > new Date())
           .sort((a, b) => new Date(a.fechaInicio).getTime() - new Date(b.fechaInicio).getTime())
           .slice(0, 3);
-        
+
         this.eventosProximos = eventosOrdenados;
         this.estadisticas.totalEventos = eventos.length;
         eventosLoaded = true;
-        
+
         if (recompensasLoaded) this.isLoading = false;
       },
       error: (error) => {
@@ -196,17 +185,15 @@ export class HomeComponent implements OnInit {
       }
     });
 
-    // Cargar recompensas
     this.obtenerRecompensas().subscribe({
       next: (recompensas) => {
-        // Tomar las primeras 3 recompensas con stock disponible
         this.recompensasDestacadas = recompensas
           .filter(r => r.stock > 0)
           .slice(0, 3);
-        
+
         this.estadisticas.recompensasDisponibles = recompensas.filter(r => r.stock > 0).length;
         recompensasLoaded = true;
-        
+
         if (eventosLoaded) this.isLoading = false;
       },
       error: (error) => {
@@ -218,16 +205,15 @@ export class HomeComponent implements OnInit {
   }
 
   private calcularEstadisticas(usuarios: Usuario[]): void {
-    this.estadisticas.voluntariosActivos = usuarios.filter(u => 
+    this.estadisticas.voluntariosActivos = usuarios.filter(u =>
       u.rol.nombre === 'VOLUNTARIO'
     ).length;
-    
+
     this.estadisticas.horasTotales = Math.round(
       usuarios.reduce((total, u) => total + u.horasAcumuladas, 0)
     );
   }
 
-  // Acciones del usuario
   inscribirseEvento(eventoId: number): void {
     if (!this.usuarioActual) {
       console.error('Usuario no encontrado');
@@ -280,10 +266,9 @@ export class HomeComponent implements OnInit {
       next: (resultado) => {
         console.log('Canje exitoso:', resultado);
         alert('¡Has canjeado la recompensa exitosamente! 🎁');
-        
-        // Actualizar puntos del usuario localmente
+
         this.usuarioActual!.puntos -= recompensa.puntosNecesarios;
-        // Actualizar stock de la recompensa
+
         recompensa.stock -= 1;
       },
       error: (error) => {
@@ -293,7 +278,6 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  // Navegación
   verTodosEventos(): void {
     this.router.navigate(['/eventos']);
   }
@@ -306,7 +290,6 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/perfil']);
   }
 
-  // Utilidades
   formatearFecha(fecha: string): string {
     const date = new Date(fecha);
     return date.toLocaleDateString('es-PE', {

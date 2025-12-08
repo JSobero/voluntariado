@@ -39,4 +39,15 @@ export class InscripcionService {
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+  inscribir(usuarioId: number, eventoId: number): Observable<Inscripcion> {
+
+    const body = {
+      usuarioId: usuarioId,
+      eventoId: eventoId
+    };
+    return this.http.post<Inscripcion>(this.apiUrl, body);
+  }
+  obtenerPorEvento(eventoId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/inscripciones/evento/${eventoId}`);
+  }
 }
