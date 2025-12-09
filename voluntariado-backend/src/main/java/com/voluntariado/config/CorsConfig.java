@@ -6,6 +6,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.NonNull;
+
 @Configuration
 @EnableWebMvc
 public class CorsConfig implements WebMvcConfigurer {
@@ -13,19 +15,25 @@ public class CorsConfig implements WebMvcConfigurer {
     @Value("${upload.path:uploads}")
     private String uploadPath;
 
+    @Value("${cors.allowed-origins:http://localhost:4200}")
+    private String allowedOrigins;
+
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
+    public void addCorsMappings(@NonNull CorsRegistry registry) {
+        String[] origins = allowedOrigins.split(",");
+        // Trim cada origen para eliminar espacios
+        for (int i = 0; i < origins.length; i++) {
+            origins[i] = origins[i].trim();
+        }
         registry.addMapping("/**")
-                .allowedOrigins(
-                        "http://localhost:4200",
-                        "https://majestic-creponne-8619c7.netlify.app"
-                )
+                .allowedOrigins(origins)
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }
+    
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+    public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
         // Convertir a ruta absoluta si es relativa
         String absolutePath = uploadPath;
         if (!uploadPath.startsWith("/") && !uploadPath.matches("^[A-Za-z]:.*")) {

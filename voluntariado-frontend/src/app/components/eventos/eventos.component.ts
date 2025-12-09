@@ -9,6 +9,7 @@ import { CategoriaService } from '../../core/services/categoria.service';
 import { AuthService } from '../../services/auth.service';
 import { InscripcionService } from '../../core/services/inscripcion.service';
 import { Inscripcion } from '../../core/models/inscripcion.model';
+import { environment } from '../../../environments/environment';
 
 interface Evento {
   id: number;
@@ -40,7 +41,7 @@ export class EventosComponent implements OnInit {
   private authService = inject(AuthService);
   private inscripcionService = inject(InscripcionService);
   private categoriaService = inject(CategoriaService);
-  private readonly API_EVENTOS = 'https://voluntariado-e7o4.onrender.com';
+  private readonly API_EVENTOS = `${environment.apiUrl}/eventos`;
   searchTerm = '';
   fechaInicio = '';
   fechaFin = '';

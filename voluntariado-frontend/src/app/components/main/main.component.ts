@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 interface EventoBackend {
   id: number;
@@ -29,7 +30,7 @@ export class LandingComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient);
   private router = inject(Router);
 
-  private readonly API_EVENTOS = 'https://voluntariado-e7o4.onrender.com';
+  private readonly API_EVENTOS = `${environment.apiUrl}/eventos`;
 
   currentSlide = 0;
   currentTestimonial = 0;
