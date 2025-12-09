@@ -32,7 +32,7 @@ export class PerfilComponent implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
 
-  private readonly API_BASE = 'http://localhost:8080';
+  private readonly API_BASE = 'https://voluntariado-e7o4.onrender.com';
 
   usuarioActual: Usuario | null = null;
   inscripciones: Inscripcion[] = [];

@@ -40,7 +40,7 @@ export class EventosComponent implements OnInit {
   private authService = inject(AuthService);
   private inscripcionService = inject(InscripcionService);
   private categoriaService = inject(CategoriaService);
-  private readonly API_EVENTOS = 'http://localhost:8080/eventos';
+  private readonly API_EVENTOS = 'https://voluntariado-e7o4.onrender.com';
   searchTerm = '';
   fechaInicio = '';
   fechaFin = '';

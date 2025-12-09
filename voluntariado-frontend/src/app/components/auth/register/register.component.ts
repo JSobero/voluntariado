@@ -165,7 +165,7 @@ getPasswordStrength(): string {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.http.get<any[]>('http://localhost:8080/roles').subscribe({
+    this.http.get<any[]>('https://voluntariado-e7o4.onrender.com').subscribe({
       next: (roles) => {
         const rolVoluntario = roles.find(r => r.nombre === 'VOLUNTARIO') || { id: 3, nombre: 'VOLUNTARIO' };
 
@@ -179,7 +179,7 @@ getPasswordStrength(): string {
           rol: rolVoluntario
         };
 
-        this.http.post('http://localhost:8080/usuarios', nuevoUsuario).subscribe({
+        this.http.post('https://voluntariado-e7o4.onrender.com', nuevoUsuario).subscribe({
           next: (response) => {
             this.successMessage = '¡Cuenta creada exitosamente!';
             this.isLoading = false;

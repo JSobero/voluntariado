@@ -29,7 +29,7 @@ export class LandingComponent implements OnInit, OnDestroy {
   private http = inject(HttpClient);
   private router = inject(Router);
 
-  private readonly API_EVENTOS = 'http://localhost:8080/eventos';
+  private readonly API_EVENTOS = 'https://voluntariado-e7o4.onrender.com';
 
   currentSlide = 0;
   currentTestimonial = 0;

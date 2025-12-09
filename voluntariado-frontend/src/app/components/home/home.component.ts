@@ -82,7 +82,7 @@ export class HomeComponent implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
 
-  private readonly API_BASE = 'http://localhost:8080';
+  private readonly API_BASE = 'https://voluntariado-e7o4.onrender.com';
   private readonly API_USUARIOS = `${this.API_BASE}/usuarios`;
   private readonly API_EVENTOS = `${this.API_BASE}/eventos`;
   private readonly API_RECOMPENSAS = `${this.API_BASE}/recompensas`;
