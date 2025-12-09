@@ -23,7 +23,22 @@ public class CorsConfig implements WebMvcConfigurer {
     }
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // Convertir a ruta absoluta si es relativa
+        String absolutePath = uploadPath;
+        if (!uploadPath.startsWith("/") && !uploadPath.matches("^[A-Za-z]:.*")) {
+            // Es una ruta relativa, convertirla a absoluta
+            absolutePath = System.getProperty("user.dir") + "/" + uploadPath;
+        }
+        
+        // Normalizar la ruta para Windows (reemplazar \ por /)
+        absolutePath = absolutePath.replace("\\", "/");
+        
+        // Asegurar que termine con /
+        if (!absolutePath.endsWith("/")) {
+            absolutePath += "/";
+        }
+        
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:" + uploadPath + "/");
+                .addResourceLocations("file:" + absolutePath);
     }
 }

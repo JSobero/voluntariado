@@ -21,8 +21,14 @@ public class ImageService {
     private String baseUrl;
 
     public String saveImage(MultipartFile file, String folder) throws IOException {
+        // Convertir a ruta absoluta si es relativa
+        String absoluteUploadPath = uploadPath;
+        if (!uploadPath.startsWith("/") && !uploadPath.matches("^[A-Za-z]:.*")) {
+            // Es una ruta relativa, convertirla a absoluta
+            absoluteUploadPath = System.getProperty("user.dir") + "/" + uploadPath;
+        }
 
-        Path uploadDir = Paths.get(uploadPath, folder);
+        Path uploadDir = Paths.get(absoluteUploadPath, folder);
         if (!Files.exists(uploadDir)) {
             Files.createDirectories(uploadDir);
         }
@@ -41,8 +47,14 @@ public class ImageService {
 
     public boolean deleteImage(String imageUrl) {
         try {
+            // Convertir a ruta absoluta si es relativa
+            String absoluteUploadPath = uploadPath;
+            if (!uploadPath.startsWith("/") && !uploadPath.matches("^[A-Za-z]:.*")) {
+                absoluteUploadPath = System.getProperty("user.dir") + "/" + uploadPath;
+            }
+            
             String relativePath = imageUrl.replace(baseUrl + "/uploads/", "");
-            Path filePath = Paths.get(uploadPath, relativePath);
+            Path filePath = Paths.get(absoluteUploadPath, relativePath);
 
             if (Files.exists(filePath)) {
                 Files.delete(filePath);
