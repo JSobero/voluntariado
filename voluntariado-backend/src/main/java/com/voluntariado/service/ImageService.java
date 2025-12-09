@@ -1,68 +1,74 @@
 package com.voluntariado.service;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.UUID;
+import java.util.Map;
 
 @Service
 public class ImageService {
 
-    @Value("${upload.path:uploads}")
-    private String uploadPath;
+    private final Cloudinary cloudinary;
 
-    @Value("${app.base-url:http://localhost:8080}")
-    private String baseUrl;
+    @Value("${cloudinary.folder:voluntariado}")
+    private String baseFolder;
+
+    public ImageService(Cloudinary cloudinary) {
+        this.cloudinary = cloudinary;
+    }
 
     public String saveImage(MultipartFile file, String folder) throws IOException {
-        // Convertir a ruta absoluta si es relativa
-        String absoluteUploadPath = uploadPath;
-        if (!uploadPath.startsWith("/") && !uploadPath.matches("^[A-Za-z]:.*")) {
-            // Es una ruta relativa, convertirla a absoluta
-            absoluteUploadPath = System.getProperty("user.dir") + "/" + uploadPath;
-        }
+        String targetFolder = baseFolder + "/" + (folder == null ? "general" : folder);
 
-        Path uploadDir = Paths.get(absoluteUploadPath, folder);
-        if (!Files.exists(uploadDir)) {
-            Files.createDirectories(uploadDir);
-        }
+        Map<?, ?> uploadResult = cloudinary.uploader().upload(
+                file.getBytes(),
+                ObjectUtils.asMap(
+                        "folder", targetFolder,
+                        "resource_type", "image"
+                )
+        );
 
-        String originalFilename = file.getOriginalFilename();
-        String extension = originalFilename != null && originalFilename.contains(".")
-                ? originalFilename.substring(originalFilename.lastIndexOf("."))
-                : ".jpg";
-        String filename = UUID.randomUUID().toString() + extension;
-
-        Path filePath = uploadDir.resolve(filename);
-        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-
-        return baseUrl + "/uploads/" + folder + "/" + filename;
+        return (String) uploadResult.get("secure_url");
     }
 
     public boolean deleteImage(String imageUrl) {
         try {
-            // Convertir a ruta absoluta si es relativa
-            String absoluteUploadPath = uploadPath;
-            if (!uploadPath.startsWith("/") && !uploadPath.matches("^[A-Za-z]:.*")) {
-                absoluteUploadPath = System.getProperty("user.dir") + "/" + uploadPath;
-            }
-            
-            String relativePath = imageUrl.replace(baseUrl + "/uploads/", "");
-            Path filePath = Paths.get(absoluteUploadPath, relativePath);
+            String publicId = extractPublicId(imageUrl);
+            if (publicId == null) return false;
 
-            if (Files.exists(filePath)) {
-                Files.delete(filePath);
-                return true;
-            }
+            Map<?, ?> result = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+            Object status = result.get("result");
+            return status != null && status.toString().equalsIgnoreCase("ok");
+        } catch (Exception e) {
             return false;
-        } catch (IOException e) {
-            throw new RuntimeException("Error al eliminar la imagen: " + e.getMessage());
+        }
+    }
+
+    // Extrae el public_id desde la URL segura de Cloudinary
+    private String extractPublicId(String imageUrl) {
+        if (imageUrl == null || !imageUrl.contains("/upload/")) {
+            return null;
+        }
+
+        try {
+            String[] parts = imageUrl.split("/upload/");
+            if (parts.length < 2) return null;
+
+            String path = parts[1];
+            // Quitar la versión (v123...)
+            path = path.replaceFirst("^v\\d+/", "");
+
+            int dotIndex = path.lastIndexOf('.');
+            if (dotIndex > 0) {
+                path = path.substring(0, dotIndex);
+            }
+            return path;
+        } catch (Exception e) {
+            return null;
         }
     }
 
