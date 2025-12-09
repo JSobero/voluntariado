@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 
 interface RegisterData {
   nombre: string;
@@ -165,7 +166,7 @@ getPasswordStrength(): string {
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.http.get<any[]>('https://voluntariado-e7o4.onrender.com').subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/roles`).subscribe({
       next: (roles) => {
         const rolVoluntario = roles.find(r => r.nombre === 'VOLUNTARIO') || { id: 3, nombre: 'VOLUNTARIO' };
 
@@ -179,7 +180,7 @@ getPasswordStrength(): string {
           rol: rolVoluntario
         };
 
-        this.http.post('https://voluntariado-e7o4.onrender.com', nuevoUsuario).subscribe({
+        this.http.post(`${environment.apiUrl}/usuarios`, nuevoUsuario).subscribe({
           next: (response) => {
             this.successMessage = '¡Cuenta creada exitosamente!';
             this.isLoading = false;

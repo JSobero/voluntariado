@@ -1,6 +1,5 @@
 # === Node / Angular ===
 node_modules/
-dist/
 .angular/
 .env
 .env.local

@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AuthService, Usuario } from '../../services/auth.service';
 import { Canje } from '../../core/models/canje.model';
+import { environment } from '../../../environments/environment';
 
 interface Inscripcion {
   id: number;
@@ -32,7 +33,7 @@ export class PerfilComponent implements OnInit {
   private router = inject(Router);
   private authService = inject(AuthService);
 
-  private readonly API_BASE = 'https://voluntariado-e7o4.onrender.com';
+  private readonly API_BASE = environment.apiUrl;
 
   usuarioActual: Usuario | null = null;
   inscripciones: Inscripcion[] = [];

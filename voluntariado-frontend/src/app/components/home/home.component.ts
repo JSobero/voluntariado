@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 export interface Usuario {
   id: number;
@@ -82,7 +83,7 @@ export class HomeComponent implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
 
-  private readonly API_BASE = 'https://voluntariado-e7o4.onrender.com';
+  private readonly API_BASE = environment.apiUrl;
   private readonly API_USUARIOS = `${this.API_BASE}/usuarios`;
   private readonly API_EVENTOS = `${this.API_BASE}/eventos`;
   private readonly API_RECOMPENSAS = `${this.API_BASE}/recompensas`;
