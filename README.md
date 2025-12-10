@@ -4,6 +4,8 @@
 
 ![Estado del proyecto](https://img.shields.io/badge/status-completado-green)
 
+https://glittering-kelpie-1a1a62.netlify.app/
+
 ## 📋 Índice
 
 - [Descripción del proyecto](#descripción-del-proyecto)
